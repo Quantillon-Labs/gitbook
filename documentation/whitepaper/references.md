@@ -1,7 +1,3 @@
----
-description: References
----
-
 # References
 
 #### 📚 Academic & Technical References

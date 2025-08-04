@@ -1,7 +1,3 @@
----
-description: Conclusion & Perspectives
----
-
 # Conclusion & Perspectives
 
 Quantillon Protocol embodies a pragmatic, technically rigorous, and strategically ambitious response to the eurozone's persistent underrepresentation in decentralized finance. By leveraging the deep liquidity of USD markets while enabling native euro exposure through robust hedging mechanisms, it succeeds in building a euro-denominated stablecoin infrastructure with institutional-grade architecture.

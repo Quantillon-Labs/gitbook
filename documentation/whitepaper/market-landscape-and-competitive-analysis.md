@@ -1,19 +1,15 @@
----
-description: Market Landscape & Competitive Analysis
----
-
 # Market Landscape & Competitive Analysis
 
 ### The Euro Stablecoin Market: Fragmentation and Failure to Launch
 
-Despite numerous attempts to develop euro-denominated stablecoins, none have achieved substantial market penetration or liquidity. EUROC (Circle), EURS (Stasis), EURT (Tether), and Angle's agEUR represent the most recognizable names in this segment, yet they collectively represent **less than 2%** of the total stablecoin market capitalization as of Q2 2025. Each of these projects suffers from critical structural limitations:
+Despite numerous attempts to develop euro-denominated stablecoins, none have achieved substantial market penetration or liquidity. EUROC (Circle), EURS (Stasis), EURT (Tether), and Angle's EURA represent the most recognizable names in this segment, yet they collectively represent **less than 1%** of the total stablecoin market capitalization as of Q2 2025. Each of these projects suffers from critical structural limitations:
 
 | Stablecoin | Issuer         | Key Limitations                                                                                                                                                                                                       |
 | ---------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **EUROC**  | Circle         | Despite the credibility of its issuer, EUROC has limited utility and suffers from low liquidity on decentralized exchanges. It also lacks yield generation mechanisms and is primarily used as a compliance showcase. |
 | **EURS**   | Stasis         | EURS is a custodial stablecoin with limited adoption and high on/off-ramp costs. It is centralized and opaque, offering no native integration with DeFi protocols.                                                    |
 | **EURT**   | Tether         | Lacking regulatory clarity and plagued by transparency concerns, EURT is largely avoided by institutional players.                                                                                                    |
-| **agEUR**  | Angle Protocol | While technically innovative with a dynamic reserve model, agEUR has struggled with capital efficiency and scale, facing depegging events and declining user confidence.                                              |
+| **EURA**   | Angle Protocol | While technically innovative with a dynamic reserve model, EURA has struggled with capital efficiency and scale, facing depegging events and low yield generation as it is based on euro bonds.                       |
 
 The consistent problem across all these assets is their failure to create meaningful liquidity, yield opportunities, and DeFi integration comparable to USD stablecoins. These failings result not from lack of intent but from poor incentive alignment, limited network effects, and insufficient hedging infrastructure for EUR/USD volatility.
 
@@ -43,7 +39,7 @@ Unlike existing euro stablecoins, Quantillon introduces a permissionless hedging
 
 **📈 Yield Shift Mechanism**
 
-QEURO is not only a stablecoin but a savings instrument. By redistributing part of the yield from collateral deployment (e.g., Aave) to users and hedgers via a dynamic "Yield Shift," the protocol incentivizes long-term participation and peg maintenance.
+QEURO is not only a stablecoin but a savings instrument. By redistributing most of the yield from collateral deployment (e.g., Aave) to users and hedgers via a dynamic 'Yield Shift,' the protocol incentivizes long-term participation and peg maintenance.
 
 These components create a uniquely sustainable design that addresses both supply (hedgers) and demand (euro users) sides of the market. By leveraging DeFi primitives and real-world financial theory—including FX swap economics and interest rate parity—Quantillon delivers a euro stablecoin that is liquid, scalable, and yield-generating.
 

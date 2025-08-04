@@ -1,7 +1,3 @@
----
-description: Appendices Techniques
----
-
 # Appendices Techniques
 
 ### Smart Contract Architecture

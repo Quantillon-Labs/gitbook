@@ -1,7 +1,3 @@
----
-description: Business Model & Economic Sustainability
----
-
 # Business Model & Economic Sustainability
 
 Quantillon Protocol is structured around a **dual-source revenue model** that prioritizes scalability, capital efficiency, and long-term sustainability. In contrast to speculative or transaction-based DeFi projects, Quantillon generates recurring income from two distinct but complementary streams:

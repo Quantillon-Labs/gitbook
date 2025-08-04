@@ -1,7 +1,3 @@
----
-description: Risks & Mitigation Strategies
----
-
 # Risks & Mitigation Strategies
 
 ### Currency Risk: EUR/USD Volatility

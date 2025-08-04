@@ -1,7 +1,3 @@
----
-description: Tokenomics & Governance
----
-
 # Tokenomics & Governance
 
 ### The $QTI Token: Governance, Distribution, and Incentives
@@ -29,10 +25,10 @@ Collateral deployed in DeFi protocols (e.g., Aave) generates a baseline APY. Fro
 1. A protocol fee of **10%** is applied.
 2. Hedgers receive a fixed compensation based on the EUR/USD interest rate spread (typically \~1%).
 3. The residual is then distributed variably:
-   * **Positive Yield Shift**: More yield flows to Users when hedger participation is high.
-   * **Negative Yield Shift**: More yield incentivizes Hedgers when their supply is insufficient.
+   * **Positive Yield Shift**: More yield incentivizes Hedgers when their supply is insufficient.
+   * **Negative Yield Shift**: More yield flows to Users when hedger participation is high.
 
-This creates a dynamic equilibrium. The Yield Shift is not discretionary; it is governed by pre-defined formulas based on real-time FX spreads and protocol TVL ratios. Governance can only modify its parameters within capped ranges, preserving systemic integrity.
+This creates a dynamic equilibrium. The Yield Shift is not discretionary; it is governed by predefined formulas based on real-time FX rate spreads and User/Hedger supply and demand. Governance can only modify its parameters within capped ranges, preserving systemic integrity.
 
 ### Incentive Alignment and Protocol Sustainability
 

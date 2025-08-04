@@ -1,7 +1,3 @@
----
-description: Team & Operational Structure
----
-
 # Team & Operational Structure
 
 Quantillon is driven by a multidisciplinary team combining decades of experience in software engineering, decentralized finance, macroeconomics, and digital asset management. The organizational design reflects the layered responsibilities of protocol development, governance stewardship, and institutional interfacing.

@@ -1,14 +1,10 @@
----
-description: Roadmap & Adoption Strategy
----
-
 # Roadmap & Adoption Strategy
 
 ### Technical and Product Development Timeline
 
 Quantillon's roadmap is structured in three phases, balancing rapid deployment with robust institutional integration. Each phase incorporates clear milestones for TVL, user adoption, regulatory preparation, and technological expansion.
 
-**Phase 1 — Launch & Bootstrap (Q3–Q4 2025)**
+**Phase 1 — Launch & Bootstrap (Q4 2025)**
 
 **🚀 Core Deliverables:**
 
@@ -28,7 +24,7 @@ Quantillon's roadmap is structured in three phases, balancing rapid deployment w
 **🏢 Strategic Focus:**
 
 * Launch of mQEURO and bQEURO vaults to diversify collateral exposure.
-* Strategic partnerships with CeDeFi brokers (e.g., Quantfury) and fintech platforms.
+* Strategic partnerships with CeDeFi brokers and fintech platforms.
 * Fiat on/off-ramp integrations with custody partners.
 * UI/UX upgrade toward retail-facing web and mobile interface with neobank features.
 * Regulatory whitepaper and optional registration with European sandbox frameworks.

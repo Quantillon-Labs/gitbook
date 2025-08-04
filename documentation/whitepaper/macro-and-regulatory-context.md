@@ -1,7 +1,3 @@
----
-description: Macro & Regulatory Context
----
-
 # Macro & Regulatory Context
 
 ### The Eurozone's Monetary Landscape: A Fragile Equilibrium
@@ -14,7 +10,7 @@ Following the COVID-19 pandemic, these weaknesses became more visible. The ECB's
 
 ### The Case for Euro-Native Instruments: Yield, Safety, and Monetary Sovereignty
 
-European savers face a paradox. While they exhibit high precautionary saving rates—estimated at over **12% of household income** across the eurozone—most of this capital is deployed in vehicles offering negligible returns: Livret A (France, 3%), regulated life insurance contracts, and pension products. These products are structurally constrained by regulation, subject to opaque fee structures, and offer limited capital appreciation.
+European savers face a paradox. While they exhibit high precautionary saving rates—estimated at over **12% of household income** across the eurozone—most of this capital is deployed in vehicles offering negligible returns: Livret A (France, 1.7%), regulated life insurance contracts, and pension products. These products are structurally constrained by regulation, subject to opaque fee structures, and offer limited capital appreciation.
 
 At the macro level, the lack of euro-native yield instruments exacerbates the **Cantillon Effect**. Monetary stimulus disproportionately benefits financial intermediaries and capital holders close to the central bank's monetary base. Retail savers, by contrast, receive only the diluted remnants of yield transmission. This creates a structural transfer from savers to asset managers—a pattern Quantillon explicitly seeks to reverse.
 

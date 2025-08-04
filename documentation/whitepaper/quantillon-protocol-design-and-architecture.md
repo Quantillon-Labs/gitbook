@@ -1,12 +1,8 @@
----
-description: 'Quantillon Protocol: Design & Architecture'
----
-
 # Quantillon Protocol: Design & Architecture
 
 ### QEURO Stablecoin Design: A Euro-Pegged, Overcollateralized Instrument
 
-At the core of the Quantillon Protocol lies the **QEURO**—a euro-pegged stablecoin minted against overcollateralized reserves in USD stablecoins, initially USDC. The choice of overcollateralization offers a high-integrity approach to maintaining the peg and minimizing counterparty risk, avoiding the algorithmic fragility or undercollateralization that plagued predecessors like TerraUSD or IRON.
+At the core of the Quantillon Protocol lies the **QEURO**—a euro-pegged stablecoin minted against overcollateralized reserves in USD stablecoins, initially USDC. The choice of overcollateralization offers a high-integrity approach to maintaining the peg and minimizing counterparty risk.
 
 QEURO is minted permissionlessly at the oracle price, allowing any user to deposit accepted ERC20 assets which are then routed through the protocol's smart contracts to be swapped into USDC and locked as collateral. The protocol ensures a minimum **101% collateralization ratio**, with liquidation mechanisms triggered automatically via Chainlink or equivalent high-reliability oracles if the threshold is breached. Redeeming QEURO follows the same logic in reverse, enabling frictionless exit at minimal cost.
 
