@@ -33,7 +33,6 @@
 ## 📈  Tokenomics
 
 * [Tokenomics](tokenomics/tokenomics.md)
-* [QTI Token](tokenomics/qti-token.md)
 
 ## 📜 Regulatory & Legal
 
