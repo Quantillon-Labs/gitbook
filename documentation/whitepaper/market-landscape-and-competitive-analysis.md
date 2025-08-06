@@ -39,7 +39,7 @@ Unlike existing euro stablecoins, Quantillon introduces a permissionless hedging
 
 **📈 Yield Shift Mechanism**
 
-QEURO is not only a stablecoin but a savings instrument. By redistributing most of the yield from collateral deployment (e.g., Aave) to users and hedgers via a dynamic 'Yield Shift,' the protocol incentivizes long-term participation and peg maintenance.
+QEURO is not only a stablecoin but a savings instrument. By redistributing most of the yield from collateral deployment (e.g., Aave) to users and hedgers via a dynamic 'Yield Shift', the protocol incentivizes long-term participation and peg maintenance.
 
 These components create a uniquely sustainable design that addresses both supply (hedgers) and demand (euro users) sides of the market. By leveraging DeFi primitives and real-world financial theory—including FX swap economics and interest rate parity—Quantillon delivers a euro stablecoin that is liquid, scalable, and yield-generating.
 
