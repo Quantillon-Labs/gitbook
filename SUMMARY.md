@@ -33,6 +33,7 @@
 ## 📈  Tokenomics
 
 * [Tokenomics](tokenomics/tokenomics.md)
+* [Copy of Tokenomics](tokenomics/copy-of-tokenomics.md)
 
 ## 📜 Regulatory & Legal
 
