@@ -21,6 +21,7 @@
 * [Quantillon DAO](documentation/quantillon-dao.md)
 * [Quantillon Guardians](documentation/quantillon-guardians.md)
 * [Frequently Asked Questions](documentation/frequently-asked-questions.md)
+* [Glossary](documentation/glossary.md)
 
 ## 📊  Market & Competitive Analysis
 
