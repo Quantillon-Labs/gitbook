@@ -8,13 +8,11 @@ description: >-
 
 ## MVP Technical Documentation
 
-***
-
 ### Overview
 
 This document outlines the technical architecture, smart contract specifications, and implementation roadmap for the Quantillon Protocol MVP. The MVP focuses on core stablecoin functionality with QEURO minting/redemption, yield-generating collateral management, and foundational hedging infrastructure.
 
-\{% hint style="info" %\} **MVP Scope**: Single vault implementation (aQEURO) with USDC collateral, Aave v3 integration, and basic frontend for mint/redeem operations on Base mainnet. \{% endhint %\}
+> **MVP Scope**: Single vault implementation (aQEURO) with USDC collateral, Aave v3 integration, and basic frontend for mint/redeem operations on Base mainnet.
 
 ***
 
@@ -34,26 +32,41 @@ This document outlines the technical architecture, smart contract specifications
 
 #### Core On-Chain Components
 
-```mermaid
-graph TB
-    A[QEURO Contract] --> B[VaultEngine]
-    B --> C[YieldController]
-    B --> D[Aave v3 Pool]
-    C --> E[HedgerPool]
-    F[Chainlink Oracles] --> A
-    F --> C
-    
-    subgraph "External Integrations"
-        D
-        F
-    end
-    
-    subgraph "Core Protocol"
-        A
-        B
-        C
-        E
-    end
+```
+                    ┌─────────────────┐
+                    │ Chainlink       │
+                    │ Oracles         │
+                    │ (EUR/USD,       │
+                    │  USDC/USD)      │
+                    └──────┬─────┬────┘
+                           │     │
+            ┌──────────────▼─────▼──────────────┐
+            │         QEURO Contract            │
+            │      (ERC20 Stablecoin)           │
+            └──────────────┬────────────────-───┘
+                           │
+            ┌──────────────▼───────────────────┐
+            │         VaultEngine              │
+            │    (Collateral Management)       │
+            └──────┬───────────────────┬───────┘
+                   │                   │
+        ┌──────────▼───────────┐   ┌───▼───────────────┐
+        │   YieldController    │   │   Aave v3 Pool    │
+        │ (Yield Distribution) │   │ (Yield Generation)│
+        └──────┬───────────────┘   └───────────────────┘
+               │
+        ┌──────▼───────────┐
+        │   HedgerPool     │
+        │ (Margin & Risk)  │
+        └──────────────────┘
+
+Data Flow:
+1. Chainlink Oracles → Price feeds to QEURO & YieldController
+2. QEURO Contract → Mint/redeem operations via VaultEngine
+3. VaultEngine → Deploys USDC to Aave v3 for yield generation
+4. VaultEngine → Sends yield data to YieldController
+5. YieldController → Distributes yield between Users & Hedgers
+6. YieldController → Manages HedgerPool incentives
 ```
 
 **Component Responsibilities:**
