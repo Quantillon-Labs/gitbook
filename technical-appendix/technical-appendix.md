@@ -1,3 +1,0 @@
-# Technical Appendix
-
-## Coming soon...

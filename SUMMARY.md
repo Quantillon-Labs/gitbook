@@ -48,5 +48,4 @@
 
 ## 🛠️ Technical Appendix
 
-* [Technical Appendix](technical-appendix/technical-appendix.md)
 * [MVP Technical Documentation](technical-appendix/mvp-technical-documentation.md)
