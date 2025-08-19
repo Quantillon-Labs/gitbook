@@ -8,63 +8,6 @@ Our roadmap emphasizes **methodical development**, **security-first approach**, 
 
 ***
 
-### 🗓️ Interactive Development Timeline
-
-```mermaid
-timeline
-    title Quantillon Protocol Development Timeline
-    
-    section Q2 2025
-        Phase 1: Project Kickoff & Team Assembly
-            : Core team assembled
-            : Initial research completed
-            : Project vision defined
-    
-    section Q3 2025
-        Phase 2: Protocol Architecture & Whitepaper
-            : Advisors onboarded
-            : Whitepaper published
-            : Technical architecture finalized
-            : Website launch & Community channels open
-    
-    section Q4 2025
-        Phase 3: MVP Build & Internal Alpha
-            : Smart contracts developed
-            : Internal alpha testing
-            : Code review completed
-            : Initial UI prototype
-    
-    section Q1 2026
-        Phase 4: MVP Public Testnet Launch
-            : Private beta deployed
-            : Bug bounty launched
-            : Community feedback collected
-            : Technical documentation released
-    
-    section Q2 2026
-        Phase 5: Security Audits & Mainnet Readiness
-            : Security audit started
-            : Audit report received
-            : Mainnet deployment plan
-            : User guides finalized
-    
-    section Q3 2026
-        Phase 6: Mainnet Launch & Early Integrations
-            : Mainnet launched
-            : First DeFi integration
-            : Liquidity mining live
-            : First user onboarding
-    
-    section Q4 2026
-        Phase 7: DAO Launch & Community Programs
-            : Governance token launched
-            : DAO voting live
-            : Community grants open
-            : Ambassador program started
-```
-
-***
-
 ### 🗺️ Detailed Phase Breakdown
 
 #### Phase 1: Project Kickoff & Team Assembly 🏗️
