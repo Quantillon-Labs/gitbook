@@ -1,10 +1,8 @@
 # Quantillon Protocol's tokens
 
-## Tokenomics
+## Quantillon Protocol's Token Ecosystem
 
-### Quantillon Protocol's Token Ecosystem
-
-### Overview
+### 📋 Overview
 
 Quantillon Protocol operates through a sophisticated three-token architecture designed to create a comprehensive euro-native DeFi ecosystem. Each token serves a distinct purpose within our protocol while maintaining synergistic relationships that drive sustainable growth, decentralized governance, and optimal capital efficiency.
 

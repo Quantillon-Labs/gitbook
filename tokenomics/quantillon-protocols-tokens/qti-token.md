@@ -1,8 +1,8 @@
-# Tokenomics
+# QTI Token
 
 ## QTI Tokenomics: Advanced Economic Design
 
-### Executive Summary
+### 📋 Executive Summary
 
 The Quantillon Governance Token (QTI) represents a sophisticated approach to DeFi governance and value accrual, designed specifically for the Euro stablecoin ecosystem. Built on advanced tokenomic principles including vote-escrow mechanics, dynamic reward systems, and progressive decentralization, QTI creates sustainable incentives for long-term protocol growth while maintaining robust security and community alignment.
 

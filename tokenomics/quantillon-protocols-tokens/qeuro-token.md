@@ -2,7 +2,7 @@
 
 ## QEURO Tokenomics: Euro-Native Stablecoin Architecture
 
-### Executive Summary
+### 📋 Executive Summary
 
 The Quantillon Euro (QEURO) represents a revolutionary approach to euro-denominated digital assets, combining the stability of traditional stablecoins with the innovation of decentralized finance. Designed as an overcollateralized, yield-generating stablecoin backed by USDC and governed through democratic mechanisms, QEURO solves the fundamental liquidity and adoption challenges facing Euro DeFi markets.
 

@@ -2,7 +2,7 @@
 
 ## stQEURO Tokenomics: Yield-Bearing Euro Infrastructure
 
-### Executive Summary
+### 📋 Executive Summary
 
 The Staked Quantillon Euro (stQEURO) represents the next evolution in euro-denominated yield-bearing tokens, designed to automatically compound returns from QEURO collateral deployment while maintaining full liquidity and composability. stQEURO creates a seamless bridge between passive euro exposure and active DeFi yield generation.
 
