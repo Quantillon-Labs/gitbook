@@ -4,7 +4,7 @@ description: Quantillon Protocol Whitepaper
 
 # Whitepaper
 
-## QUANTILLON PROTOCOL WHITEPAPER
+## Quantillon Protocol Whitepaper
 
 _15th of July 2025_
 
