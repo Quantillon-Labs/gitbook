@@ -8,7 +8,7 @@ description: Quantillon Protocol Whitepaper
 
 _15th of July 2025_
 
-{% file src="../../.gitbook/assets/Quantillon Protocol Whitepaper.pdf" %}
+{% file src="../../.gitbook/assets/Quantillon Protocol Whitepaper v1.2 (1).pdf" %}
 Download our whitepaper
 {% endfile %}
 
@@ -30,7 +30,9 @@ Download our whitepaper
 
 Over the past decade, decentralized finance (DeFi) has emerged as one of the most transformative movements in financial history. Yet, despite its global ambitions, DeFi remains overwhelmingly denominated in U.S. dollars, structurally excluding over 300 million European savers and institutions who operate natively in euros. This asymmetry not only exposes European participants to unnecessary currency risk but also fails to capitalize on a vast pool of capital currently parked in underperforming legacy products such as life insurance contracts, and regulated savings plans.
 
-Quantillon Protocol seeks to rectify this imbalance by introducing **QEURO**, a euro-pegged stablecoin over-collateralized in dollar-based assets and governed in a decentralized manner. Through its dual-pool architecture—composed of "Users" who mint and stake QEURO, and "Hedgers" who assume delta-neutral FX positions on the EUR/USD pair—the protocol achieves a fully decentralized, scalable, and compliant stablecoin issuance mechanism. At its core lies a set of innovative mechanisms: permissionless hedging, yield redistribution through a variable "Yield Shift," and modular collateral management through vault variants (e.g., aQEURO, mQEURO, bQEURO, eQEURO).
+Quantillon Protocol seeks to rectify this imbalance through a revolutionary three-token ecosystem: QEURO (euro-pegged stablecoin), stQEURO (yield-bearing auto-compounding wrapper), and QTI (governance token with vote-escrow mechanics). This synergistic architecture creates interconnected value flows where each token reinforces the utility and adoption of the others.
+
+QEURO operates through an innovative dual-pool architecture—composed of "Users" who mint and stake QEURO, and "Hedgers" who assume delta-neutral FX positions on the EUR/USD pair—achieving fully decentralized, scalable, and compliant stablecoin issuance. stQEURO automatically compounds yields from QEURO collateral deployment without token inflation, offering Europeans their first native yield-bearing euro instrument with instant liquidity and full DeFi composability. QTI enables sophisticated governance through vote-escrow mechanics, progressive decentralization, and sustainable incentive alignment. At its core lies a set of innovative mechanisms: permissionless hedging, yield redistribution through a variable "Yield Shift," and modular collateral management through vault variants (e.g., aQEURO, mQEURO, bQEURO, eQEURO).
 
 #### 💡 Economic Philosophy: The Cantillon Effect
 
@@ -50,7 +52,7 @@ Economically, the protocol generates revenue through mint/redeem fees (0.1%) and
 
 #### 🏆 Competitive Advantages
 
-Compared to existing euro-stablecoins such as EUROC (Circle), EURS (Stasis), or EURT (Tether), Quantillon offers:
+Compared to existing euro-stablecoins such as EUROC (Circle), EURS (Stasis), or EURT (Tether), Quantillon represents the only comprehensive three-token euro-DeFi ecosystem, offering:
 
 * ✅ **Superior capital efficiency** via delta-neutral hedging
 * ✅ **Composability** across multiple DeFi protocols

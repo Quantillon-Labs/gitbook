@@ -2,19 +2,48 @@
 
 ### The $QTI Token: Governance, Distribution, and Incentives
 
-The **$QTI token** serves as the governance backbone of the Quantillon Protocol. Its primary role is to coordinate decisions regarding protocol upgrades, vault whitelisting, fee calibration, and treasury allocation. In contrast to speculative utility tokens with ambiguous roles, $QTI is explicitly designed for long-term protocol stewardship.
+#### 5.1 Three-Token Ecosystem Architecture
 
-The total supply of $QTI is capped, with the initial distribution structured as follows:
+Quantillon operates through a sophisticated three-token system designed to create sustainable value flows and optimal capital efficiency across the euro-DeFi ecosystem.
 
-**📊 Token Distribution**
+**The $QTI Token: Governance & Value Accrual**
 
-* **50%** allocated to the community via liquidity mining, governance rewards, and protocol usage
-* **15%** reserved for the core development team
-* **35%** allocated to early backers, strategic partners, advisors, liquidity and DAO.
+The $QTI token serves as the governance backbone of the Quantillon Protocol, featuring advanced vote-escrow (veQTI) mechanics and progressive decentralization. With a fixed total supply of 100,000,000 QTI tokens, the distribution is strategically structured as follows:
 
-Both the team and backer allocations are subject to a **multiple year linear vesting schedule** with a 12-month cliff. This ensures that early stakeholders are aligned with the long-term health of the protocol.
+**Strategic Token Allocation:**
 
-Governance is executed through a token-weighted voting system using on-chain proposals and Snapshot voting. Over time, governance responsibilities may include activation of the Fee Switch mechanism, treasury investment strategies, and expansion of collateral options.
+| Category                  | Allocation | Amount         | Lock Period | Vesting Schedule            |
+| ------------------------- | ---------- | -------------- | ----------- | --------------------------- |
+| **Community & Ecosystem** | 50%        | 50,000,000 QTI | Variable    | 48-month algorithmic curve  |
+| **Team & Founders**       | 15%        | 15,000,000 QTI | 12 months   | 36 months linear            |
+| **Investors (SAFT/BSA)**  | 13%        | 13,000,000 QTI | 6-18 months | 24-36 months tiered         |
+| **DAO Treasury**          | 10%        | 10,000,000 QTI | Immediate   | Governance-controlled       |
+| **Strategic Partners**    | 5%         | 5,000,000 QTI  | 6 months    | 18 months performance-based |
+| **Advisors**              | 2%         | 2,000,000 QTI  | 6 months    | 18 months milestone-driven  |
+| **Liquidity Provision**   | 5%         | 5,000,000 QTI  | Immediate   | Market-responsive release   |
+
+**Vote-Escrow (veQTI) System**
+
+QTI holders can lock their tokens for periods ranging from 1 week to 4 years, receiving voting power multipliers up to 4x base weight. This system ensures long-term alignment and prevents governance attacks while enabling meaningful decentralized decision-making.
+
+**Governance operates through three layers:**
+
+* **Constitutional Changes:** 85% threshold, 14-day timelock (protocol parameters, emergency procedures)
+* **Operational Decisions:** 60% threshold, 3-day timelock (fee structures, incentive programs)
+* **Community Proposals:** Simple majority, 24-hour timelock (grants, marketing initiatives)
+
+**stQEURO: Yield-Bearing Euro Infrastructure**
+
+stQEURO represents the protocol's yield-bearing token, automatically compounding returns from QEURO collateral deployment. Unlike traditional staking mechanisms, stQEURO maintains constant token quantity in user wallets while increasing intrinsic value over time through the formula:
+
+**stQEURO Value = 1 stQEURO = (1 + Cumulative Yield Rate) QEURO**
+
+Key benefits include:
+
+* **Automatic Compounding:** No manual reinvestment required
+* **Instant Liquidity:** No lock periods or withdrawal delays
+* **DeFi Composability:** Full integration across protocols while earning yield
+* **Tax Efficiency:** No rebase events creating potential taxable income
 
 ### Yield Mechanics and the "Yield Shift"
 

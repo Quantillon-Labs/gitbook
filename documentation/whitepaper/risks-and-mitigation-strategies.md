@@ -36,4 +36,43 @@ Quantillon interacts with other DeFi platforms, notably Aave. In the event of fa
 
 **🛡️ Mitigation:** Collateral is diversified across whitelisted protocols. Vault variants can be adjusted via governance to reduce exposure. The protocol monitors real-time risk parameters, including liquidity ratios and asset volatility. In extreme scenarios, emergency pause mechanisms are available.
 
+### stQEURO-Specific Risk Factors
+
+The introduction of yield-bearing euro infrastructure creates additional risk vectors requiring specialized mitigation strategies.
+
+**Auto-Compounding Mechanism Risk**
+
+**Risk:** Smart contract vulnerabilities in yield calculation or distribution logic could result in incorrect stQEURO valuations or user fund loss.
+
+**🛡️ Mitigation:**&#x20;
+
+* Specialized audits focused exclusively on auto-compounding token mechanics
+* Formal mathematical verification of yield calculation algorithms
+* Real-time monitoring with automated circuit breakers for anomalous calculations
+* Emergency pause functionality with governance-controlled restart procedures
+* Segregated insurance fund (3% of yield) specifically for compounding mechanism failures
+
+**Yield Volatility and User Expectation Risk**
+
+**Risk:** Rapid changes in underlying Aave yields could create user dissatisfaction or mass unstaking events if stQEURO returns fall below expectations.
+
+**🛡️ Mitigation:**&#x20;
+
+* 7-day moving average smoothing for APY display to reduce short-term volatility perception
+* 5% protocol yield reserve buffer to maintain consistent distributions during temporary yield drops
+* Guaranteed minimum 2% APY floor through protocol treasury backing
+* Maximum 15% APY ceiling to prevent unsustainable user expectations during yield spikes
+* Transparent communication about yield sources and market dependency
+
+**Cross-Protocol Composability Risk**
+
+**Risk:** stQEURO's use as collateral in other DeFi protocols could create cascading liquidation events if stQEURO value appreciation calculations fail or if oracle feeds become unreliable.
+
+**🛡️ Mitigation:**&#x20;
+
+* Conservative oracle update mechanisms with multiple data sources and heartbeat monitoring
+* Partnership agreements with major DeFi protocols for standardized stQEURO valuation methods
+* Graduated rollout of stQEURO integrations with smaller protocols before major platform adoption
+* Emergency communication channels for rapid coordination during cross-protocol incidents
+
 > **Quantillon is built on the principle of resilient decentralization. Rather than avoiding risk, it manages it explicitly through incentive design, robust engineering, and layered governance. This makes it uniquely equipped to operate in a volatile, fragmented, and evolving DeFi environment.**

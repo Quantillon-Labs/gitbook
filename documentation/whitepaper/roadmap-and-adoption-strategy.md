@@ -4,51 +4,65 @@
 
 Quantillon's roadmap is structured in three phases, balancing rapid deployment with robust institutional integration. Each phase incorporates clear milestones for TVL, user adoption, regulatory preparation, and technological expansion.
 
-**Phase 1 — Launch & Bootstrap (Q4 2025)**
+### **Phase 1 — Three-Token Launch & Bootstrap (Q4 2025)**
 
-**🚀 Core Deliverables:**
+* 🪙 Mainnet deployment of complete three-token ecosystem: **QEURO, stQEURO, and QTI**
+* 🏦 aQEURO vault launch with Aave USDC integration as primary collateral backend
+* 🗳️ veQTI system activation with vote-escrow mechanics and governance layer implementation
+* 🤝 Initial hedger onboarding and liquidity provisioning via Quantillon Labs
+* ⚡ stQEURO auto-compounding mechanism launch with real-time yield calculation
+* 🔍 First comprehensive audit reports published covering all three tokens
+* 🐞 Bug bounty programs initiated with specialized focus on yield-bearing mechanics
 
-* Mainnet deployment of the QEURO core protocol with aQEURO vault (USDC/Aave).
-* Initial Hedger onboarding and liquidity provisioning via Quantillon Labs.
-* Launch of the $QTI token with liquidity mining and governance activation.
-* First audit reports published; bug bounty programs initiated.
+**🎯 Target Metrics:**
 
-**🎯 Targets:**
+* TVL: €10M total (€6M QEURO, €4M stQEURO)
+* Users: 10,000 total (7,000 QEURO holders, 3,000 stQEURO stakers)
+* Staking Ratio: 40% of QEURO supply staked as stQEURO
+* QTI Market Cap: $5M with 15% governance participation
+* Swap Volume: €100M with 0.5% average daily trading velocity
 
-* **TVL:** €10M
-* **Users:** 10,000
-* **Swap Volume:** €100M
+***
 
-**Phase 2 — Institutional Integration & Expansion (Q1–Q2 2026)**
+### **Phase 2 — Multi-Vault Expansion & Institutional Integration (Q1-Q2 2026)**
 
-**🏢 Strategic Focus:**
+* 🏛️ Launch of **mQEURO (MakerDAO)** and **bQEURO (Real World Assets)** vault variants
+* 🌉 Cross-chain deployment of complete three-token system on **Base and Arbitrum**
+* 🤝 Strategic partnerships with CeDeFi brokers and institutional fintech platforms
+* 💳 Fiat on/off-ramp integrations with regulated custody partners for institutional access
+* 📊 Advanced stQEURO yield optimization strategies and institutional reporting features
+* 📱 Mobile application launch with neobank-style interface for retail adoption
+* 📄 Regulatory whitepaper publication and optional sandbox framework registration
 
-* Launch of mQEURO and bQEURO vaults to diversify collateral exposure.
-* Strategic partnerships with CeDeFi brokers and fintech platforms.
-* Fiat on/off-ramp integrations with custody partners.
-* UI/UX upgrade toward retail-facing web and mobile interface with neobank features.
-* Regulatory whitepaper and optional registration with European sandbox frameworks.
+**🎯 Target Metrics:**
 
-**🎯 Targets:**
+* TVL: €100M total (€60M QEURO, €40M stQEURO across 3 vaults)
+* Users: 50,000 total with 60% cross-chain adoption
+* Staking Ratio: 60% of QEURO supply in stQEURO variants
+* QTI Market Cap: $25M with 25% governance participation
+* Institutional AUM: €20M in bQEURO institutional vault
+* Cross-Chain Volume: €1B with 30% L2 distribution
 
-* **TVL:** €100M
-* **Users:** 50,000
-* **Swap Volume:** €1B
+***
 
-**Phase 3 — Cross-Chain, Institutional Scaling, DAO Transition (H2 2026–2027)**
+### **Phase 3 — Advanced DeFi Integration & Full Decentralization (H2 2026-2027)**
 
-**🌐 Expansion Initiatives:**
+* ⚖️ eQEURO vault launch with **Ethena** and advanced yield strategies (up to 3x leverage)
+* 🌐 Complete cross-chain ecosystem deployment (**zkSync, Polygon, additional L2s**)
+* 🏦 DAO-controlled treasury activation with full **Fee Switch** implementation
+* 🧑‍💼 Advanced institutional products: custom yield strategies, treasury management APIs
+* 🗳️ Full protocol decentralization with governance parameter control transferred to QTI holders
+* 🔗 Integration with **50+ DeFi protocols** supporting stQEURO as native collateral
+* 🏛️ Traditional finance bridges: **CBDC compatibility layer** and institutional custody integration
 
-* Deployment of eQEURO and support for RWAs (Real World Assets) collateral.
-* Cross-chain expansion (e.g., Arbitrum, Base, zkSync, LayerZero bridges).
-* DAO-controlled treasury activation with Fee Switch.
-* Full decentralization of protocol parameters through $QTI governance.
+**🎯 Target Metrics:**
 
-**🎯 Goals:**
-
-* **TVL:** €1B
-* **Institutional AUM onboarding**
-* **Full MiCA-exempt DeFi framework**
+* TVL: €1B total across all vaults and chains
+* Users: 200,000+ with institutional treasury adoption
+* Staking Ratio: 70% of QEURO supply optimized across vault variants
+* QTI Market Cap: $100M+ with 45% governance participation
+* Protocol Revenue: €10M+ annually with 80% margin sustainability
+* Cross-Protocol Integration: stQEURO accepted in 50+ major DeFi platforms
 
 ### Strategic KPIs and Milestones
 
