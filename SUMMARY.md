@@ -34,9 +34,9 @@
 ## 📈  Tokenomics
 
 * [Quantillon Protocol's tokens](tokenomics/quantillon-protocols-tokens/README.md)
-  * [QTI Token](tokenomics/quantillon-protocols-tokens/qti-token.md)
   * [QEURO Token](tokenomics/quantillon-protocols-tokens/qeuro-token.md)
   * [stQEURO Token](tokenomics/quantillon-protocols-tokens/stqeuro-token.md)
+  * [QTI Token](tokenomics/quantillon-protocols-tokens/qti-token.md)
 
 ## 📜 Regulatory & Legal
 
