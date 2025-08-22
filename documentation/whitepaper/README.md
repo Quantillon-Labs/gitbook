@@ -8,9 +8,11 @@ description: Quantillon Protocol Whitepaper
 
 _15th of July 2025_
 
-{% file src="../../.gitbook/assets/Quantillon Protocol Whitepaper v1.2 (1).pdf" %}
-Download our whitepaper
-{% endfile %}
+### Download our whitepaper on Github :&#x20;
+
+[Our documentation repository](https://github.com/Quantillon-Labs/docs/tree/main/whitepaper)
+
+{% embed url="https://github.com/Quantillon-Labs/docs/blob/main/whitepaper/generated/Quantillon%20Protocol%20Whitepaper%20v1.2.pdf" %}
 
 ### Table of Contents
 
