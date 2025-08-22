@@ -10,13 +10,23 @@ description: >-
 
 ### Overview
 
-This document outlines the technical architecture, smart contract specifications, and implementation roadmap for the Quantillon Protocol MVP. The MVP focuses on core stablecoin functionality with QEURO minting/redemption, yield-generating collateral management, and foundational hedging infrastructure.
+This document outlines the technical architecture, smart contract specifications, and implementation roadmap for the Quantillon Protocol MVP. The MVP introduces Quantillon's revolutionary **three-token ecosystem**: QEURO (euro-pegged stablecoin), stQEURO (yield-bearing auto-compounding wrapper), and QTI (governance token with vote-escrow mechanics).
 
-> **MVP Scope**: Single vault implementation (aQEURO) with USDC collateral, Aave v3 integration, and basic frontend for mint/redeem operations on Base mainnet.
+> **Three-Token MVP Scope**: Complete ecosystem implementation with QEURO minting/redemption, stQEURO auto-compounding mechanics, QTI governance foundations, and aQEURO vault with Aave v3 integration on Base mainnet.
 
 ***
 
 ### 🏗️ Global Technical Architecture
+
+#### Revolutionary Three-Token Ecosystem
+
+Quantillon Protocol operates through a sophisticated three-token architecture designed to create interconnected value flows where each token reinforces the utility and adoption of the others:
+
+| Token          | Primary Function       | Key Innovation                                       | MVP Implementation                    |
+| -------------- | ---------------------- | ---------------------------------------------------- | ------------------------------------- |
+| **💶 QEURO**   | Euro-pegged stablecoin | Dual-pool architecture with embedded hedging         | Full mint/redeem + basic staking      |
+| **📈 stQEURO** | Yield-bearing wrapper  | Auto-compounding without token inflation             | Complete auto-compounding system      |
+| **🏛️ QTI**    | Governance backbone    | Vote-escrow mechanics + progressive decentralization | Basic governance + token distribution |
 
 #### Recommended Tech Stack
 
@@ -24,13 +34,13 @@ This document outlines the technical architecture, smart contract specifications
 | -------------------------- | ----------------- | ------------------------------------------- |
 | **Smart Contracts**        | Solidity          | 0.8.x with OpenZeppelin upgradeable proxies |
 | **Development Framework**  | Foundry           | For development, testing, and deployment    |
-| **Blockchain**             | Base Mainnet      | Production deployment (no testnet required) |
+| **Blockchain**             | Base Mainnet      | Production deployment (L2 efficiency)       |
 | **Price Oracles**          | Chainlink         | EUR/USD and USDC/USD price feeds            |
 | **Yield Integration**      | Aave v3           | USDC collateral deployment on Base          |
-| **Frontend**               | React + Next.js   | Lightweight MVP user interface              |
-| **Backend/Infrastructure** | Minimal off-chain | Analytics and monitoring only               |
+| **Frontend**               | React + Next.js   | Complete three-token interface              |
+| **Backend/Infrastructure** | Minimal off-chain | Real-time yield calculation and analytics   |
 
-#### Core On-Chain Components
+#### Core Protocol Architecture
 
 ```
                     ┌─────────────────┐
@@ -41,157 +51,179 @@ This document outlines the technical architecture, smart contract specifications
                     └──────┬─────┬────┘
                            │     │
             ┌──────────────▼─────▼──────────────┐
-            │         QEURO Contract            │
-            │      (ERC20 Stablecoin)           │
-            └──────────────┬────────────────-───┘
-                           │
-            ┌──────────────▼───────────────────┐
-            │         VaultEngine              │
-            │    (Collateral Management)       │
+            │         QEURO Contract           │
+            │      (Euro Stablecoin)           │
             └──────┬───────────────────┬───────┘
                    │                   │
         ┌──────────▼───────────┐   ┌───▼───────────────┐
-        │   YieldController    │   │   Aave v3 Pool    │
-        │ (Yield Distribution) │   │ (Yield Generation)│
-        └──────┬───────────────┘   └───────────────────┘
+        │   stQEURO Contract   │   │   VaultEngine     │
+        │ (Auto-Compounding)   │   │ (Collateral Mgmt) │
+        └──────┬───────────────┘   └───┬───────────────┘
+               │                       │
+        ┌──────▼───────────┐   ┌───────▼───────────────┐
+        │   QTI Contract   │   │   Aave v3 Pool        │
+        │ (Governance)     │   │ (Yield Generation)    │
+        └──────┬───────────┘   └───────────────────────┘
                │
         ┌──────▼───────────┐
-        │   HedgerPool     │
-        │ (Margin & Risk)  │
+        │  YieldController │
+        │ (Distribution)   │
         └──────────────────┘
 
-Data Flow:
-1. Chainlink Oracles → Price feeds to QEURO & YieldController
-2. QEURO Contract → Mint/redeem operations via VaultEngine
-3. VaultEngine → Deploys USDC to Aave v3 for yield generation
-4. VaultEngine → Sends yield data to YieldController
-5. YieldController → Distributes yield between Users & Hedgers
-6. YieldController → Manages HedgerPool incentives
+Ecosystem Flow:
+1. Users deposit USDC → Mint QEURO (overcollateralized 101%+)
+2. Users stake QEURO → Receive stQEURO (auto-compounding)
+3. Collateral deployed to Aave v3 → Generates yield
+4. YieldController distributes yield to stQEURO holders
+5. QTI holders govern protocol parameters and treasury
+6. Hedgers provide EUR/USD hedging (future full implementation)
 ```
 
 **Component Responsibilities:**
 
-* **QEURO Contract**: ERC20 stablecoin with mint/redeem logic and collateral ratio enforcement
+* **QEURO Contract**: ERC20 stablecoin with mint/redeem logic, collateral ratio enforcement, and hedger integration
+* **stQEURO Contract**: Yield-bearing wrapper with automatic compounding and instant liquidity
+* **QTI Contract**: Governance token with vote-escrow mechanics and progressive decentralization
 * **VaultEngine**: Manages USDC collateral deposits and Aave v3 integration for yield generation
-* **YieldController**: Distributes yield between Users and Hedgers according to Yield Shift mechanism
-* **HedgerPool**: Manages hedger collateral, margin requirements, and liquidation states (MVP placeholder)
-* **Governance**: Future $QTI DAO contracts (not included in MVP)
-
-#### Frontend Architecture
-
-**User Application (MVP Scope)**
-
-* Mint QEURO against USDC collateral
-* Redeem USDC by burning QEURO
-* Real-time display of collateral ratio, vault TVL, and staking APR
-* Oracle price feeds integration for EUR/USD rates
-
-**Future Extensions**
-
-* Hedger dashboard for position management and margin monitoring
-* DAO governance interface for proposals and voting
-* Advanced analytics and portfolio management tools
+* **YieldController**: Distributes yield between stQEURO holders and hedgers using Yield Shift mechanism
+* **HedgerPool**: Delta-neutral EUR/USD hedging infrastructure (simplified MVP implementation)
 
 ***
 
 ### 📜 Smart Contract Specifications
 
-#### QEURO (ERC20 Stablecoin)
+#### QEURO (Euro Stablecoin)
 
-**Primary Role**: Euro-pegged stablecoin issuance and redemption with collateral backing
+**Primary Role**: Euro-pegged stablecoin with overcollateralized USDC backing and embedded hedging
 
 **Core Functions:**
 
 ```solidity
 interface IQEURO {
-    function mint(address to, uint256 amount) external;
-    function redeem(address to, uint256 amount) external;
+    function mint(address to, uint256 usdcAmount) external;
+    function redeem(address to, uint256 qeuroAmount) external;
+    function stake(uint256 amount) external returns (uint256 stQEURO);
     function collateralRatio() external view returns (uint256);
     function liquidate(address user) external;
+    function getEURUSDRate() external view returns (uint256);
 }
 ```
 
 **Implementation Details:**
 
-* **Minting**: Issues QEURO tokens when protocol collateralization ≥ 101%
-* **Redemption**: Burns QEURO and releases equivalent USDC from vault
-* **Collateral Monitoring**: Real-time tracking of protocol-wide collateral ratio
-* **Liquidation**: Automated liquidation trigger when collateral falls below threshold
+* **Minting**: Issues QEURO tokens when protocol collateralization ≥ 101% using real-time EUR/USD rates
+* **Redemption**: Burns QEURO and releases equivalent USDC from vault (0.1% fee)
+* **Staking Integration**: Direct staking to stQEURO with automatic yield allocation
+* **Oracle Integration**: Chainlink EUR/USD and USDC/USD price feeds with fallback mechanisms
+* **Fee Structure**: 0.1% mint/redeem fees supporting protocol sustainability
 
-#### VaultEngine
+#### stQEURO (Yield-Bearing Euro Token)
 
-**Primary Role**: Collateral management and yield generation through Aave v3 integration
+**Primary Role**: Auto-compounding yield-bearing wrapper for QEURO with instant liquidity
+
+**Core Functions:**
+
+```solidity
+interface IstQEURO {
+    function stake(uint256 qeuroAmount) external returns (uint256 stQEURO);
+    function unstake(uint256 stQEURO) external returns (uint256 qeuroAmount);
+    function getExchangeRate() external view returns (uint256);
+    function getTotalYield() external view returns (uint256);
+    function compound() external; // Automatic via YieldController
+}
+```
+
+**Auto-Compounding Mechanism:**
+
+* **Value Appreciation**: stQEURO token quantity remains constant, but each token increases in QEURO value
+* **Exchange Rate Formula**: `stQEURO Rate = 1 + (Cumulative Yield ÷ Total Days × Days Held)`
+* **Yield Sources**: Aave USDC lending returns (4-12% APY) minus protocol fees and hedging costs
+* **Distribution**: 87-89% of yield auto-compounded to stQEURO holders
+
+**Example Timeline:**
+
+* **Day 0**: Stake 1,000 QEURO → Receive 1,000 stQEURO (Rate: 1.000)
+* **Day 365**: Still hold 1,000 stQEURO (Rate: 1.053 with 5.3% APY)
+* **Unstaking**: 1,000 stQEURO → 1,053 QEURO
+
+#### QTI (Governance Token)
+
+**Primary Role**: Protocol governance with vote-escrow mechanics and progressive decentralization
+
+**Core Functions:**
+
+```solidity
+interface IQTI {
+    function lock(uint256 amount, uint256 duration) external returns (uint256 veQTI);
+    function vote(uint256 proposalId, bool support, uint256 weight) external;
+    function claimRewards() external returns (uint256);
+    function createProposal(bytes calldata data) external returns (uint256);
+}
+```
+
+**Governance Features:**
+
+* **Vote-Escrow (veQTI)**: Lock QTI for voting power and yield sharing
+* **Progressive Decentralization**: Gradual transition from Labs control to DAO governance
+* **Parameter Control**: Collateral ratios, yield distribution, fee structures
+* **Treasury Management**: Protocol revenue allocation and strategic decisions
+
+**Token Distribution:**
+
+* **60%**: Community (users, liquidity providers, ecosystem growth)
+* **20%**: Team (long-term vesting with performance milestones)
+* **20%**: Backers/Investors (strategic funding with lock-up periods)
+
+#### VaultEngine (Enhanced Collateral Management)
+
+**Primary Role**: Multi-vault collateral management with advanced yield optimization
 
 **Core Functions:**
 
 ```solidity
 interface IVaultEngine {
-    function depositCollateral(uint256 amount) external;
-    function withdrawCollateral(uint256 amount) external;
-    function integrateAave() external;
-    function getVaultAPY() external view returns (uint256);
-    function rebalance() external;
+    function depositCollateral(uint256 amount, uint8 vaultType) external;
+    function withdrawCollateral(uint256 amount, uint8 vaultType) external;
+    function rebalance(uint8 fromVault, uint8 toVault, uint256 amount) external;
+    function getVaultAPY(uint8 vaultType) external view returns (uint256);
+    function getTotalTVL() external view returns (uint256);
 }
 ```
 
-**Implementation Details:**
+**Vault Variants (MVP Foundation):**
 
-* **Collateral Operations**: Secure USDC deposit/withdrawal with access controls
-* **Aave Integration**: Automatic deployment of collateral to generate aUSDC yield
-* **APY Tracking**: Real-time monitoring of Aave lending rates
-* **Rebalancing**: Handles collateral withdrawals for redemption requests
+* **aQEURO**: Aave v3 USDC integration (primary MVP implementation)
+* **mQEURO**: MakerDAO integration (future Phase 2)
+* **bQEURO**: Real World Assets integration (future Phase 2)
+* **eQEURO**: ETH-based collateral variant (future Phase 3)
 
-#### YieldController
+#### YieldController (Enhanced Distribution)
 
-**Primary Role**: Yield distribution between Users and Hedgers using dynamic Yield Shift mechanism
+**Primary Role**: Sophisticated yield distribution with dynamic optimization
 
-**Yield Distribution Logic:**
+**Advanced Yield Distribution Logic:**
 
 1. Calculate gross Aave yield from aUSDC positions
-2. Deduct hedging costs (estimated \~1% EUR/USD spread)
-3. Apply variable Yield Shift (target 0.5%) for supply/demand balancing
-4. Distribute net yield:
-   * **Users**: Base staking APY + dynamic performance boost
-   * **Hedgers**: FX spread compensation + Yield Shift allocation
+2. Deduct protocol fees (10% to treasury and development)
+3. Calculate hedging costs (EUR/USD spread \~1% + variable Yield Shift)
+4. Apply dynamic Yield Shift (target 0.5%) for supply/demand balancing
+5. Distribute net yield:
+   * **stQEURO Holders**: 87-89% (auto-compounded)
+   * **Hedgers**: EUR/USD spread + Yield Shift allocation
+   * **QTI Stakers**: Protocol fee sharing based on veQTI weight
 
 ```solidity
 interface IYieldController {
-    function calculateYieldDistribution() external view returns (uint256 usersYield, uint256 hedgersYield);
-    function updateYieldShift(uint256 newShift) external;
-    function distributeYield() external;
+    function calculateOptimalDistribution() external view returns (
+        uint256 stQEUROYield,
+        uint256 hedgerYield,
+        uint256 qtiYield
+    );
+    function executeDistribution() external;
+    function updateYieldShift(uint256 newShift) external onlyGovernance;
+    function getYieldShift() external view returns (uint256);
 }
 ```
-
-#### HedgerPool (MVP Simplified)
-
-**Primary Role**: Hedger margin management and liquidation infrastructure (placeholder implementation)
-
-**Core Functions:**
-
-```solidity
-interface IHedgerPool {
-    function registerHedger(address hedger, uint256 margin) external;
-    function getMargin(address hedger) external view returns (uint256);
-    function liquidateHedger(address hedger) external;
-}
-```
-
-**MVP Limitations:**
-
-* Simplified margin tracking without live forex integration
-* Basic liquidation logic (margin < 1% threshold)
-* No automated hedging position management
-
-#### Governance ($QTI) - Future Implementation
-
-**Scope**: DAO-based parameter management and protocol governance (excluded from MVP)
-
-**Future Capabilities:**
-
-* Collateral ratio threshold adjustments
-* Yield Shift parameter tuning
-* Protocol upgrade approvals
-* $QTI token distribution (60% users, 20% team, 20% backers)
 
 ***
 
@@ -201,101 +233,96 @@ interface IHedgerPool {
 
 **Required Price Feeds:**
 
-* **EUR/USD**: Primary feed for hedging calculations and peg maintenance
+* **EUR/USD**: Primary feed for QEURO peg maintenance and hedging calculations
 * **USDC/USD**: Collateral valuation and protocol health monitoring
+* **ETH/USD**: Future multi-collateral support and vault variants
 
 **Security Measures:**
 
 * **Dual Oracle Setup**: Primary Chainlink feed with secondary TWAP fallback
 * **Circuit Breaker**: Automatic protocol pause during price feed failures
-* **Anomaly Detection**: Price deviation alerts and manual intervention capabilities
+* **Anomaly Detection**: Price deviation alerts (>2% in 5 minutes) with manual intervention
+* **Update Frequency**: 12-second maximum latency for price updates
 
-**Implementation:**
-
-```solidity
-interface IPriceOracle {
-    function getEURUSDPrice() external view returns (int256 price, uint256 timestamp);
-    function getUSDCUSDPrice() external view returns (int256 price, uint256 timestamp);
-    function validatePriceFeeds() external view returns (bool isValid);
-}
-```
-
-#### Aave v3 Integration
+#### Aave v3 Integration (Enhanced)
 
 **Collateral Strategy:**
 
 * Deploy USDC collateral to Aave v3 lending pool on Base
 * Receive aUSDC tokens representing yield-bearing positions
-* Maintain liquidity buffer for redemption requests
+* Monitor utilization rates and adjust deployment accordingly
 
 **Risk Management:**
 
-* Monitor Aave protocol health and utilization rates
-* Implement emergency withdrawal procedures
-* Track aUSDC/USDC exchange rate variations
+* Real-time Aave protocol health monitoring
+* Emergency withdrawal procedures for liquidity crises
+* Dynamic rebalancing based on utilization and yield optimization
+* Integration with multiple DeFi protocols for diversification (future phases)
 
 **Integration Flow:**
 
-1. User deposits USDC for QEURO minting
-2. VaultEngine deposits USDC to Aave v3 pool
+1. User deposits USDC for QEURO minting or stQEURO staking
+2. VaultEngine optimally deploys collateral to Aave v3 pool
 3. Protocol receives aUSDC representing yield-bearing position
-4. YieldController tracks and distributes generated yield
-5. Rebalancing handles withdrawals for redemption requests
+4. YieldController tracks yield generation and executes distribution
+5. Automatic rebalancing handles withdrawals and optimization
 
 ***
 
 ### 💻 Frontend DApp Specification
 
-#### User Interface (Phase 1 - MVP)
+#### Three-Token Interface (Complete MVP)
 
-**Mint Panel:**
+**QEURO Panel:**
 
-* **Input**: USDC amount with wallet balance display
-* **Output**: QEURO amount calculated using real-time EUR/USD oracle rates
-* **Fee Display**: 0.1% minting fee transparency
-* **Transaction Preview**: Gas estimation and confirmation details
+* **Mint Interface**: USDC → QEURO conversion with real-time EUR/USD rates
+* **Redeem Interface**: QEURO → USDC conversion with fee transparency
+* **Balance Display**: Real-time QEURO balance and USD/EUR equivalent values
+* **Transaction History**: Complete mint/redeem operation tracking
 
-**Redeem Panel:**
+**stQEURO Panel:**
 
-* **Input**: QEURO amount with current balance
-* **Output**: USDC amount after 0.1% redemption fee
-* **Availability Check**: Ensure sufficient vault liquidity
-* **Processing Time**: Real-time transaction status updates
+* **Stake Interface**: QEURO → stQEURO with projected APY calculations
+* **Unstake Interface**: stQEURO → QEURO with earned yield display
+* **Yield Tracking**: Real-time APY, total earned, and compounding visualization
+* **Performance Analytics**: Historical yield performance and projections
+
+**QTI Panel:**
+
+* **Governance Dashboard**: Active proposals, voting history, and participation metrics
+* **Lock Interface**: QTI → veQTI with duration selection and voting power calculation
+* **Rewards Claiming**: Protocol fee sharing and governance participation rewards
+* **Treasury Overview**: Protocol revenue, TVL, and treasury composition
 
 **Protocol Dashboard:**
 
-* **Collateral Ratio**: Live protocol health indicator
-* **Total Value Locked (TVL)**: Aggregate vault statistics
-* **Current Aave APY**: Real-time yield generation rates
-* **User Staking Rewards**: Personalized yield tracking
+* **Three-Token Overview**: Complete ecosystem metrics and health indicators
+* **Collateral Ratio**: Real-time protocol health across all vaults
+* **Total Value Locked (TVL)**: Aggregate statistics across QEURO, stQEURO, and vaults
+* **Yield Performance**: Current Aave APY, stQEURO returns, and QTI rewards
+* **Market Data**: EUR/USD rates, trading volumes, and liquidity metrics
 
 **Technical Implementation:**
 
 ```typescript
-interface MintRedeemInterface {
+interface QuantillonProtocol {
+  // QEURO Operations
   mintQEURO: (usdcAmount: BigNumber) => Promise<TransactionResponse>;
   redeemUSDC: (qeuroAmount: BigNumber) => Promise<TransactionResponse>;
-  getCollateralRatio: () => Promise<BigNumber>;
-  getProtocolTVL: () => Promise<BigNumber>;
-  getUserRewards: (address: string) => Promise<BigNumber>;
+  
+  // stQEURO Operations
+  stakeQEURO: (qeuroAmount: BigNumber) => Promise<TransactionResponse>;
+  unstakeQEURO: (stQEUROAmount: BigNumber) => Promise<TransactionResponse>;
+  
+  // QTI Operations
+  lockQTI: (amount: BigNumber, duration: number) => Promise<TransactionResponse>;
+  vote: (proposalId: string, support: boolean) => Promise<TransactionResponse>;
+  
+  // Protocol Data
+  getProtocolMetrics: () => Promise<ProtocolMetrics>;
+  getUserPortfolio: (address: string) => Promise<UserPortfolio>;
 }
 ```
-
-#### Future Interface Extensions
-
-**Hedger Dashboard (Phase 2):**
-
-* Margin registration and management
-* Real-time PnL tracking
-* Liquidation risk monitoring
-* Incentive rewards claiming
-
-**Governance Interface (Phase 3):**
-
-* DAO proposal creation and voting
-* Parameter adjustment proposals
-* Treasury management oversight
-* Community governance participation
 
 ***
 
@@ -305,251 +332,267 @@ interface MintRedeemInterface {
 
 **Unit Tests (Foundry)**
 
-* **Mint/Redeem Operations**: Normal and edge case scenarios
-* **Collateral Ratio Enforcement**: Threshold compliance testing
-* **Liquidation Mechanisms**: Automated liquidation triggers
-* **Yield Calculations**: Accurate distribution logic verification
-* **Access Controls**: Role-based permission testing
+* **Three-Token Interactions**: Cross-token functionality and value flows
+* **Auto-Compounding Logic**: stQEURO yield calculation and distribution accuracy
+* **Governance Mechanisms**: QTI voting, proposals, and parameter changes
+* **Collateral Management**: Multi-vault operations and rebalancing
+* **Oracle Integration**: Price feed handling and fallback mechanisms
+* **Emergency Procedures**: Circuit breakers and protocol pause functionality
 
 **Integration Tests**
 
-* **Oracle Manipulation**: Price feed attack simulations
-* **Aave Integration**: Mock aUSDC yield generation testing
-* **Stress Testing**: Mass redemption and oracle downtime scenarios
-* **Multi-contract Interactions**: End-to-end workflow validation
+* **End-to-End Workflows**: Complete user journeys across all three tokens
+* **Aave Integration**: Mock yield generation and withdrawal scenarios
+* **Oracle Manipulation**: Price feed attack simulations and recovery
+* **Stress Testing**: Mass operations, simultaneous redemptions, and high-load scenarios
+* **Multi-Contract Coordination**: Complex interactions between all protocol components
 
 **Security Testing Scenarios:**
 
 ```solidity
 contract SecurityTests {
     function testReentrancyProtection() external;
-    function testOracleManipulation() external;
     function testFlashLoanAttacks() external;
-    function testCollateralDraining() external;
     function testGovernanceAttacks() external;
+    function testYieldManipulation() external;
+    function testCrossTokenExploits() external;
+    function testOracleManipulation() external;
 }
 ```
 
-#### Security Best Practices
+#### Advanced Security Measures
 
 **Smart Contract Security:**
 
-* **Reentrancy Guards**: OpenZeppelin ReentrancyGuard implementation
-* **Circuit Breakers**: Automated pause mechanisms for oracle anomalies
-* **Access Control**: Role-based permissions with multi-signature requirements
-* **Upgrade Safety**: UUPS proxy pattern with governance-controlled upgrades
+* **Multi-Signature Protection**: Critical functions require multiple signatures
+* **Time-Locked Operations**: Governance proposals have mandatory delay periods
+* **Emergency Procedures**: Protocol-wide pause capability with rapid response
+* **Formal Verification**: Mathematical proofs for critical economic mechanisms
+* **Bug Bounty Program**: Incentivized community security testing (post-MVP)
 
 **Operational Security:**
 
-* **Multi-signature Wallets**: Critical function protection
-* **Time-locked Operations**: Governance proposal execution delays
-* **Emergency Procedures**: Protocol pause and recovery mechanisms
-* **Regular Audits**: Continuous security assessment and improvement
+* **Progressive Decentralization**: Gradual transition from Labs to DAO control
+* **Treasury Protection**: Multi-signature wallets with geographic distribution
+* **Upgrade Safety**: Comprehensive testing and community approval for upgrades
+* **Incident Response**: Detailed emergency procedures and communication protocols
 
 ***
 
 ### 🚀 Deployment & Infrastructure
 
-#### Environment Configuration
+#### Multi-Chain Strategy
+
+**Primary Deployment:**
+
+* **Base Mainnet**: Primary deployment for L2 efficiency and ecosystem integration
+* **Ethereum Mainnet**: Future cross-chain bridge and institutional access
+* **Additional L2s**: Arbitrum and Optimism expansion (Phase 2)
+
+**Environment Configuration:**
 
 **Development Environment:**
 
-* **Local Testing**: Anvil (Foundry) for rapid iteration
+* **Local Testing**: Anvil (Foundry) with complete three-token simulation
 * **Contract Development**: Solidity 0.8.x with comprehensive test coverage
-* **Integration Testing**: Mock oracle and Aave contracts
-
-**Staging Environment:**
-
-* **Testnet Deployment**: Sepolia for frontend integration testing
-* **End-to-end Testing**: Complete user workflow validation
-* **Performance Testing**: Gas optimization and transaction throughput
+* **Integration Testing**: Mock oracles, Aave, and cross-contract interactions
 
 **Production Environment:**
 
-* **Base Mainnet**: Primary deployment target
-* **No Testnet Requirements**: Direct mainnet deployment strategy
-* **Monitoring**: Comprehensive protocol health tracking
+* **Base Mainnet**: Complete three-token ecosystem deployment
+* **Cross-Chain Infrastructure**: Future multi-chain synchronization
+* **Monitoring**: Real-time protocol health, yield tracking, and governance activity
 
-#### CI/CD Pipeline
+#### CI/CD Pipeline (Enhanced)
 
 **Automated Deployment:**
 
 ```yaml
-name: Quantillon Protocol Deployment
+name: Quantillon Three-Token Protocol Deployment
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   
 jobs:
-  test-and-deploy:
+  comprehensive-testing:
     runs-on: ubuntu-latest
     steps:
-      - name: Smart Contract Testing
-        run: forge test --gas-report
+      - name: Three-Token Integration Tests
+        run: forge test --match-path "test/integration/*" --gas-report
       
-      - name: Security Analysis
-        run: slither . --exclude-dependencies
+      - name: Cross-Contract Security Analysis
+        run: slither . --exclude-dependencies --check-upgradeability
       
-      - name: Deployment
-        run: forge script Deploy --broadcast --verify
+      - name: Governance Simulation
+        run: forge test --match-path "test/governance/*" --fork-url $BASE_RPC
+      
+      - name: Deployment with Verification
+        run: forge script DeployThreeTokens --broadcast --verify
 ```
-
-**Infrastructure Components:**
-
-* **GitHub Actions**: Automated build, test, and deployment pipeline
-* **Foundry Scripts**: Deterministic deployment and configuration
-* **Tenderly/Defender**: Real-time monitoring and alerting system
 
 #### Gas Optimization Strategies
 
-**Storage Optimization:**
+**Multi-Token Efficiency:**
 
-* Efficient storage layout design
-* Packed struct implementations
-* Minimal state variable usage
-
-**Execution Optimization:**
-
-* Batch oracle reads for multiple operations
-* Optimized loop structures and conditionals
-* Strategic use of view functions for read operations
+* **Batch Operations**: Combined mint/stake operations for gas savings
+* **Proxy Patterns**: Upgradeable contracts minimizing deployment costs
+* **Storage Optimization**: Packed structs for multi-token user data
+* **View Function Optimization**: Efficient read operations across tokens
 
 **Transaction Cost Management:**
 
-* **Mint/Redeem**: Minimize state writes in critical user paths
-* **Yield Distribution**: Batch processing for efficiency
-* **Liquidations**: Gas-optimized emergency procedures
-
-#### Upgradeability Framework
-
-**Proxy Implementation:**
-
-* **UUPS Pattern**: Universal Upgradeable Proxy Standard (EIP-1967)
-* **Governance Control**: Future DAO-managed upgrade approvals
-* **Security Measures**: Implementation validation and testing requirements
-
-**Upgrade Process:**
-
-1. **Proposal Creation**: Technical specification and impact analysis
-2. **Community Review**: Stakeholder feedback and security assessment
-3. **Testing Phase**: Comprehensive validation on staging environment
-4. **Governance Vote**: DAO approval with required quorum
-5. **Implementation**: Controlled upgrade execution with monitoring
+* **QEURO Operations**: <60,000 gas for mint/redeem
+* **stQEURO Operations**: <80,000 gas for stake/unstake with compounding
+* **QTI Operations**: <100,000 gas for voting and governance participation
+* **Yield Distribution**: Optimized batch processing with automated triggers
 
 ***
 
-### 📋 MVP Development Checklist
+### 📋 MVP Development Roadmap
 
-#### Phase 1: Core Protocol Development
+#### Phase 1: Core Three-Token Development (Q4 2025)
 
 **Smart Contract Implementation:**
 
-* \[ ] QEURO ERC20 with mint/redeem functionality
-* \[ ] VaultEngine with Aave v3 integration
-* \[ ] YieldController with basic yield distribution
-* \[ ] HedgerPool stub contract for future expansion
-* \[ ] Oracle integration with Chainlink price feeds
+* \[ ] QEURO ERC20 with mint/redeem and oracle integration
+* \[ ] stQEURO auto-compounding wrapper with yield calculation
+* \[ ] QTI governance token with vote-escrow mechanics
+* \[ ] VaultEngine with Aave v3 integration and multi-vault foundation
+* \[ ] YieldController with sophisticated distribution logic
+* \[ ] HedgerPool stub for future EUR/USD hedging expansion
 
-**Integration Development:**
+**Cross-Token Integration:**
+
+* \[ ] QEURO ↔ stQEURO seamless staking/unstaking
+* \[ ] QTI governance parameter control over yield distribution
+* \[ ] Unified fee collection and distribution across three tokens
+* \[ ] Cross-contract security and access control implementation
+
+**External Integrations:**
 
 * \[ ] Chainlink EUR/USD and USDC/USD oracle connections
-* \[ ] Aave v3 lending pool integration on Base
-* \[ ] Circuit breaker implementation for oracle failures
-* \[ ] Emergency pause mechanisms
+* \[ ] Aave v3 lending pool integration with yield optimization
+* \[ ] Emergency procedures and circuit breaker implementations
+* \[ ] Multi-signature governance setup for progressive decentralization
 
-**Security Implementation:**
+#### Phase 2: Frontend & User Experience (Q4 2025)
 
-* \[ ] Comprehensive unit test suite (>95% coverage)
-* \[ ] Integration tests with mock external contracts
-* \[ ] Reentrancy protection and access controls
-* \[ ] Multi-signature wallet setup for critical functions
+**Complete Three-Token Interface:**
 
-#### Phase 2: Frontend Development
+* \[ ] QEURO mint/redeem interface with real-time EUR/USD rates
+* \[ ] stQEURO staking interface with yield visualization and auto-compounding
+* \[ ] QTI governance dashboard with proposal creation and voting
+* \[ ] Unified protocol dashboard with comprehensive analytics
+* \[ ] Wallet integration supporting multi-token operations
 
-**User Interface:**
+**Advanced Features:**
 
-* \[ ] Mint/redeem interface with real-time rate calculations
-* \[ ] Protocol dashboard with TVL, collateral ratio, and APY
-* \[ ] Wallet integration (MetaMask, WalletConnect, Coinbase Wallet)
-* \[ ] Transaction history and user portfolio tracking
+* \[ ] Mobile-optimized interface for smartphone-native experience
+* \[ ] Portfolio tracking across all three tokens with performance analytics
+* \[ ] Educational resources and guided onboarding for new users
+* \[ ] Advanced trading features and yield optimization recommendations
 
-**Technical Integration:**
+#### Phase 3: Security & Compliance (Q1-Q2 2026)
 
-* \[ ] Smart contract interaction layer
-* \[ ] Real-time oracle price feed integration
-* \[ ] Gas estimation and transaction optimization
-* \[ ] Error handling and user feedback systems
+**Comprehensive Security Audit:**
 
-#### Phase 3: Testing & Security
+* \[ ] Multi-contract security audit by leading firms (OpenZeppelin, ConsenSys)
+* \[ ] Cross-token attack vector analysis and mitigation
+* \[ ] Formal verification of critical economic mechanisms
+* \[ ] Bug bounty program with specialized focus on three-token interactions
 
-**Security Audit:**
+**Regulatory Compliance:**
 
-* \[ ] Internal security review and testing
-* \[ ] External audit by reputable security firm
-* \[ ] Bug bounty program launch (post-MVP)
-* \[ ] Continuous monitoring setup
+* \[ ] MiCA compliance verification across all three tokens
+* \[ ] Legal classification confirmation for QEURO, stQEURO, and QTI
+* \[ ] Institutional compliance documentation and procedures
+* \[ ] Regulatory reporting framework and transparency measures
 
-**Performance Testing:**
-
-* \[ ] Load testing for high transaction volumes
-* \[ ] Gas optimization validation
-* \[ ] Oracle failure recovery testing
-* \[ ] User experience optimization
-
-#### Phase 4: Deployment
+#### Phase 4: Mainnet Launch & Ecosystem Growth (Q3 2026)
 
 **Production Deployment:**
 
-* \[ ] Base mainnet deployment scripts
-* \[ ] Contract verification on Basescan
-* \[ ] Frontend deployment and CDN configuration
-* \[ ] Monitoring and alerting system activation
+* \[ ] Complete three-token ecosystem launch on Base mainnet
+* \[ ] Initial liquidity provision and market making across all tokens
+* \[ ] DeFi protocol integrations supporting all three tokens
+* \[ ] Institutional onboarding and custody provider partnerships
 
-**Go-Live Preparation:**
+**Community & Governance:**
 
-* \[ ] Documentation finalization
-* \[ ] User guides and tutorials
-* \[ ] Community communication and support
-* \[ ] Liquidity bootstrapping and initial market making
+* \[ ] DAO governance activation with QTI token distribution
+* \[ ] Community grant programs and ecosystem development initiatives
+* \[ ] Cross-chain expansion planning and implementation
+* \[ ] Long-term sustainability and decentralization roadmap
 
 ***
 
 ### 🎯 Success Metrics & KPIs
 
-#### Protocol Health Indicators
+#### Three-Token Ecosystem Health
 
-**Stability Metrics:**
+**Stability & Security Metrics:**
 
-* **Collateral Ratio**: Maintain >101% at all times
-* **Peg Stability**: QEURO/EUR exchange rate variance <0.5%
-* **Liquidity Coverage**: Vault liquidity >20% of total QEURO supply
+* **QEURO Peg Stability**: EUR/QEURO variance <0.5% across all market conditions
+* **stQEURO Yield Consistency**: <5% monthly deviation from target APY
+* **QTI Governance Participation**: >15% of circulating supply actively voting
+* **Protocol Security**: Zero critical vulnerabilities, >99.9% uptime
 
-**Growth Metrics:**
+**Growth & Adoption Metrics:**
 
-* **Total Value Locked (TVL)**: Target €10M within 6 months
-* **Daily Active Users**: Measure engagement and adoption
-* **Transaction Volume**: Track mint/redeem activity
+* **Total Value Locked (TVL)**: €50M across all three tokens within 12 months
+* **User Distribution**: 15,000 QEURO users, 8,000 stQEURO stakers, 3,000 QTI governors
+* **Daily Active Users**: 1,000+ daily interactions across ecosystem
+* **Cross-Token Utilization**: >60% of users holding multiple tokens
 
-**Yield Performance:**
+**Economic Performance:**
 
-* **Aave APY Tracking**: Monitor yield generation efficiency
-* **User Staking Returns**: Validate competitive yield distribution
-* **Protocol Revenue**: Fee generation and sustainability metrics
+* **stQEURO APY**: Competitive 5-8% yield with consistent compounding
+* **Protocol Revenue**: €200K+ monthly from fees and yield management
+* **QTI Token Value**: Sustainable growth through utility and governance demand
+* **Yield Distribution Efficiency**: >95% accuracy in automated compounding
 
 #### Technical Performance
 
 **System Reliability:**
 
-* **Uptime**: Target 99.9% protocol availability
+* **Multi-Token Uptime**: 99.9% availability across all three contracts
 * **Transaction Success Rate**: >99% successful operations
 * **Oracle Responsiveness**: <30 second price update latency
+* **Cross-Contract Coordination**: Seamless multi-token operations
 
-**Gas Efficiency:**
+**User Experience:**
 
-* **Mint Cost**: <50,000 gas per transaction
-* **Redeem Cost**: <40,000 gas per transaction
-* **Yield Distribution**: Optimized batch processing costs
+* **Transaction Costs**: <$10 average cost for complex multi-token operations
+* **Interface Performance**: <3 second load times for dashboard
+* **Mobile Optimization**: 90%+ mobile user satisfaction score
+* **Educational Effectiveness**: >80% user onboarding completion rate
 
 ***
 
-_This MVP Technical Documentation serves as the foundational blueprint for Quantillon Protocol implementation. For questions or technical clarification, please refer to the broader protocol whitepaper or contact the development team._
+### 🌟 Innovation Highlights
+
+#### Revolutionary Three-Token Design
+
+**Interconnected Value Creation:**
+
+* **QEURO**: Provides euro exposure with USD liquidity depth
+* **stQEURO**: Offers set-and-forget euro yield generation with instant liquidity
+* **QTI**: Enables sophisticated governance and protocol value capture
+
+**Technical Innovations:**
+
+* **Auto-Compounding Without Inflation**: stQEURO increases value without token rebasing
+* **Embedded DEX**: Native token swapping eliminating external dependencies
+* **Yield Shift Mechanism**: Dynamic yield distribution balancing supply and demand
+* **Progressive Decentralization**: Gradual transition from centralized launch to DAO governance
+
+**Market Advantages:**
+
+* **First Euro DeFi Ecosystem**: Complete three-token architecture for European market
+* **Institutional Ready**: MiCA-compliant design with professional-grade features
+* **Capital Efficient**: Optimal collateral utilization across multiple DeFi protocols
+* **Community Driven**: Governance-first approach with sustainable tokenomics
+
+***
+
+_This MVP Technical Documentation serves as the comprehensive blueprint for Quantillon Protocol's revolutionary three-token ecosystem. For questions or technical clarification, please refer to the complete protocol whitepaper or contact the development team._
