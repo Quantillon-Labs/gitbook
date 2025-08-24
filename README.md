@@ -1,7 +1,8 @@
----
-cover: .gitbook/assets/banner.png
-coverY: 0
----
+# Quantillon Protocol
+
+<div align="center">
+  <img src=".gitbook/assets/banner.png" alt="Quantillon Protocol Banner" width="100%">
+</div>
 
 # Overview
 
