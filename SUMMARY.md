@@ -1,4 +1,4 @@
-# Table of contents
+# Table of Contents
 
 ## 👋 Introduction
 
@@ -15,7 +15,7 @@
   * [Risks & Mitigation Strategies](documentation/whitepaper/risks-and-mitigation-strategies.md)
   * [Roadmap & Adoption Strategy](documentation/whitepaper/roadmap-and-adoption-strategy.md)
   * [Team & Operational Structure](documentation/whitepaper/team-and-operational-structure.md)
-  * [Appendices Techniques](documentation/whitepaper/appendices-techniques.md)
+  * [Technical Appendices](documentation/whitepaper/appendices-techniques.md)
   * [Conclusion & Perspectives](documentation/whitepaper/conclusion-and-perspectives.md)
   * [References](documentation/whitepaper/references.md)
 * [Quantillon DAO](documentation/quantillon-dao.md)
@@ -23,32 +23,32 @@
 * [Frequently Asked Questions](documentation/frequently-asked-questions.md)
 * [Glossary](documentation/glossary.md)
 
-## 📊  Market & Competitive Analysis
+## 📊 Market & Competitive Analysis
 
-* [Market & Competitive Analysis](market-and-competitive-analysis/market-and-competitive-analysis.md)
+* [Market Analysis Overview](market-and-competitive-analysis/market-and-competitive-analysis.md)
 
-## ⚙️ Mechanisms
+## ⚙️ Protocol Mechanisms
 
-* [Mechanisms](mechanisms/mechanisms.md)
+* [Core Mechanisms](mechanisms/mechanisms.md)
 
-## 📈  Tokenomics
+## 📈 Tokenomics & Economics
 
-* [Quantillon Protocol's tokens](tokenomics/quantillon-protocols-tokens/README.md)
+* [Token Ecosystem Overview](tokenomics/quantillon-protocols-tokens/README.md)
   * [QEURO Token](tokenomics/quantillon-protocols-tokens/qeuro-token.md)
   * [stQEURO Token](tokenomics/quantillon-protocols-tokens/stqeuro-token.md)
   * [QTI Token](tokenomics/quantillon-protocols-tokens/qti-token.md)
 
-## 📜 Regulatory & Legal
+## 📜 Regulatory & Legal Framework
 
-* [Regulatory & Legal](regulatory-and-legal/regulatory-and-legal.md)
+* [Regulatory Compliance](regulatory-and-legal/regulatory-and-legal.md)
 * [Legal Notice](regulatory-and-legal/legal-notice.md)
 * [Privacy Policy](regulatory-and-legal/privacy-policy.md)
-* [Terms of Services](regulatory-and-legal/terms-of-services.md)
+* [Terms of Service](regulatory-and-legal/terms-of-services.md)
 
-## 🚧  Roadmap & Launch Plan
+## 🚧 Development & Launch
 
 * [Roadmap & Launch Plan](roadmap-and-launch-plan/roadmap-and-launch-plan.md)
 
-## 🛠️ Technical Appendix
+## 🛠️ Technical Documentation
 
-* [MVP Technical Documentation](technical-appendix/mvp-technical-documentation.md)
+* [MVP Technical Specification](technical-appendix/mvp-technical-documentation.md)
