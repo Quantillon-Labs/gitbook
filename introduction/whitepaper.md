@@ -1,7 +1,3 @@
----
-description: Quantillon Protocol Whitepaper
----
-
 # Why Quantillon Protocol
 
 Over the past decade, decentralized finance (DeFi) has emerged as one of the most transformative movements in financial history. Yet, despite its global ambitions, DeFi remains overwhelmingly denominated in U.S. dollars, structurally excluding over 300 million European savers and institutions who operate natively in euros. This asymmetry not only exposes European participants to unnecessary currency risk but also fails to capitalize on a vast pool of capital currently parked in underperforming legacy products such as life insurance contracts, and regulated savings plans.
