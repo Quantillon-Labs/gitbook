@@ -1,54 +1,54 @@
-# Table of Contents
+# Table of contents
 
 ## 👋 Introduction
 
 * [Overview](README.md)
+* [Why Quantillon Protocol](introduction/whitepaper.md)
 
-## 📝 Protocol Documentation
+## 🌎 Strategic Context
 
-* [Whitepaper](documentation/whitepaper/README.md)
-  * [Macro & Regulatory Context](documentation/whitepaper/macro-and-regulatory-context.md)
-  * [Market Landscape & Competitive Analysis](documentation/whitepaper/market-landscape-and-competitive-analysis.md)
-  * [Quantillon Protocol: Design & Architecture](documentation/whitepaper/quantillon-protocol-design-and-architecture.md)
-  * [Tokenomics & Governance](documentation/whitepaper/tokenomics-and-governance.md)
-  * [Business Model & Economic Sustainability](documentation/whitepaper/business-model-and-economic-sustainability.md)
-  * [Risks & Mitigation Strategies](documentation/whitepaper/risks-and-mitigation-strategies.md)
-  * [Roadmap & Adoption Strategy](documentation/whitepaper/roadmap-and-adoption-strategy.md)
-  * [Team & Operational Structure](documentation/whitepaper/team-and-operational-structure.md)
-  * [Technical Appendices](documentation/whitepaper/appendices-techniques.md)
-  * [Conclusion & Perspectives](documentation/whitepaper/conclusion-and-perspectives.md)
-  * [References](documentation/whitepaper/references.md)
-* [Quantillon DAO](documentation/quantillon-dao.md)
-* [Quantillon Guardians](documentation/quantillon-guardians.md)
-* [Frequently Asked Questions](documentation/frequently-asked-questions.md)
-* [Glossary](documentation/glossary.md)
+* [Macro & Regulatory Context](strategic-context/macro-and-regulatory-context.md)
+* [Market Analysis Overview](strategic-context/market-and-competitive-analysis.md)
+* [Market Landscape & Competitive Analysis](strategic-context/market-landscape-and-competitive-analysis.md)
+* [Business Model & Economic Sustainability](strategic-context/business-model-and-economic-sustainability.md)
+* [Regulatory Compliance](strategic-context/regulatory-and-legal.md)
 
-## 📊 Market & Competitive Analysis
+## 🛠️ Protocol
 
-* [Market Analysis Overview](market-and-competitive-analysis/market-and-competitive-analysis.md)
+* [Design & Architecture](protocol/quantillon-protocol-design-and-architecture.md)
+* [Core Mechanisms](protocol/mechanisms.md)
+* [Token Ecosystem Overview](protocol/quantillon-protocols-tokens/README.md)
+  * [QEURO Token](protocol/quantillon-protocols-tokens/qeuro-token.md)
+  * [stQEURO Token](protocol/quantillon-protocols-tokens/stqeuro-token.md)
+  * [QTI Token](protocol/quantillon-protocols-tokens/qti-token.md)
+* [Technical Appendices](protocol/appendices-techniques.md)
 
-## ⚙️ Protocol Mechanisms
+## 🛡️ Risk Management and Sustainability
 
-* [Core Mechanisms](mechanisms/mechanisms.md)
+* [Risks & Mitigation Strategies](risk-management-and-sustainability/risks-and-mitigation-strategies.md)
 
-## 📈 Tokenomics & Economics
+## 🚀 Roadmap and Launch
 
-* [Token Ecosystem Overview](tokenomics/quantillon-protocols-tokens/README.md)
-  * [QEURO Token](tokenomics/quantillon-protocols-tokens/qeuro-token.md)
-  * [stQEURO Token](tokenomics/quantillon-protocols-tokens/stqeuro-token.md)
-  * [QTI Token](tokenomics/quantillon-protocols-tokens/qti-token.md)
+***
 
-## 📜 Regulatory & Legal Framework
+* [Adoption Strategy](roadmap-and-adoption-strategy.md)
+* [Roadmap & Launch Plan](roadmap-and-launch-plan.md)
+* [MVP Technical Specification](mvp-technical-documentation.md)
 
-* [Regulatory Compliance](regulatory-and-legal/regulatory-and-legal.md)
-* [Legal Notice](regulatory-and-legal/legal-notice.md)
-* [Privacy Policy](regulatory-and-legal/privacy-policy.md)
-* [Terms of Service](regulatory-and-legal/terms-of-services.md)
+## 🤝 Organization and Governance
 
-## 🚧 Development & Launch
+***
 
-* [Roadmap & Launch Plan](roadmap-and-launch-plan/roadmap-and-launch-plan.md)
+* [Team & Operational Structure](team-and-operational-structure.md)
+* [Tokenomics & Governance](tokenomics-and-governance.md)
+* [Quantillon DAO](quantillon-dao.md)
+* [Quantillon Guardians](quantillon-guardians.md)
 
-## 🛠️ Technical Documentation
+## 📜 Complementary Information
 
-* [MVP Technical Specification](technical-appendix/mvp-technical-documentation.md)
+* [Frequently Asked Questions](complementary-information/frequently-asked-questions.md)
+* [Glossary](complementary-information/glossary.md)
+* [References](complementary-information/references.md)
+* [Legal Notice](complementary-information/legal-notice.md)
+* [Privacy Policy](complementary-information/privacy-policy.md)
+* [Terms of Service](complementary-information/terms-of-services.md)

@@ -15,9 +15,7 @@ The Website is published by the Company.
 
 \- Company’s name: Quantillon Labs,
 
-\- SIREN number: 988 682 613,
-
-\- Registered office: 2, Avenue de Lognac, 33700 Mérignac
+\- SIREN number: 988 682 613
 
 \- VAT number: FR87988682613
 

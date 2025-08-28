@@ -4,7 +4,9 @@ description: >-
   implementation on Base mainnet
 ---
 
-# MVP Technical Documentation
+# MVP Technical Specification
+
+### <mark style="color:red;">\[This document reflects work in progress. The following content is intended as a reference example and target direction, not as a final or definitive specification]</mark>
 
 ## MVP Technical Documentation
 

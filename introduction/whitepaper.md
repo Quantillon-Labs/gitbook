@@ -2,33 +2,7 @@
 description: Quantillon Protocol Whitepaper
 ---
 
-# Whitepaper
-
-## Quantillon Protocol Whitepaper
-
-_15th of July 2025_
-
-### [Download](https://github.com/Quantillon-Labs/docs/blob/main/whitepaper/generated/Quantillon%20Protocol%20Whitepaper%20v1.2.pdf) our whitepaper on [Github](https://github.com/Quantillon-Labs/docs/tree/main/whitepaper)
-
-{% file src="../../.gitbook/assets/Quantillon Protocol Whitepaper v1.2 (2).pdf" %}
-
-{% embed url="https://github.com/Quantillon-Labs/docs/blob/main/whitepaper/generated/Quantillon%20Protocol%20Whitepaper%20v1.2.pdf" %}
-
-### Table of Contents
-
-1. [Macro & Regulatory Context](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/macro-and-regulatory-context)
-2. [Market Landscape & Competitive Analysis](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/market-landscape-and-competitive-analysis)
-3. [Quantillon Protocol: Design & Architecture](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/quantillon-protocol-design-and-architecture)
-4. [Tokenomics & Governance](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/tokenomics-and-governance)
-5. [Business Model & Economic Sustainability](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/business-model-and-economic-sustainability)
-6. [Risks & Mitigation Strategies](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/risks-and-mitigation-strategies)
-7. [Roadmap & Adoption Strategy](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/roadmap-and-adoption-strategy)
-8. [Team & Operational Structure](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/team-and-operational-structure)
-9. [Appendices Techniques](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/appendices-techniques)
-10. [Conclusion & Perspectives](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/conclusion-and-perspectives)
-11. [References](https://quantillon.gitbook.io/quantillon/documentation/whitepaper/references)
-
-### Executive Summary
+# Why Quantillon Protocol
 
 Over the past decade, decentralized finance (DeFi) has emerged as one of the most transformative movements in financial history. Yet, despite its global ambitions, DeFi remains overwhelmingly denominated in U.S. dollars, structurally excluding over 300 million European savers and institutions who operate natively in euros. This asymmetry not only exposes European participants to unnecessary currency risk but also fails to capitalize on a vast pool of capital currently parked in underperforming legacy products such as life insurance contracts, and regulated savings plans.
 
