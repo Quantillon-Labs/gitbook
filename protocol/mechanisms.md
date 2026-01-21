@@ -4,6 +4,8 @@
 
 Understanding how Quantillon Protocol operates is essential for both users and developers. This comprehensive guide breaks down the core mechanisms that power QEURO—from the dual-pool architecture and overcollateralization model to the innovative Yield Shift system that maintains peg stability while generating sustainable returns.
 
+> **📋 MVP Status**: This documentation reflects the current MVP implementation. Features marked with 🚧 are planned for future phases.
+
 ***
 
 ### 🏗️ Protocol Architecture Overview
@@ -13,30 +15,31 @@ Quantillon Protocol represents a paradigm shift in stablecoin design, combining 
 #### Core Design Principles
 
 * **🔒 Over-collateralization**: Minimum 101% backing ensures systemic stability
-* **⚖️ Delta-neutral hedging**: FX risk is distributed across willing participants
-* **📈 Dynamic yield distribution**: Market-responsive incentive alignment
-* **🌊 Liquidity inheritance**: Leverages existing USDC and forex market depth
-* **🏛️ Decentralized governance**: Community-controlled parameter management
+* **⚖️ Delta-neutral hedging**: FX risk managed by designated hedger (MVP: single hedger)
+* **📈 Dynamic yield distribution**: YieldShift mechanism for market-responsive incentive alignment
+* **🌊 Liquidity inheritance**: Leverages existing USDC liquidity depth
+* **🏛️ Decentralized governance**: Community-controlled parameter management via QTI
 
 ***
 
 ### 💶 QEURO Stablecoin Mechanics
 
-#### Minting Process
+#### Minting Process (MVP Implementation)
 
 The QEURO minting mechanism is designed for simplicity and capital efficiency:
 
 **📥 Step-by-Step Minting**
 
-1. **Asset Deposit**: Users deposit accepted ERC-20 tokens (USDC, ETH, WBTC, etc.)
-2. **Automatic Routing**: Protocol routes deposits through integrated DEX for optimal pricing
-3. **USDC Conversion**: All deposits are automatically converted to USDC collateral
-4. **Oracle Price Check**: Chainlink oracles provide real-time EUR/USD exchange rates
-5. **QEURO Issuance**: Users receive QEURO at current oracle price minus 0.1% minting fee
-6. **Collateral Lock**: USDC is deposited into yield-generating vaults (Aave, Maker, etc.)
+1. **USDC Deposit**: Users deposit USDC to the QuantillonVault
+2. **Oracle Price Check**: Chainlink oracles provide real-time EUR/USD exchange rates
+3. **Collateral Verification**: Protocol verifies 101%+ collateralization ratio
+4. **QEURO Issuance**: Users receive QEURO at current oracle price minus 0.1% minting fee
+5. **Yield Deployment**: USDC is deployed to Aave v3 for yield generation
+
+> **Note**: The MVP only accepts USDC as collateral. Multi-collateral support (ETH, WBTC) is planned for future phases.
 
 ```
-Example Minting Transaction:
+Minting Transaction Example:
 User deposits: 1,000 USDC
 EUR/USD rate: 1.10
 Minting fee: 0.1% = 1 USDC
@@ -46,10 +49,10 @@ QEURO received: 999 ÷ 1.10 = 908.18 QEURO
 
 **⚡ Key Features**
 
-* **Zero slippage** minting at oracle rates
-* **Instant settlement** within one block
-* **Permissionless access** 24/7 availability
-* **Multi-asset support** for user convenience
+* **Zero slippage**: Minting at oracle rates, no DEX impact
+* **Instant settlement**: Single-block transaction finality
+* **Open access**: Any address can deposit/redeem via the Vault
+* **Rate limiting**: Protection against large-scale manipulation
 
 #### Redemption Process
 
@@ -57,14 +60,14 @@ Redemption operates as the inverse of minting, ensuring users can always exit at
 
 **📤 Step-by-Step Redemption**
 
-1. **QEURO Burn**: Users submit QEURO for redemption
-2. **Oracle Verification**: Current EUR/USD rate determines USD value
-3. **Collateral Release**: Equivalent USDC withdrawn from vaults
+1. **QEURO Submission**: Users submit QEURO for redemption via Vault
+2. **Oracle Verification**: Current EUR/USD rate determines USDC value
+3. **Collateral Release**: Equivalent USDC withdrawn from Aave
 4. **Fee Deduction**: 0.1% redemption fee applied
 5. **USDC Transfer**: Net USDC transferred to user wallet
 
 ```
-Example Redemption Transaction:
+Redemption Transaction Example:
 User redeems: 900 QEURO
 EUR/USD rate: 1.08
 USD value: 900 × 1.08 = 972 USDC
@@ -76,386 +79,420 @@ Net USDC received: 971.03 USDC
 
 ### 🎭 Dual-Pool Architecture
 
-The innovative dual-pool system is what sets Quantillon apart from traditional stablecoins. It creates natural peg stability through aligned economic incentives rather than relying solely on arbitrage.
+The innovative dual-pool system creates natural peg stability through aligned economic incentives.
 
-#### 👥 Users Pool
+#### 👥 Users Pool (UserPool Contract)
 
-Users are participants who mint and hold QEURO for euro exposure and yield generation.
+Users are participants who mint/hold QEURO for euro exposure and yield generation.
 
 **User Motivations**
 
-* **🇪🇺 Native Euro Exposure**: Eliminate EUR/USD volatility risk
-* **📈 Yield Generation**: Earn returns through staking mechanisms
+* **🇪🇺 Native Euro Exposure**: Euro-denominated value without EUR/USD volatility risk
+* **📈 Yield Generation**: Earn returns through stQEURO staking
 * **🔗 DeFi Access**: Participate in euro-denominated DeFi strategies
 * **💼 Treasury Management**: Corporate and institutional euro liquidity
 
 **User Mechanics**
 
-* Mint QEURO against accepted collateral
-* Stake QEURO to earn variable APY from Yield Shift
-* Participate in governance through staked positions
+* Deposit USDC via Vault to mint QEURO
+* Stake QEURO to stQEURO to earn auto-compounding yield
+* Participate in governance through QTI holdings
 * Redeem anytime at oracle-determined rates
 
-#### 🛡️ Hedgers Pool
+**Technical Parameters**
 
-Hedgers provide the delta-neutral backbone that maintains peg stability while earning compensation for EUR/USD exposure.
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `stakingAPY` | APY for staked positions | Governance-set |
+| `minStakeAmount` | Minimum stake amount | Configurable |
+| `unstakingCooldown` | Cooldown before unstake | Configurable |
+| `performanceFee` | Fee on yield | Governance-set |
+
+#### 🛡️ Hedger Pool (HedgerPool Contract)
+
+**MVP: Single Hedger Model**
+
+> **Important**: The MVP implements a **single designated hedger** model for simplified operations. The hedger is assigned via `setSingleHedger()` by governance.
+
+```solidity
+// Single hedger address
+address public singleHedger;
+
+// Hedger role for operations
+bytes32 public constant HEDGER_ROLE = keccak256("HEDGER_ROLE");
+```
 
 **Hedger Function**
 
-Hedgers essentially take **long EUR/USD positions** in exchange for:
+The designated hedger provides delta-neutral EUR/USD hedging:
 
-* Interest rate differential compensation (typically \~1% annually)
-* Variable Yield Shift bonuses based on supply/demand
-* Protocol fee sharing when activated
+* **Position Opening**: Depositer USDC margin to open hedge positions
+* **Leverage**: Configurable via `maxLeverage` parameter
+* **P&L Tracking**: Real-time unrealized and realized P&L calculation
+* **Yield Earning**: Receives yield allocation via YieldShift
 
-**Hedger Entry Process**
+**Position Management**
 
-1. **Deposit USDC**: Provide USD-denominated liquidity
-2. **Leverage Selection**: Choose exposure level (typically 2-10x)
-3. **Margin Requirements**: Maintain minimum collateralization ratio
-4. **Yield Participation**: Earn compensation from multiple sources
+```solidity
+struct HedgePosition {
+    address hedger;           // Hedger address
+    uint96 positionSize;      // Position size
+    uint96 filledVolume;      // Volume filled by user mints
+    uint96 margin;            // Margin deposited
+    uint96 entryPrice;        // Entry price (EUR/USD)
+    uint64 entryTime;         // Position open time
+    uint64 lastUpdateTime;    // Last update timestamp
+    int128 unrealizedPnL;     // Current unrealized P&L
+    int128 realizedPnL;       // Realized P&L
+    uint8 leverage;           // Position leverage
+    bool isActive;            // Position status
+    uint128 qeuroBacked;      // QEURO backed by this position
+}
+```
+
+**Compensation Structure**
+
+```
+Hedger Revenue Sources:
+├── EUR/USD Interest Rate Differential
+├── YieldShift allocation (10-50% based on pool ratios)
+├── Entry/Exit fees from position management
+└── Margin fees (if applicable)
+```
 
 **Risk Management**
 
-* **Liquidation Threshold**: Automatic liquidation if margin ratio falls below 101%
-* **Dynamic Pricing**: Real-time EUR/USD exposure pricing via Chainlink
-* **Position Limits**: Maximum exposure limits prevent concentration risk
+| Parameter | Description | Location |
+|-----------|-------------|----------|
+| `minMarginRatio` | Minimum margin ratio | CoreParams |
+| `maxLeverage` | Maximum leverage allowed | CoreParams |
+| `entryFee` | Fee for opening positions | CoreParams |
+| `exitFee` | Fee for closing positions | CoreParams |
+
+**Position Health & Liquidation**
+
+```solidity
+// Check if position is healthy
+function _isPositionHealthyForFill(HedgePosition memory pos) internal view returns (bool);
+
+// Emergency close by governance
+function emergencyClosePosition(address hedger) external onlyRole(EMERGENCY_ROLE);
+```
 
 #### 🔄 Pool Interaction Dynamics
 
-The dual pools create a symbiotic relationship:
-
 ```
-Users ←→ Protocol ←→ Hedgers
-  ↓         ↓         ↓
-Euro      USDC      USD
-Exposure  Backing   Risk
+Users ←→ QuantillonVault ←→ Hedger
+  ↓           ↓              ↓
+ Euro       USDC           USD
+Exposure   Collateral    Risk Mgmt
+  ↓           ↓              ↓
+stQEURO ←→ YieldShift ←→ Rewards
 ```
 
-* **Users** get euro exposure without FX risk
-* **Hedgers** assume FX risk for yield compensation
-* **Protocol** maintains stability through balanced incentives
+* **Users** get euro exposure via QEURO/stQEURO
+* **Hedger** manages EUR/USD risk for yield compensation
+* **Protocol** maintains stability through YieldShift incentives
 
 ***
 
 ### 📊 Overcollateralization Model
 
-Quantillon uses overcollateralization—meaning that the value of assets held in reserves is greater than the pegged value—to mitigate the inherent volatility of the underlying forex markets.
+Quantillon uses overcollateralization to mitigate forex market volatility.
 
-#### Collateralization Requirements
+#### Collateralization Requirements (MVP)
 
 **Minimum Ratios**
 
-* **Users**: 101% minimum collateralization
-* **Hedgers**: 101% margin requirement
-* **Protocol**: Dynamic buffer based on volatility
+| Actor | Minimum Ratio | Liquidation Threshold |
+|-------|---------------|----------------------|
+| **Protocol** | 101% | < 101% triggers alerts |
+| **Hedger** | Configurable (minMarginRatio) | < minMarginRatio |
 
-**Liquidation Mechanisms**
+**Accepted Collateral (MVP)**
 
-**User Liquidations:**
-
-* Triggered when collateral value falls below 101% of QEURO debt
-* Automatic execution via Chainlink price feeds
-* 5% liquidation penalty to maintain protocol health
-* Liquidated collateral sold to cover debt and penalties
-
-**Hedger Liquidations:**
-
-* Triggered when margin ratio falls below 101%
-* EUR/USD movement against hedger positions
-* Automated liquidation bot network ensures rapid execution
-* Liquidation penalty redistributed to remaining hedgers
+| Asset | Status | Notes |
+|-------|--------|-------|
+| **USDC** | ✅ Live | Primary collateral |
+| 🚧 ETH | Planned | Phase 2 |
+| 🚧 WBTC | Planned | Phase 2 |
+| 🚧 Governance-approved | Planned | Phase 3 |
 
 #### Collateral Management
 
-**Accepted Collateral Types**
+**Vault Deployment (MVP)**
 
-* **USDC**: Primary collateral for direct backing
-* **ETH**: Blue-chip cryptocurrency with high liquidity
-* **WBTC**: Wrapped Bitcoin for portfolio diversification
-* **Additional assets**: Approved through governance voting
-
-**Vault Deployment Strategy**
-
-| Vault Type | Collateral Backend  | Risk Profile | Target APY |
-| ---------- | ------------------- | ------------ | ---------- |
-| **aQEURO** | Aave USDC lending   | Low          | 3-7%       |
-| **mQEURO** | MakerDAO DSR/PSM    | Very Low     | 2-5%       |
-| **bQEURO** | Tokenized T-Bills   | Low          | 4-6%       |
-| **eQEURO** | Advanced strategies | Medium       | 5-12%      |
+| Vault Type | Backend | Status | Target APY |
+|------------|---------|--------|------------|
+| **aQEURO** | Aave v3 USDC | ✅ Live | 4-12% |
+| 🚧 mQEURO | MakerDAO DSR/PSM | Planned | 2-5% |
+| 🚧 bQEURO | Tokenized T-Bills | Planned | 4-6% |
+| 🚧 eQEURO | Advanced strategies | Planned | 5-12% |
 
 ***
 
 ### ⚖️ The Yield Shift Mechanism
 
-The Yield Shift represents Quantillon's most innovative feature—a dynamic system that automatically rebalances yield distribution based on market conditions.
+The YieldShift represents Quantillon's most innovative feature—a dynamic system that rebalances yield distribution based on pool conditions.
+
+#### Technical Parameters (From Code)
+
+```solidity
+uint256 public constant MIN_HOLDING_PERIOD = 7 days;  // Minimum for yield claims
+uint256 public constant TWAP_PERIOD = 24 hours;       // Time-weighted average window
+uint256 public constant MAX_TIME_ELAPSED = 365 days;
+
+// Configurable parameters
+uint256 baseYieldShift = 5000;     // 50% default to users
+uint256 maxYieldShift = 9000;      // 90% max to users
+uint256 adjustmentSpeed = 100;      // 1% adjustment rate
+uint256 targetPoolRatio = 10000;    // 100% target ratio
+```
 
 #### Mathematical Foundation
-
-The Yield Shift operates on a continuous rebalancing formula:
-
-**Base Variables**
-
-* **R** = Total yield from collateral deployment
-* **H** = Hedger pool utilization ratio (0-100%)
-* **U** = User pool demand ratio
-* **α** = Governance-defined sensitivity parameter
 
 **Distribution Formula**
 
 ```
-Hedger Yield = min(Interest_Rate_Differential + (Yield_Shift × R), Max_Hedger_Yield)
-User Yield = R - Hedger_Yield - Protocol_Fee(10%)
-Yield_Shift = α × (Target_H - Current_H) / Target_H
-```
+userAllocation = totalYield × (currentYieldShift / 10000)
+hedgerAllocation = totalYield - userAllocation
 
 Where:
+- currentYieldShift ranges from (10000 - maxYieldShift) to maxYieldShift
+- Adjustment based on pool ratios using 24h TWAP
+```
 
-* **Target\_H** = Optimal hedger pool ratio (typically 30-50%)
-* **Current\_H** = Actual hedger participation level
-* **α** = Sensitivity coefficient (0.1 - 2.0)
+**Pool Ratio Calculation**
 
-#### Dynamic Rebalancing Examples
+```solidity
+poolRatio = eligibleUserPoolSize × 10000 / eligibleHedgerPoolSize
+```
 
-**Scenario 1: Excess Hedger Supply**
+> **Note**: "Eligible" pool sizes exclude recent deposits (< 7 days) to prevent flash deposit manipulation.
 
-* **Situation**: Hedger utilization = 80% (above target 50%)
-* **Yield Shift**: Negative → More yield flows to Users
-* **Result**: Attracts more QEURO demand, rebalances pools
+#### Dynamic Rebalancing
 
-**Scenario 2: Insufficient Hedgers**
+| Pool Condition | Current Shift | Direction | Result |
+|----------------|---------------|-----------|--------|
+| **User pool > Hedger pool** | High (>50%) | ↓ Decrease | More yield to hedger |
+| **Balanced pools** | ~50% | → Stable | Equal distribution |
+| **Hedger pool > User pool** | Low (<50%) | ↑ Increase | More yield to users |
 
-* **Situation**: Hedger utilization = 20% (below target 50%)
-* **Yield Shift**: Positive → More yield flows to Hedgers
-* **Result**: Attracts delta-neutral capital, strengthens peg
+#### Holding Period Protection
 
-**Scenario 3: Balanced Pools**
+```solidity
+// Users must hold deposits for 7 days before claiming yield
+if (TIME_PROVIDER.currentTime() < lastDepositTime[user] + MIN_HOLDING_PERIOD) {
+    revert CommonErrorLibrary.HoldingPeriodNotMet();
+}
+```
 
-* **Situation**: Hedger utilization = 50% (at target)
-* **Yield Shift**: Neutral → Standard distribution
-* **Result**: Stable yields for both user groups
-
-#### Real-Time Adjustment Mechanics
-
-The Yield Shift updates **continuously** based on:
-
-1. **📊 Pool Utilization**: Real-time hedger/user ratios
-2. **💱 FX Volatility**: EUR/USD movement amplifies shifts
-3. **🏦 Collateral Performance**: Underlying yield changes
-4. **⚖️ Governance Parameters**: Community-set bounds and targets
+This prevents:
+- Flash deposit attacks
+- Yield farming manipulation
+- Short-term speculation
 
 ***
 
 ### 🔮 Oracle & Pricing Infrastructure
 
-Accurate, tamper-resistant pricing is critical for all protocol mechanisms. Quantillon employs a multi-layered oracle system for maximum reliability.
+Accurate, tamper-resistant pricing is critical for all protocol mechanisms.
 
-#### Primary Oracle Sources
+#### Primary Oracle: ChainlinkOracle Contract
 
-**Chainlink Integration**
+**Price Feeds**
 
-* **EUR/USD Price Feeds**: Multiple data aggregators
-* **Heartbeat Monitoring**: Maximum 1-hour update intervals
-* **Deviation Thresholds**: 0.1% price movement triggers updates
-* **Backup Feeds**: Secondary oracle validation
+| Feed | Purpose | Max Staleness |
+|------|---------|---------------|
+| EUR/USD | QEURO peg pricing | 1 hour |
+| USDC/USD | Collateral validation | 1 hour |
 
-**Price Feed Architecture**
+**Security Parameters**
+
+```solidity
+uint256 public constant MAX_PRICE_STALENESS = 3600;   // 1 hour
+uint256 public constant MAX_PRICE_DEVIATION = 500;    // 5%
+uint256 public constant MAX_TIMESTAMP_DRIFT = 900;    // 15 minutes
+
+// Price bounds (configurable)
+uint256 minEurUsdPrice = 0.80e18;   // 0.80 USD/EUR
+uint256 maxEurUsdPrice = 1.40e18;   // 1.40 USD/EUR
+uint256 usdcToleranceBps = 200;     // 2% USDC tolerance
+```
+
+**Circuit Breaker Mechanism**
 
 ```
-Chainlink EUR/USD → Price Aggregator → Protocol Logic
-     ↓                    ↓               ↓
-  Backup Oracle → Circuit Breaker → Emergency Pause
+Price Update Flow:
+1. Fetch Chainlink data
+2. Validate timestamp (< MAX_STALENESS + DRIFT)
+3. Validate price bounds (0.80 - 1.40)
+4. Check deviation from last price (< 5%)
+5. If any check fails → Circuit breaker triggered
+6. Protocol uses last valid price as fallback
 ```
 
-#### Failsafe Mechanisms
+**Emergency Functions**
 
-**Circuit Breakers**
+```solidity
+// Manual circuit breaker
+function triggerCircuitBreaker() external onlyRole(EMERGENCY_ROLE);
 
-* **Price Deviation Limits**: >5% movement triggers review
-* **Heartbeat Monitoring**: Stale feeds automatically flagged
-* **Consensus Requirements**: Multiple oracle confirmation
-
-**Emergency Protocols**
-
-* **Governance Override**: Emergency oracle updates
-* **Trading Halts**: Automatic suspension during anomalies
-* **Manual Review**: Foundation intervention capabilities
+// Reset after incident resolution
+function resetCircuitBreaker() external onlyRole(EMERGENCY_ROLE);
+```
 
 ***
 
-### 🛡️ Liquidation & Risk Management
+### 🛡️ Risk Management
 
-Quantillon's liquidation system ensures protocol solvency while minimizing user losses through efficient, transparent processes.
+#### Protocol-Level Controls
 
-#### Liquidation Triggers
+**Emergency Hierarchy**
 
-**Automated Monitoring**
+```
+Level 1: Rate Limiting (automatic per-address limits)
+    ↓
+Level 2: Minting Killswitch (stop new mints only)
+    ↓
+Level 3: Circuit Breaker (oracle fallback mode)
+    ↓
+Level 4: Full Pause (all operations halted)
+```
 
-* **Real-time collateral tracking** via Chainlink oracles
-* **Health factor calculation** for all positions
-* **Liquidation bot network** for rapid execution
-* **Public liquidation interface** for community participation
+**Configurable Thresholds (QuantillonVault)**
 
-**Liquidation Process Flow**
+```solidity
+uint256 minCollateralizationRatioForMinting;  // Min ratio to allow mints
+uint256 criticalCollateralizationRatio;        // Triggers alerts/restrictions
+```
 
-1. **Health Check**: Continuous monitoring of collateralization ratios
-2. **Trigger Event**: Position falls below 101% threshold
-3. **Liquidation Call**: Automated or manual liquidation initiated
-4. **Collateral Sale**: Assets sold at market rates
-5. **Debt Coverage**: QEURO debt burned with proceeds
-6. **Penalty Distribution**: 5% penalty split between liquidators and protocol
+#### Hedger Risk Management
 
-#### Risk Parameters
+**Position Monitoring**
 
-**Dynamic Risk Adjustment**
+```solidity
+// Check if liquidation should be triggered
+function shouldTriggerLiquidation() external view returns (bool);
 
-* **Volatility-based margins**: Higher volatility = higher requirements
-* **Liquidity considerations**: Illiquid assets require higher collateral
-* **Market stress response**: Automatic parameter tightening
+// Get current liquidation status
+function getLiquidationStatus() external view returns (
+    bool canLiquidate,
+    uint256 shortfall,
+    uint256 requiredCollateral
+);
+```
 
-**Emergency Measures**
+**Emergency Close**
 
-* **Global settlement**: Protocol-wide redemption in extreme scenarios
-* **Pause mechanisms**: Halt new positions during market stress
-* **Governance intervention**: Community-controlled crisis response
+```solidity
+// Force close hedger position in emergency
+function emergencyClosePosition(address hedger) external onlyRole(EMERGENCY_ROLE);
+```
 
 ***
 
 ### 🏛️ Governance Integration
 
-All protocol mechanisms operate under the oversight of decentralized governance, ensuring community control while maintaining operational efficiency.
+All protocol mechanisms operate under decentralized governance via QTI token.
 
 #### Governable Parameters
 
 **Economic Variables**
 
-* **Yield Shift sensitivity** (α coefficient)
-* **Target pool ratios** for optimal balance
-* **Fee structures** (minting, redemption, protocol)
-* **Liquidation penalties** and thresholds
+| Parameter | Contract | Role Required |
+|-----------|----------|---------------|
+| YieldShift base/max/speed | YieldShift | GOVERNANCE_ROLE |
+| Mint/redeem fees | QuantillonVault | GOVERNANCE_ROLE |
+| Hedger parameters | HedgerPool | GOVERNANCE_ROLE |
+| Oracle bounds | ChainlinkOracle | ORACLE_MANAGER_ROLE |
 
 **Risk Management**
 
-* **Collateralization requirements** for different asset types
-* **Oracle parameters** and backup sources
-* **Emergency pause authorities** and conditions
-* **Vault whitelisting** for new collateral backends
+| Parameter | Contract | Role Required |
+|-----------|----------|---------------|
+| Collateralization thresholds | QuantillonVault | GOVERNANCE_ROLE |
+| Rate limits | QEUROToken | DEFAULT_ADMIN_ROLE |
+| Compliance lists | QEUROToken | COMPLIANCE_ROLE |
+| Emergency pause | All | EMERGENCY_ROLE |
 
-#### Governance Process
+#### QTI Vote-Escrow System
 
-**Proposal Lifecycle**
+```solidity
+// Lock QTI for voting power
+function lock(uint256 amount, uint256 duration) external returns (uint256 veQTI);
 
-1. **Community Discussion**: Forum-based proposal development
-2. **Formal Submission**: On-chain proposal creation
-3. **Voting Period**: 7-day voting window for $QTI holders
-4. **Implementation**: Automatic execution if approved
-5. **Review Period**: 24-48 hour timelock for critical changes
-
-**Voting Power Distribution**
-
-* **$QTI Token Weight**: Proportional to holdings
-* **Staking Multipliers**: Enhanced voting power for committed users
-* **Delegation Options**: Community members can delegate votes
-* **Quorum Requirements**: Minimum participation for validity
+// Voting power multiplier (up to 4x for max lock)
+MAX_LOCK_TIME = 4 years;
+MAX_VE_QTI_MULTIPLIER = 4;
+```
 
 ***
 
 ### 🔧 Integration & Composability
 
-Quantillon's mechanisms are designed for seamless integration with the broader DeFi ecosystem, enabling composability and innovation.
-
 #### Protocol Interfaces
 
-**Standard ERC-20 Compatibility**
+**QEURO Token (ERC-20)**
 
-* **QEURO Token**: Full ERC-20 standard compliance
-* **DEX Integration**: Native support for Uniswap, Curve, Balancer
-* **Lending Protocols**: Collateral for Aave, Compound, etc.
-* **Cross-chain Bridges**: LayerZero and other bridge protocols
+* Full ERC-20 compliance
+* Pausable transfers
+* Blacklist/whitelist support
+* 18 decimals
 
-**Advanced Integration Features**
+**stQEURO Token (Yield-Bearing)**
 
-* **Flash Loan Support**: Atomic arbitrage and liquidation
-* **Vault Strategy Plugins**: Custom yield generation modules
-* **Cross-protocol Yield**: Compound strategies across platforms
-* **Institutional APIs**: Direct integration for qualified entities
+* Exchange rate appreciation model
+* Instant stake/unstake
+* No rebasing (value appreciation)
+* 18 decimals
 
-#### Developer Resources
+**Integration Example**
 
-**Smart Contract Architecture**
+```solidity
+// Mint QEURO via Vault
+vault.mintQEURO(usdcAmount, recipient);
 
-* **Modular Design**: Upgradeable proxy patterns
-* **Open Source**: Fully auditable and forkable
-* **Documentation**: Comprehensive technical guides
-* **Testing Suite**: Battle-tested security frameworks
+// Stake QEURO for yield
+stQEURO.stake(qeuroAmount);
+
+// Get current exchange rate
+uint256 rate = stQEURO.exchangeRate();
+```
 
 ***
 
 ### 📈 Performance Metrics & Monitoring
 
-Understanding protocol health requires continuous monitoring of key mechanisms and their performance.
-
 #### Key Performance Indicators
 
 **Stability Metrics**
 
-* **Peg Maintenance**: QEURO price vs. EUR target
-* **Collateralization Ratio**: System-wide backing level
-* **Liquidation Frequency**: Risk management effectiveness
-* **Yield Shift Responsiveness**: Mechanism adjustment speed
+* **Peg Maintenance**: QEURO price vs EUR target (< 2% deviation)
+* **Collateralization Ratio**: Protocol-wide backing level (> 101%)
+* **Oracle Health**: Freshness and accuracy of price feeds
 
 **Efficiency Metrics**
 
-* **Capital Utilization**: Collateral deployment efficiency
-* **Yield Generation**: APY across different vault types
-* **Gas Optimization**: Transaction cost effectiveness
-* **Slippage Minimization**: Trading efficiency measures
+* **Yield Generation**: Aave APY on deployed collateral
+* **YieldShift Responsiveness**: Time to rebalance pools
+* **Gas Optimization**: Transaction costs for operations
 
-#### Public Dashboards
+#### Monitoring Functions
 
-**Real-time Monitoring**
+```solidity
+// QuantillonVault
+function getVaultMetrics() external view returns (...);
+function getProtocolCollateralizationRatio() external view returns (uint256);
 
-* **Live peg tracking** with historical charts
-* **Pool utilization ratios** and Yield Shift status
-* **Vault performance** across all backends
-* **Liquidation activity** and system health indicators
+// YieldShift
+function getPoolMetrics() external view returns (...);
+function getCurrentYieldShift() external view returns (uint256);
 
-**Historical Analysis**
-
-* **Performance attribution** across market cycles
-* **Mechanism effectiveness** during stress periods
-* **User behavior patterns** and adoption metrics
-* **Competitive positioning** vs. other stablecoins
+// ChainlinkOracle
+function getOracleHealth() external view returns (bool, bool, bool);
+```
 
 ***
 
-### 🎯 Mechanism Optimization
-
-Quantillon's mechanisms continuously evolve based on real-world performance and community feedback.
-
-#### Performance Optimization
-
-**Algorithmic Improvements**
-
-* **Machine learning** for Yield Shift optimization
-* **Predictive modeling** for liquidation risk
-* **Gas efficiency** improvements through batching
-* **MEV protection** strategies for user transactions
-
-**Community-Driven Enhancement**
-
-* **Mechanism proposals** from protocol users
-* **A/B testing** of parameter modifications
-* **Performance incentives** for optimization contributions
-* **Research grants** for academic analysis
-
-#### Future Mechanism Development
-
-**Planned Enhancements**
-
-* **Cross-chain expansion** to L2s and alternative chains
-* **Additional vault types** for diverse risk profiles
-* **Synthetic asset** support beyond EUR
-* **Institutional features** for qualified participants
-
-> **Quantillon's mechanisms represent a new paradigm in stablecoin design—combining the stability of overcollateralization with the efficiency of delta-neutral hedging and the innovation of dynamic yield distribution. This creates a self-balancing ecosystem that serves both euro-native users and global DeFi participants.**
+> **Quantillon's mechanisms represent a new paradigm in stablecoin design—combining the stability of overcollateralization with the efficiency of delta-neutral hedging and the innovation of dynamic yield distribution. The MVP focuses on core functionality with a single hedger model and Aave v3 integration, with multi-hedger support and additional vault types planned for future phases.**

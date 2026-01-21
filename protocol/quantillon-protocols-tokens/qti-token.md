@@ -19,34 +19,37 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 | **Name**          | Quantillon Governance Token | Clear utility identification   |
 | **Symbol**        | QTI                         | Memorable, brandable ticker    |
 | **Standard**      | ERC-20 (UUPS Upgradeable)   | Future-proof with security     |
-| **Network**       | Ethereum Mainnet + Base L2  | Multi-chain liquidity strategy |
+| **Network**       | Base L2 (Primary)           | L2 efficiency and lower costs  |
 | **Total Supply**  | 100,000,000 QTI (Fixed)     | Scarcity-driven value model    |
 | **Decimals**      | 18                          | Full ERC-20 compatibility      |
 | **Contract Type** | OpenZeppelin + Custom Logic | Battle-tested + innovation     |
 
-#### Advanced Features
+#### Implemented Features
 
-* **Cross-Chain Compatibility**: Native bridging to Base, Arbitrum, Optimism or other Layer 2 blockchains
-* **Gasless Transactions**: Meta-transaction support via EIP-2771
-* **Snapshot Integration**: Off-chain voting with on-chain execution
-* **Emergency Controls**: Pausable with time-locked upgrades
-* **MEV Protection**: Built-in front-running resistance
+* **Vote-Escrow (veQTI)**: Lock QTI for enhanced voting power (up to 4x)
+* **On-Chain Governance**: Proposal creation, voting, and execution
+* **Emergency Controls**: Pausable with time-locked upgrades via UUPS
+* **Progressive Decentralization**: Configurable decentralization levels
+
+> **🚧 Roadmap Features**: Cross-chain compatibility, meta-transactions (EIP-2771), and snapshot integration are planned for future phases.
 
 ***
 
 ### Token Distribution Architecture
 
+> **Important**: La distribution des tokens QTI est gérée via la governance et les décisions opérationnelles. Le smart contract définit uniquement le `TOTAL_SUPPLY_CAP = 100,000,000 QTI`. Les allocations ci-dessous représentent la **stratégie de distribution planifiée**, non des contraintes on-chain.
+
 #### Strategic Allocation Framework
 
 | Category                     | Allocation | Amount         | Lock Period | Vesting Schedule    | Release Mechanism    |
 | ---------------------------- | ---------- | -------------- | ----------- | ------------------- | -------------------- |
-| **🌍 Community & Ecosystem** | 50%        | 50,000,000 QTI | Variable    | 48-month curve      | Algorithmic emission |
-| **👥 Team & Founders**       | 15%        | 15,000,000 QTI | 12 months   | 36 months linear    | Monthly unlock       |
-| **💼 Investors (SAFT/BSA)**  | 13%        | 13,000,000 QTI | 6-18 months | 24-36 months        | Tiered by round      |
+| **🌍 Community & Ecosystem** | 50%        | 50,000,000 QTI | Variable    | 48-month curve      | Governance-managed   |
+| **👥 Team & Founders**       | 15%        | 15,000,000 QTI | 12 months   | 36 months linear    | Governance-managed   |
+| **💼 Investors (SAFT/BSA)**  | 13%        | 13,000,000 QTI | 6-18 months | 24-36 months        | Governance-managed   |
 | **🏛️ DAO Treasury**         | 10%        | 10,000,000 QTI | Immediate   | Governance-gated    | Vote-controlled      |
-| **🤝 Strategic Partners**    | 5%         | 5,000,000 QTI  | 6 months    | 18 months           | Performance-based    |
-| **🎯 Advisors**              | 2%         | 2,000,000 QTI  | 6 months    | 18 months           | Milestone-driven     |
-| **💧 Liquidity Provision**   | 5%         | 5,000,000 QTI  | Immediate   | Progressive release | Market-responsive    |
+| **🤝 Strategic Partners**    | 5%         | 5,000,000 QTI  | 6 months    | 18 months           | Governance-managed   |
+| **🎯 Advisors**              | 2%         | 2,000,000 QTI  | 6 months    | 18 months           | Governance-managed   |
+| **💧 Liquidity Provision**   | 5%         | 5,000,000 QTI  | Immediate   | Progressive release | Governance-managed   |
 
 #### Community & Ecosystem Breakdown (50M QTI)
 
@@ -102,12 +105,13 @@ Layer 3: Community Proposals (Simple majority, 24h timelock)
 
 #### 💰 Revenue Generation & Distribution
 
-**Primary Revenue Streams**
+**Primary Revenue Streams (MVP)**
 
-1. **QEURO Operations** (0.1% on mint/redeem)
-2. **Yield Farming Fees** (10% performance fee)
-3. **Liquidation Penalties** (2-5% of liquidated positions)
-4. **Cross-Chain Bridge Fees** (0.1-0.3% of transfers)
+1. **QEURO Operations** (0.1% on mint/redeem via QuantillonVault)
+2. **Yield Fees** (10% of Aave yield via AaveVault)
+3. **Hedger Position Fees** (Entry/exit fees configurable via governance)
+
+> **🚧 Future Revenue**: Cross-chain bridge fees, liquidation penalties, and additional vault fees are planned for future protocol phases.
 
 **Revenue Allocation Model**
 
@@ -148,10 +152,12 @@ Where:
 
 **Whale Protection Systems**
 
-* **Voting Weight Cap**: Maximum 5% influence per address
-* **Gradual Accumulation**: Increasing cost per additional token
-* **Sybil Resistance**: Identity verification for large holders
-* **Time-Weighted Voting**: Historical participation requirements
+* **Vote-Escrow**: Longer lock periods = more voting power (up to 4x)
+* **Time-Weighted Voting**: veQTI decays over time until unlock
+* **Governance Thresholds**: Configurable proposal and quorum thresholds
+* **Timelock Delays**: Critical changes require waiting periods
+
+> **Note**: Additional whale protection mechanisms (voting caps, sybil resistance) may be implemented via governance proposals.
 
 **Market Stability Mechanisms**
 
@@ -164,10 +170,10 @@ Where:
 
 **Smart Contract Security**
 
-* **Multi-Audit Approach**: 3+ independent security reviews
-* **Formal Verification**: Mathematical proof of critical functions
-* **Bug Bounty Program**: Up to $100K for critical vulnerabilities
-* **Continuous Monitoring**: Real-time anomaly detection
+* **Audit Process**: Independent security reviews before mainnet
+* **OpenZeppelin Base**: Battle-tested upgradeable contracts
+* **Bug Bounty Program**: Planned for post-launch (amounts TBD via governance)
+* **Continuous Monitoring**: Real-time monitoring via OpenZeppelin Defender
 
 **Operational Security**
 

@@ -6,60 +6,64 @@
 
 The Staked Quantillon Euro (stQEURO) represents the next evolution in euro-denominated yield-bearing tokens, designed to automatically compound returns from QEURO collateral deployment while maintaining full liquidity and composability. stQEURO creates a seamless bridge between passive euro exposure and active DeFi yield generation.
 
-Our yield-bearing architecture incorporates cutting-edge mechanisms including automatic compounding functionality, cross-protocol composability, and progressive decentralization that delivers superior user experience while maintaining institutional-grade security. The design prioritizes capital efficiency, regulatory compliance, and sustainable auto-compounding across diverse market conditions.
+Our yield-bearing architecture incorporates cutting-edge mechanisms including automatic compounding functionality via exchange rate appreciation, cross-protocol composability, and integration with the YieldShift system that delivers superior user experience while maintaining security. The design prioritizes capital efficiency, regulatory compliance, and sustainable auto-compounding across diverse market conditions.
 
 ***
 
-#### Core Token Specifications
+### Core Token Specifications
 
 **Technical Architecture**
 
-| Parameter         | Value                            | Rationale                      |
-| ----------------- | -------------------------------- | ------------------------------ |
-| **Name**          | Staked Quantillon Euro           | Clear staking utility          |
-| **Symbol**        | stQEURO                          | Intuitive yield-bearing prefix |
-| **Standard**      | ERC-20 Compounding Token         | Auto-compounding functionality |
-| **Network**       | Ethereum Mainnet + Base L2       | Multi-chain staking strategy   |
-| **Exchange Rate** | Dynamic (yield-adjusted)         | Automatic yield accumulation   |
-| **Decimals**      | 18                               | Full ERC-20 compatibility      |
-| **Contract Type** | OpenZeppelin + compounding Logic | Battle-tested + innovation     |
+| Parameter | Value | Rationale |
+| --------- | ----- | --------- |
+| **Name** | Staked Quantillon Euro | Clear staking utility |
+| **Symbol** | stQEURO | Intuitive yield-bearing prefix |
+| **Standard** | ERC-20 (UUPS Upgradeable) | Auto-compounding functionality |
+| **Network** | Base L2 (Primary) | L2 efficiency and lower costs |
+| **Exchange Rate** | Dynamic (yield-adjusted) | Automatic yield accumulation |
+| **Decimals** | 18 | Full ERC-20 compatibility |
+| **Contract Type** | OpenZeppelin + Custom Logic | Battle-tested + innovation |
 
-**Advanced Features**
+**Implemented Features**
 
-* **Automatic Compounding**
-* **Cross-Chain Staking**: Native deployment on Base, Arbitrum, Optimism
-* **Instant Liquidity**: No lock periods or withdrawal delays
-* **Oracle Integration**: Real-time yield calculation and distribution
-* **MEV Protection**: Built-in front-running resistance for stake operations
+* **Automatic Compounding**: Value appreciation via exchange rate mechanism
+* **Instant Liquidity**: No lock periods for staking/unstaking
+* **YieldShift Integration**: Dynamic yield allocation from protocol yields
+* **Oracle Integration**: Real-time yield calculation from underlying sources
+* **Emergency Controls**: Pausable with emergency withdrawal capability
+
+> **🚧 Roadmap Features**: Cross-chain staking (Arbitrum, Optimism) is planned for future phases.
 
 ***
 
 ### Yield-Bearing Mechanics
 
-**🔄  Token Architecture**
+**🔄 Token Architecture**
 
-**Auto-Compounding Model**
+**Auto-Compounding Model (Exchange Rate Appreciation)**
 
 Unlike traditional staking where users must manually claim rewards, stQEURO automatically increases in intrinsic value over time. The quantity of stQEURO tokens in user wallets remains constant, but each token becomes worth more QEURO as yields accumulate.
 
 ```
-stQEURO Value Growth = 1 stQEURO = (1 + Cumulative Yield Rate) QEURO
-
-Example:
-Day 0: Stake 1,000 QEURO → Receive 1,000 stQEURO (1 stQEURO = 1 QEURO)
-Day 365: Still hold 1,000 stQEURO, but 1 stQEURO = 1.053 QEURO (5.3% APY)
-When unstaking: 1,000 stQEURO → 1,053 QEURO
-```
-
-**📊 Yield Calculation Formula**
-
-```
-Daily Value Appreciation = Current Exchange Rate × (1 + Daily Yield Rate)
+stQEURO Value = QEURO Amount × Exchange Rate
 
 Where:
-- Exchange Rate: How much QEURO each stQEURO is worth
-- Daily Yield Rate: (Aave APY - Protocol Fees - Hedger Compensation) ÷ 365
+- Exchange Rate starts at 1.0
+- Exchange Rate increases as yield is distributed
+- No token rebasing or inflation
 ```
+
+**📊 Yield Calculation**
+
+```
+New Exchange Rate = Current Exchange Rate + (Yield Amount / Total stQEURO Supply)
+```
+
+**Example Timeline:**
+
+* **Day 0**: Stake 1,000 QEURO → Receive 1,000 stQEURO (Rate: 1.000)
+* **Day 365**: Still hold 1,000 stQEURO (Rate: 1.053 with 5.3% APY)
+* **Unstaking**: 1,000 stQEURO → 1,053 QEURO
 
 **⚡ Key Benefits**:
 
@@ -73,27 +77,99 @@ Where:
 **Revenue Flow Architecture**
 
 ```
-QEURO Collateral Deployment (100%)
-├── Aave USDC Lending (Primary Source)
-│   ├── Base APY: 4-12% (market dependent)
-│   └── Auto-compounding via aUSDC
-├── Protocol Fee Collection (10% of yield)
-│   ├── Treasury: 5%
-│   └── Development: 5%
-├── Hedger Compensation (Variable: 1-3%)
-│   ├── Base Rate: EUR/USD spread (~1.2%)
-│   └── Yield Shift: ±2% market adjustment
-└── stQEURO Distribution (Remaining: 87-89%)
-    └── Compound Effect: No manual reinvestment
+QEURO Collateral Deployed to Aave v3
+├── Gross Yield Generated (Variable APY: 4-12%)
+│
+├── Protocol Fee: 10% (to Treasury)
+│
+└── Net Yield Distribution via YieldShift
+    ├── stQEURO Holders: 50-90% (auto-compounded)
+    └── Hedgers: 10-50% (yield shift allocation)
 ```
 
-**📊 Value Appreciation Tracking**
+**📊 Value Appreciation Estimates**
 
-| Market Condition | Aave APY | Net stQEURO APY | 1 stQEURO Value After 1 Year |
-| ---------------- | -------- | --------------- | ---------------------------- |
-| **Bear Market**  | 4%       | 2.4%            | 1.024 QEURO                  |
-| **Normal**       | 7%       | 5.3%            | 1.053 QEURO                  |
-| **Bull Market**  | 12%      | 9.8%            | 1.098 QEURO                  |
+| Market Condition | Aave APY | Estimated Net stQEURO APY | 1 stQEURO Value After 1 Year |
+| ---------------- | -------- | ------------------------- | ---------------------------- |
+| **Bear Market** | 4% | 2-3% | ~1.025 QEURO |
+| **Normal** | 7% | 4-6% | ~1.050 QEURO |
+| **Bull Market** | 12% | 8-10% | ~1.090 QEURO |
+
+> **Note**: Actual APY depends on Aave market conditions, YieldShift allocation, and protocol fee deductions. These are estimates, not guarantees.
+
+***
+
+### Technical Parameters
+
+**Contract Configuration**
+
+| Parameter | Description | Governance-Adjustable |
+|-----------|-------------|----------------------|
+| **exchangeRate** | Current QEURO per stQEURO | Auto-updated |
+| **totalUnderlying** | Total QEURO value backing stQEURO | Auto-tracked |
+| **yieldFee** | Protocol fee on distributed yield | ✅ Yes |
+| **minYieldThreshold** | Minimum yield for distribution | ✅ Yes |
+| **maxUpdateFrequency** | Maximum rate of exchange rate updates | ✅ Yes |
+
+**Access Control Roles**
+
+| Role | Permission | Typical Holder |
+|------|------------|----------------|
+| **GOVERNANCE_ROLE** | Update parameters, manage settings | Governance/Timelock |
+| **YIELD_MANAGER_ROLE** | Distribute yield, trigger compounding | YieldShift contract |
+| **EMERGENCY_ROLE** | Pause/unpause, emergency withdraw | Emergency multisig |
+
+***
+
+### Staking & Unstaking Operations
+
+**📥 Staking (QEURO → stQEURO)**
+
+```solidity
+function stake(uint256 qeuroAmount) external returns (uint256 stQEUROAmount);
+```
+
+1. User approves QEURO for stQEURO contract
+2. User calls `stake()` with QEURO amount
+3. Contract calculates stQEURO based on current exchange rate
+4. QEURO transferred to contract, stQEURO minted to user
+
+**📤 Unstaking (stQEURO → QEURO)**
+
+```solidity
+function unstake(uint256 stQEUROAmount) external returns (uint256 qeuroAmount);
+```
+
+1. User calls `unstake()` with stQEURO amount
+2. Contract calculates QEURO based on current exchange rate
+3. stQEURO burned, QEURO transferred to user
+4. User receives original stake + accumulated yield
+
+**Batch Operations**
+
+* `batchStake(amounts[])` - Stake multiple amounts efficiently
+* `batchUnstake(amounts[])` - Unstake multiple amounts efficiently
+
+***
+
+### YieldShift Integration
+
+**Dynamic Yield Distribution**
+
+stQEURO yield is distributed through the YieldShift mechanism which balances incentives between users and hedgers:
+
+```
+Yield Distribution Flow:
+1. Aave generates yield on USDC collateral
+2. AaveVault harvests yield (minus 10% protocol fee)
+3. YieldShift receives net yield
+4. YieldShift distributes to stQEURO based on current shift ratio
+5. stQEURO exchange rate increases automatically
+```
+
+**Holding Period Requirement**
+
+> **Important**: The YieldShift mechanism enforces a **7-day minimum holding period** for yield claims. This prevents flash deposit attacks and ensures fair yield distribution.
 
 ***
 
@@ -101,167 +177,150 @@ QEURO Collateral Deployment (100%)
 
 **🛡️ Smart Contract Security**
 
-**Multi-Layer Security Architecture**
+**Security Architecture**
 
-* **Auto-compound Logic Audit**: Specialized audit for auto-compounding token mechanics
-* **Formal Verification**: Mathematical proof of yield calculation accuracy
-* **Real-Time Monitoring**: Continuous tracking of compounding operations
-* **Emergency Pause**: Immediate halt capability for critical issues
+* **OpenZeppelin Base**: Battle-tested upgradeable contracts
+* **Reentrancy Protection**: ReentrancyGuardUpgradeable on all external calls
+* **Access Control**: Role-based permissions for all sensitive operations
+* **Pausable**: Emergency pause capability for crisis situations
+* **UUPS Upgradeable**: Secure upgrade pattern with timelock
 
 **🔍 Security Measures**
 
-| Component                  | Security Measure         |
-| -------------------------- | ------------------------ |
-| **Componding Calculation** | Formal verification      |
-| **Yield Distribution**     | Automatic                |
-| **Oracle Integration**     | Chainlink + backup feeds |
-| **Emergency Response**     | Circuit breakers         |
+| Component | Security Measure |
+| --------- | ---------------- |
+| **Exchange Rate Calculation** | Checked arithmetic, overflow protection |
+| **Yield Distribution** | Only authorized YieldShift can update |
+| **Oracle Integration** | Via YieldShift with Chainlink feeds |
+| **Emergency Response** | Pause + emergency withdrawal |
 
-**⚖️ Economic Risk Mitigation**
+**⚖️ Economic Risk Considerations**
 
-**Yield Volatility Protection**
+**Yield Variability**
 
-* **Smoothing Mechanisms**: 7-day moving average for stable APY display
-* **Reserve Buffer**: 5% of yield held in reserve for consistent distribution
-* **Floor Protection**: Minimum 2% APY guaranteed through protocol treasury
-* **Ceiling Management**: Maximum 15% APY to prevent unsustainable expectations
+* Yields depend on Aave market conditions (supply/demand)
+* YieldShift allocation varies based on pool ratios
+* Protocol fees reduce gross yield by 10%
 
-**📊 Risk Monitoring Dashboard**
+> **Note**: The documentation previously mentioned "Floor Protection" (2% APY) and "Ceiling Management" (15% APY). These are NOT currently implemented in the smart contracts. Yields are market-driven.
 
-```
-Real-Time Risk Metrics:
-├── Collateral Health: 105-150% ratio monitoring
-├── Yield Stability: ±20% monthly deviation alerts  
-├── Liquidity Depth: >$1M stQEURO/QEURO pool requirement
-├── Smart Contract: 99.9% uptime target
-└── Oracle Accuracy: <0.1% price deviation tolerance
-```
+**📊 Risk Monitoring**
+
+Key metrics to monitor:
+
+* **Collateral Health**: Protocol collateralization ratio
+* **Yield Stability**: Aave APY fluctuations
+* **Liquidity Depth**: stQEURO/QEURO liquidity availability
+* **Exchange Rate**: Consistent appreciation pattern
 
 **🚨 Emergency Procedures**
 
 **Crisis Response Protocol**
 
-* **Level 1 (Minor)**: Automatic compounding pause with 24h resolution target
-* **Level 2 (Major)**: Emergency DAO vote with 6h execution timelock
-* **Level 3 (Critical)**: Multi-sig intervention with immediate effect
-* **Level 4 (Catastrophic)**: Complete protocol pause with user protection
+* **Level 1**: Pause yield distribution
+* **Level 2**: Pause staking (new deposits)
+* **Level 3**: Emergency withdrawal (users can exit)
+* **Level 4**: Protocol pause (all operations halted)
 
 **User Protection Mechanisms**
 
-* **Insurance Fund**: 3% of yield allocated to cover potential losses
 * **Instant Unstaking**: Always available regardless of protocol state
-* **Priority Access**: stQEURO holders get first access to emergency exits
-* **Compensation Pool**: Dedicated fund for verified user losses
+* **Emergency Withdraw**: Direct withdrawal bypassing normal flow
+* **No Lock Periods**: Users can exit at any time
 
 ***
 
 ### Tokenomic Model & Sustainability
 
-**💰 Revenue Generation Framework**
+**💰 Value Accrual**
 
-**Protocol Revenue Sources**
+stQEURO value grows through:
 
-1. **Yield Management Fee**: 10% of all Aave returns (estimated €350K annually at €50M TVL)
-2. **Staking Operations**: 0.05% fee on stake/unstake operations
-3. **Cross-Chain Fees**: 0.1% for bridge operations between networks
-4. **Premium Services**: Advanced analytics and institutional tools
+1. **Aave Yield**: Primary source from USDC lending
+2. **YieldShift Allocation**: Dynamic share of protocol yield
+3. **Compound Effect**: Automatic reinvestment without gas costs
 
-**📈 Growth Projections & Targets**
+**📈 Growth Factors**
 
-**Conservative Growth Scenario**
-
-| Metric                   | Month 6 | Year 1 | Year 2 | Year 3 |
-| ------------------------ | ------- | ------ | ------ | ------ |
-| **Total stQEURO Supply** | €2M     | €15M   | €50M   | €150M  |
-| **Staking Ratio**        | 25%     | 40%    | 55%    | 70%    |
-| **Average APY**          | 4.5%    | 5.2%   | 5.8%   | 6.1%   |
-| **Active Stakers**       | 500     | 3,000  | 12,000 | 35,000 |
-| **Daily Volume**         | €50K    | €300K  | €1.2M  | €4.5M  |
-
-**Optimistic Growth Scenario**
-
-| Metric                   | Month 6 | Year 1 | Year 2 | Year 3  |
-| ------------------------ | ------- | ------ | ------ | ------- |
-| **Total stQEURO Supply** | €5M     | €40M   | €200M  | €800M   |
-| **Staking Ratio**        | 35%     | 60%    | 75%    | 85%     |
-| **Average APY**          | 6.2%    | 7.1%   | 8.3%   | 9.2%    |
-| **Active Stakers**       | 1,200   | 8,000  | 40,000 | 150,000 |
-| **Daily Volume**         | €150K   | €1M    | €6M    | €25M    |
-
-**🎯 Key Performance Indicators**
-
-**Adoption Metrics**
-
-* **Staking Participation**: Target 50%+ of QEURO supply staked
-* **Retention Rate**: >80% of stakers remain active for 6+ months
-* **Cross-Chain Distribution**: 30% mainnet, 70% L2 by Year 2
-* **DeFi Integration**: 25+ protocols supporting stQEURO natively
-
-**Performance Metrics**
-
-* **Yield Consistency**: <5% monthly deviation from target APY
-* compounding **Accuracy**: 99.99% successful daily compounding operations
-* **Gas Efficiency**: <$5 average cost for stake/unstake operations
-* **Liquidity Depth**: 24/7 stQEURO/QEURO conversion within 0.5% spread
+* **TVL Growth**: More staked QEURO = more yield generation
+* **Aave APY**: Higher market rates = higher stQEURO yields
+* **YieldShift Ratio**: Favorable allocation to users = higher returns
 
 ***
 
-### Competitive Analysis & Positioning
+### Integration & Composability
 
-**🥊 Market Positioning**
+**DeFi Compatibility**
 
-**Direct Competitors Analysis**
+stQEURO is designed as a standard ERC-20 token for maximum composability:
 
-| Protocol    | Token   | APY Range | Auto-Compound | Euro Focus | TVL   |
-| ----------- | ------- | --------- | ------------- | ---------- | ----- |
-| **Sky**     | sUSDS   | 4-8%      | ✅             | ❌          | $800M |
-| **Lido**    | stETH   | 3-6%      | ✅             | ❌          | $24B  |
-| **Rocket**  | rETH    | 3-5%      | ✅             | ❌          | $5B   |
-| **stQEURO** | stQEURO | 4-9%      | ✅             | ✅          | TBD   |
+* **Lending Protocols**: Use as collateral in other DeFi protocols
+* **DEX Liquidity**: Provide liquidity in stQEURO pairs
+* **Yield Aggregators**: Compatible with yield optimization platforms
+* **Portfolio Tracking**: Standard ERC-20 for wallet integration
 
-**🎯 Competitive Advantages**
+**Technical Integration**
 
-* **Euro-Native**: First major yield-bearing euro token with institutional backing
-* **Superior Yields**: Leveraged Aave returns with optimized fee structure
-* **Instant Liquidity**: No lock periods or withdrawal delays unlike competitors
-* **Cross-Chain Native**: Multi-network deployment from day one
-* **Regulatory Clarity**: MiCA-compliant design with clear legal framework
+```solidity
+interface IstQEURO {
+    // Read current exchange rate
+    function exchangeRate() external view returns (uint256);
+    
+    // Convert amounts
+    function getQEUROForStQEURO(uint256 stQEUROAmount) external view returns (uint256);
+    function getStQEUROForQEURO(uint256 qeuroAmount) external view returns (uint256);
+    
+    // Stake/Unstake
+    function stake(uint256 qeuroAmount) external returns (uint256 stQEUROAmount);
+    function unstake(uint256 stQEUROAmount) external returns (uint256 qeuroAmount);
+}
+```
 
-**🌟 Unique Value Propositions**
+***
 
-**For Retail Users**
+### Competitive Positioning
 
-* **Simplified Euro DeFi**: No need to manage USD/EUR conversion manually
-* **Automated Optimization**: Set-and-forget yield generation
-* **Mobile-First**: Designed for smartphone-native user experience
-* **Educational Support**: Comprehensive learning resources and community
+**🥊 Market Comparison**
 
-**For Institutional Users**
+| Protocol | Token | APY Range | Auto-Compound | Euro Focus | Lock Period |
+| -------- | ----- | --------- | ------------- | ---------- | ----------- |
+| **Sky** | sUSDS | 4-8% | ✅ | ❌ | None |
+| **Lido** | stETH | 3-6% | ✅ | ❌ | None |
+| **stQEURO** | stQEURO | 4-10% | ✅ | ✅ | None |
 
-* **Regulatory Compliance**: Full MiCA alignment with audit trails
-* **Institutional Yield**: Professional-grade returns with transparency
-* **Risk Management**: Sophisticated risk controls and monitoring
-* **Custody Integration**: Compatible with institutional custody solutions
+**🎯 Unique Value Propositions**
 
-**For DeFi Protocols**
+* **Euro-Native**: First major yield-bearing euro token
+* **Instant Liquidity**: No lock periods or withdrawal delays
+* **YieldShift**: Dynamic optimization between users and hedgers
+* **Regulatory Clarity**: MiCA-compliant design approach
 
-* **High Composability**: Easy integration as yield-bearing collateral
-* **Stable Liquidity**: Predictable staking behavior and low volatility
-* **Cross-Chain Reach**: Multi-network presence for broader adoption
-* **Partnership Support**: Dedicated integration assistance and co-marketing
+***
+
+### Technical Reference
+
+**Key Events**
+
+* `Staked(user, qeuroAmount, stQEUROAmount)` - User staked QEURO
+* `Unstaked(user, stQEUROAmount, qeuroAmount)` - User unstaked stQEURO
+* `YieldDistributed(yieldAmount, newExchangeRate)` - Yield added to exchange rate
+* `ParametersUpdated(yieldFee, minThreshold)` - Governance update
+
+**Contract Dependencies**
+
+* `QEURO`: Underlying stablecoin token
+* `YieldShift`: Yield distribution controller
+* `USDC`: Yield denomination (converted via exchange)
+* `Treasury`: Fee recipient
 
 ***
 
 ### Conclusion: Pioneering Euro Yield Infrastructure
 
-stQEURO represents a fundamental advancement in European DeFi infrastructure, offering the first truly euro-native yield-bearing token with institutional-grade security and retail-friendly user experience. Through innovative compounding mechanics, cross-protocol composability, and sustainable yield generation, stQEURO creates a new paradigm for passive euro investment in decentralized finance.
+stQEURO represents a fundamental advancement in European DeFi infrastructure, offering a truly euro-native yield-bearing token with instant liquidity and automatic compounding. Through the innovative exchange rate appreciation model, users can earn yield without token rebasing or manual reward claiming.
 
-Our approach balances sophisticated financial engineering with regulatory compliance and user accessibility, ensuring that stQEURO can serve both crypto-native users and traditional finance participants seeking exposure to DeFi yields. The automatic compounding mechanism eliminates friction while maintaining full liquidity and composability across the DeFi ecosystem.
-
-As stQEURO scales through our development roadmap, it will evolve from a simple yield-bearing token into the cornerstone of euro-denominated DeFi infrastructure, enabling seamless integration between traditional European finance and innovative decentralized protocols. This represents the beginning of a transformative journey toward mainstream adoption of euro-native DeFi products.
-
-The future of European decentralized finance is built on foundations of trust, transparency, and sustainable yield generation—principles that stQEURO embodies in every aspect of its design and operation.
+The integration with YieldShift ensures dynamic, market-responsive yield distribution that balances the interests of all protocol participants. As the Quantillon ecosystem grows, stQEURO will serve as the primary vehicle for passive euro yield generation in DeFi.
 
 ***
 
-> **Important Disclaimer**: stQEURO is a yield-bearing token that carries inherent risks including smart contract vulnerabilities, market volatility, and regulatory changes. Past performance does not guarantee future results. The compounding mechanism may result in tax implications depending on your jurisdiction. This document is for informational purposes only and should not be considered investment advice. Users should conduct thorough research and consult with financial advisors before participating in any DeFi protocol.
+> **Important Disclaimer**: stQEURO is a yield-bearing token that carries inherent risks including smart contract vulnerabilities, market volatility, and variable yields. Past performance does not guarantee future results. The compounding mechanism may result in tax implications depending on your jurisdiction. This document is for informational purposes only and should not be considered investment advice. Users should conduct thorough research before participating in any DeFi protocol.

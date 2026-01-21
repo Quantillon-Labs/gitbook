@@ -6,7 +6,7 @@
 
 The Quantillon Euro (QEURO) represents a revolutionary approach to euro-denominated digital assets, combining the stability of traditional stablecoins with the innovation of decentralized finance. Designed as an overcollateralized, yield-generating stablecoin backed by USDC and governed through democratic mechanisms, QEURO solves the fundamental liquidity and adoption challenges facing Euro DeFi markets.
 
-Our stablecoin architecture incorporates advanced mechanisms including permissionless minting/redemption, delta-neutral hedging, and modular vault systems that deliver superior capital efficiency while maintaining regulatory compliance. The design prioritizes user experience, institutional adoption, and sustainable yield generation across diverse market conditions.
+Our stablecoin architecture incorporates advanced mechanisms including overcollateralized minting/redemption via the QuantillonVault, delta-neutral hedging, and Aave v3 yield generation that delivers superior capital efficiency while maintaining regulatory compliance. The design prioritizes user experience, institutional adoption, and sustainable yield generation across diverse market conditions.
 
 ***
 
@@ -19,18 +19,22 @@ Our stablecoin architecture incorporates advanced mechanisms including permissio
 | **Name**          | Quantillon Euro             | Clear utility identification   |
 | **Symbol**        | QEURO                       | Recognizable euro denomination |
 | **Standard**      | ERC-20 (UUPS Upgradeable)   | Future-proof with security     |
-| **Network**       | Ethereum Mainnet + Base L2s | Multi-chain liquidity strategy |
+| **Network**       | Base L2 (Primary)           | L2 efficiency and lower costs  |
 | **Peg Target**    | 1 QEURO = 1 EUR             | Direct euro denomination       |
 | **Decimals**      | 18                          | Full ERC-20 compatibility      |
+| **Max Supply**    | 1,000,000,000 QEURO         | Governance-adjustable cap      |
 | **Contract Type** | OpenZeppelin + Custom Logic | Battle-tested + innovation     |
 
-**Advanced Features**
+**Implemented Features**
 
-* **Cross-Chain Compatibility**: Native bridging to Base, Arbitrum, Optimism
-* **Oracle Integration**: Chainlink EUR/USD feeds with backup systems
+* **Oracle Integration**: Chainlink EUR/USD and USDC/USD feeds with circuit breakers
 * **Slippage-Free Operations**: Mint/redeem at oracle rates with 0.1% fees
-* **Emergency Controls**: Pausable with time-locked upgrades
-* **MEV Protection**: Built-in front-running resistance for operations
+* **Emergency Controls**: Pausable with time-locked upgrades via UUPS pattern
+* **Compliance System**: Blacklist/whitelist functionality for regulatory compliance
+* **Rate Limiting**: Protection against large-scale manipulation attacks
+* **Minting Killswitch**: Emergency minting halt capability
+
+> **🚧 Roadmap Features**: Cross-chain bridging (Base, Arbitrum, Optimism) and multi-collateral support (ETH, WBTC) are planned for future phases.
 
 ***
 
@@ -38,35 +42,37 @@ Our stablecoin architecture incorporates advanced mechanisms including permissio
 
 **Overcollateralization Model**
 
-**📊 Collateral Framework**
+**📊 Collateral Framework (MVP)**
 
-| Collateral Type | Minimum Ratio | Liquidation Threshold | Accepted Assets     |
-| --------------- | ------------- | --------------------- | ------------------- |
-| **Primary**     | 101%          | 101%                  | USDC (main backend) |
-| **Secondary**   | 105%          | 103%                  | ETH, WBTC           |
-| **Alternative** | 110%          | 105%                  | Governance-approved |
+| Collateral Type | Status | Minimum Ratio | Accepted Assets |
+| --------------- | ------ | ------------- | --------------- |
+| **Primary**     | ✅ Live | 101%+         | USDC            |
+
+> **Note**: Multi-collateral support (ETH, WBTC, governance-approved assets) is planned for future protocol upgrades.
 
 **🔒 Security Mechanisms**
 
-* **Real-time Monitoring**: Chainlink oracles with real time updates
-* **Automated Liquidations**: Smart contract-driven with 5% penalty
-* **Emergency Reserves**: 3% buffer fund for extreme volatility
-* **Multi-Sig Controls**: 7-day timelock for critical parameter changes
+* **Real-time Monitoring**: Chainlink oracles with 1-hour maximum staleness
+* **Price Deviation Protection**: 5% maximum price change tolerance
+* **Circuit Breakers**: Automatic pause on oracle failures or extreme conditions
+* **Multi-Sig Controls**: Time-locked upgrades for critical parameter changes
+* **Compliance Controls**: Blacklist/whitelist address management
 
 **Minting & Redemption Process**
 
-**📥 Minting Workflow**
+**📥 Minting Workflow (MVP)**
 
 ```
-User Assets → DEX Router → USDC Conversion → Collateral Lock → QEURO Mint
+User USDC → QuantillonVault → Oracle Price Check → QEURO Mint → Aave Deployment
 ```
 
-1. **Asset Deposit**: Any accepted ERC-20 token
-2. **Automatic Routing**: Optimal price execution through integrated DEX
-3. **USDC Conversion**: All collateral standardized to USDC
-4. **Oracle Price Check**: Real-time EUR/USD rate verification
-5. **QEURO Issuance**: Instant minting at oracle rate minus 0.1% fee
-6. **Yield Deployment**: Collateral automatically deployed to Aave
+1. **USDC Deposit**: Users deposit USDC to the QuantillonVault
+2. **Oracle Price Check**: Real-time EUR/USD rate verification via Chainlink
+3. **Collateral Lock**: Protocol enforces minimum collateralization ratio
+4. **QEURO Issuance**: Vault mints QEURO at oracle rate minus 0.1% fee
+5. **Yield Deployment**: Collateral automatically deployed to Aave v3
+
+> **Important**: Minting occurs via the QuantillonVault contract which holds the MINTER_ROLE. Users interact through the Vault interface, not directly with the QEURO token contract.
 
 **📤 Redemption Workflow**
 
@@ -79,28 +85,29 @@ QEURO Burn → Oracle Verification → Collateral Release → USDC Transfer
 * **Zero Slippage**: Oracle-based pricing eliminates DEX impact
 * **24/7 Operations**: No banking hours or geographic restrictions
 * **Instant Settlement**: Single-block transaction finality
-* **Permissionless Access**: No KYC required for basic operations
+* **Open Access**: Any address can deposit/redeem via the Vault
 
 **Yield Generation Strategy**
 
-**💰 Collateral Deployment Pipeline**
+**💰 Collateral Deployment**
+
+USDC collateral is deployed to Aave v3 on Base to generate yield. The deployment is managed by governance with the following constraints:
+
+* **Maximum Aave Exposure**: 50,000,000 USDC (governance-adjustable)
+* **Harvest Threshold**: 1,000 USDC minimum for yield harvesting
+* **Emergency Withdrawal**: Available for crisis situations
+
+**Revenue Distribution Model (Dynamic YieldShift)**
 
 ```
-USDC Collateral (100%)
-├── 85% → Aave Lending (Primary Strategy)
-├── 10% → Emergency Liquidity Buffer  
-└── 5% → Protocol Operations Reserve
-```
-
-**Revenue Distribution Model**
-
-```
-Aave Yield (Base: 7% APY)
+Aave Yield (Variable APY)
 ├── 10% → Protocol Fees (Treasury)
-├── 25% → Hedgers Compensation  
-├── 60% → QEURO Stakers (stQEURO)
-└── 5% → Insurance Fund
+└── 90% → Dynamic Distribution via YieldShift
+    ├── Users (stQEURO holders): 50-90% based on pool ratios
+    └── Hedgers: 10-50% based on pool ratios
 ```
+
+> **Note**: The YieldShift mechanism dynamically adjusts yield distribution between Users and Hedgers based on pool utilization ratios. The base shift is 50% to users, with a maximum of 90%.
 
 ***
 
@@ -110,40 +117,44 @@ Aave Yield (Base: 7% APY)
 
 **Primary Functions**:
 
-* **QEURO Minting**: Permissionless issuance against collateral
-* **Yield Earning**: Stake QEURO to receive protocol yields
+* **QEURO Minting**: Deposit USDC via Vault to mint QEURO
+* **Yield Earning**: Stake QEURO to stQEURO to receive auto-compounding yields
 * **Governance Participation**: Vote on protocol parameters via QTI
-* **Liquidity Provision**: Earn trading fees in DEX pools
+* **Unstaking Cooldown**: Configurable cooldown period for unstaking
 
 **Participation Requirements**:
 
-* **Minimum Mint**: 10 QEURO (gas efficiency)
-* **Collateral Ratio**: 101% minimum maintained automatically
+* **Minimum Stake**: Configurable via governance (minStakeAmount)
+* **Collateral Ratio**: Protocol maintains 101%+ collateralization automatically
+* **Holding Period**: 7-day minimum for yield claims (anti-manipulation)
 
 **🛡️ Hedger Pool Mechanics**
 
-**Specialized Actors**:
+**Current Implementation: Single Hedger Model**
 
-* **FX Risk Management**: Delta-neutral EUR/USD exposure
-* **Liquidity Provision**: USDC deposits for protocol operations
-* **Yield Optimization**: Enhanced returns through leverage (up to 20x)
+> **Important**: The MVP implements a single designated hedger model for simplified operations. Multi-hedger support is planned for future phases.
+
+**Hedger Functions**:
+
+* **FX Risk Management**: Delta-neutral EUR/USD exposure via margin positions
+* **USDC Provision**: Deposits USDC margin for protocol collateralization
+* **Yield Optimization**: Earns compensation from yield shift allocation
 * **Peg Maintenance**: Economic incentives to maintain EUR stability
 
 **Compensation Structure**:
 
 ```
-Base Compensation: EUR/USD Interest Rate Spread (~1.2% annually)
-+ Variable Yield Shift: 0.2% to 1.5% based on market conditions
-+ Liquidation Penalties: Share of liquidated hedger positions
-= Total APY: 1.4% to 3.7% (20x leveraged: 28% to 74%)
+Base Compensation: EUR/USD Interest Rate Differential
++ Variable Yield Shift: Based on pool utilization ratios
+= Total Compensation (configurable via governance)
 ```
 
 **Risk Management**:
 
-* **Margin Requirements**: 101% minimum backed by USDC
-* **Auto-Liquidation**: Triggered below threshold with 5% penalty
-* **Position Limits**: Maximum exposure caps to prevent concentration
-* **Dynamic Pricing**: Yield shift adjusts based on supply/demand
+* **Margin Requirements**: Configurable minimum margin ratio (minMarginRatio)
+* **Leverage Limits**: Maximum leverage configurable by governance (maxLeverage)
+* **Auto-Liquidation**: Triggered when position becomes unhealthy
+* **Entry/Exit Fees**: Configurable fees for position management
 
 ***
 
@@ -153,98 +164,268 @@ Base Compensation: EUR/USD Interest Rate Spread (~1.2% annually)
 
 The Yield Shift represents QEURO's most innovative feature—automatically rebalancing incentives between Users and Hedgers based on real-time market conditions.
 
-**📊 Calculation Formula**
+**📊 Technical Parameters (Code Values)**
 
-```
-Yield Shift = Base Rate + Market Adjustment + Governance Override
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| **Base Yield Shift** | 50% (5000 bps) | Default allocation to users |
+| **Max Yield Shift** | 90% (9000 bps) | Maximum allocation to users |
+| **Adjustment Speed** | 100 bps | Rate of shift adjustment |
+| **Target Pool Ratio** | 100% (10000 bps) | Optimal user/hedger ratio |
+| **TWAP Period** | 24 hours | Time-weighted average window |
+| **Min Holding Period** | 7 days | Required for yield claims |
 
-Where:
-- Base Rate: EUR/USD interest rate differential
-- Market Adjustment: Supply/demand imbalance factor (-2% to +3%)  
-- Governance Override: Emergency adjustments via QTI voting
-```
+**🎯 How It Works**
 
-**🎯 Trigger Conditions**
+| Pool Condition | Yield Shift Direction | User Impact | Hedger Impact |
+| -------------- | --------------------- | ----------- | ------------- |
+| **High User Pool** | Shift toward hedgers | Lower yields | Higher compensation |
+| **Balanced Pools** | Neutral | Standard yields | Standard rates |
+| **High Hedger Pool** | Shift toward users | Higher yields | Lower compensation |
 
-| Market Condition       | Yield Shift Direction | User Impact       | Hedger Impact       |
-| ---------------------- | --------------------- | ----------------- | ------------------- |
-| **High QEURO Demand**  | Negative (-1.5%)      | Higher yields     | Lower compensation  |
-| **Balanced Market**    | Neutral (0%)          | Standard yields   | Standard rates      |
-| **High Hedger Demand** | Positive (+2.0%)      | Lower yields      | Higher compensation |
-| **Extreme Volatility** | Dynamic (±3.0%)       | Variable response | Enhanced incentives |
+**⏱️ Response Mechanism**:
 
-**⏱️ Response Time**:
-
-* **Automatic Adjustments**: Every 6 hours based on oracle data
-* **Emergency Response**: 15-minute reaction to extreme events
-* **Governance Override**: 24-48 hour implementation period
-
-***
-
-### Vault Variants & Risk Segmentation
-
-**🏗️ Modular Architecture Design**
-
-**📋 Vault Portfolio**
-
-| Vault Type | Collateral Backend           | Risk Profile | Target APY | Target Users       |
-| ---------- | ---------------------------- | ------------ | ---------- | ------------------ |
-| **aQEURO** | Aave USDC lending            | 🟢 Low       | 4-8%       | Retail investors   |
-| **mQEURO** | MakerDAO PSM/DSR             | 🟢 Very Low  | 3-6%       | Conservative users |
-| **bQEURO** | Tokenized T-Bills & RWAs     | 🟢 Low       | 5-7%       | Institutions       |
-| **eQEURO** | Ethena & advanced strategies | 🟡 Medium    | 6-12%      | Sophisticated DeFi |
-
-**🔄 Cross-Vault Mechanics**
-
-* **Unified Peg**: All variants maintain same EUR target price
-* **Arbitrage Opportunities**: Price differences create trading incentives
-* **Risk Isolation**: Individual vault failures don't affect others
-* **Governance Coordination**: QTI holders vote on vault parameters
-
-**🎯 Institutional Variants**
-
-**bQEURO: Institutional Focus**
-
-* **Collateral**: US Treasury Bills, German Bunds, Corporate Bonds
-* **Custody**: Regulated entities with daily attestations
-* **Compliance**: Full MiCA compliance with reporting
-* **Minimum**: €100,000 institutional threshold
-
-**eQEURO: Advanced Strategies**
-
-* **Strategies**: Ethena USDe, Lido stETH, Rocketpool rETH
-* **Leverage**: Up to 3x through recursive borrowing
-* **Automation**: Rebalancing bots and yield optimization
-* **Flexibility**: Parameter adjustment via governance
+* **Automatic Adjustments**: Based on 24-hour TWAP calculations
+* **Gradual Changes**: Adjustment speed limits sudden shifts
+* **Governance Control**: Parameters adjustable via QTI governance
 
 ***
 
-### Liquidity Architecture
+### Vault Architecture
 
-**🌊 "Liquidity by Design" Model**
+**🏗️ Current Implementation**
 
-**Upstream Liquidity (USDC Integration)**
+**aQEURO Vault (Live)**
 
-* **Primary Source**: USDC's $28B+ market cap and institutional adoption
-* **DEX Integration**: Uniswap V4, Curve, 1inch aggregation
-* **Cross-Chain**: Base, Arbitrum, Optimism native liquidity
-* **Routing Efficiency**: Automatic optimization for minimal slippage
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| **Backend** | Aave v3 USDC | Primary yield source |
+| **Risk Profile** | 🟢 Low | Established DeFi protocol |
+| **Target APY** | 4-12% | Market-dependent |
+| **Max Exposure** | 50M USDC | Risk limit |
 
-**Downstream Liquidity (Forex Integration)**
+> **🚧 Future Vault Variants** (Roadmap):
+> - **mQEURO**: MakerDAO PSM/DSR integration
+> - **bQEURO**: Tokenized T-Bills & RWAs
+> - **eQEURO**: Ethena & advanced strategies
 
-* **EUR/USD Pair**: $1.5 trillion daily volume in traditional markets
-* **Hedger Incentives**: Professional traders arbitrage price differences
-* **24/7 Operations**: Continuous price discovery without market close
-* **Deep Markets**: Institutional-grade liquidity depth
+***
 
-**🔄 Native DEX Integration**
+### Compliance & Security Features
 
-**Embedded Exchange Features**
+**🔐 Access Control Roles**
 
-* **Internal Routing**: Optimized paths for QEURO operations
-* **Fee Retention**: 100% of trading fees remain in protocol
-* **MEV Protection**: Front-running resistance for user transactions
-* **Composability**: Integration with major DeFi protocols
+| Role | Permission | Typical Holder |
+|------|------------|----------------|
+| **DEFAULT_ADMIN_ROLE** | Grant/revoke roles, critical admin | Multisig |
+| **MINTER_ROLE** | Mint new QEURO | QuantillonVault |
+| **BURNER_ROLE** | Burn QEURO | QuantillonVault |
+| **PAUSER_ROLE** | Pause/unpause | Emergency multisig |
+| **COMPLIANCE_ROLE** | Manage blacklist/whitelist | Compliance team |
+
+***
+
+### 🚦 Rate Limiting System
+
+The rate limiting system protects the protocol against large-scale manipulation attacks by limiting mint/burn volume per address over a given period.
+
+**Technical Implementation**
+
+```solidity
+// Rate Limiting Constants
+MAX_RATE_LIMIT = type(uint96).max    // Maximum configurable limit
+RATE_LIMIT_RESET_PERIOD = 1 hours    // Reset window
+```
+
+**Mechanism**
+
+1. **Per-address tracking**: Each address has its own mint/burn limit
+2. **Sliding window**: The limit resets after 1 hour of inactivity
+3. **Accumulation**: Operations accumulate within the current window
+4. **Blocking**: If cumulative total exceeds the limit, operation fails
+
+**Configuration**
+
+| Parameter | Default Value | Governable |
+|-----------|---------------|------------|
+| `rateLimitCaps[address]` | MAX_RATE_LIMIT | ✅ Yes |
+| `RATE_LIMIT_RESET_PERIOD` | 1 hour | ❌ Constant |
+
+**Use Cases**
+
+- **Anti-whale protection**: Prevents an actor from minting/burning massively
+- **Operation smoothing**: Distributes load over time
+- **Anomaly detection**: Bypass attempts can be monitored
+
+**Associated Functions**
+
+```solidity
+// Check and update mint rate limit
+function _checkAndUpdateMintRateLimit(address account, uint256 amount) internal;
+
+// Check and update burn rate limit
+function _checkAndUpdateBurnRateLimit(address account, uint256 amount) internal;
+```
+
+***
+
+### 🔴 Minting Killswitch
+
+The Minting Killswitch is an emergency mechanism that instantly halts all minting operations on the protocol.
+
+**Implementation**
+
+```solidity
+// Killswitch state
+bool public mintingKillswitch;
+
+// Enable/disable (admin only)
+function setMintingKillswitch(bool enabled) external onlyRole(DEFAULT_ADMIN_ROLE);
+```
+
+**When to Use?**
+
+| Situation | Action | Consequence |
+|-----------|--------|-------------|
+| **Vulnerability detected** | Enable killswitch | No more QEURO can be minted |
+| **Oracle compromised** | Enable killswitch | Prevents minting at wrong prices |
+| **Attack in progress** | Enable killswitch | Stops exploitation immediately |
+| **Situation resolved** | Disable killswitch | Resumes normal operations |
+
+**Impact**
+
+- ✅ **Burns remain possible**: Users can still exit
+- ✅ **Transfers remain possible**: QEURO remains transferable
+- ✅ **Redemptions remain possible**: Via the Vault (which burns)
+- ❌ **Minting blocked**: No new QEURO issuance
+
+**Difference with Pause**
+
+| Function | Mint | Burn | Transfer | Redeem |
+|----------|------|------|----------|--------|
+| **Killswitch ON** | ❌ | ✅ | ✅ | ✅ |
+| **Pause ON** | ❌ | ❌ | ❌ | ❌ |
+
+> **Note**: The killswitch is a less drastic measure than full pause, allowing users to exit the protocol.
+
+***
+
+### 📋 Compliance System (Blacklist/Whitelist)
+
+The QEURO protocol integrates a compliance system to meet regulatory requirements, including MiCA.
+
+**System Architecture**
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  COMPLIANCE SYSTEM                   │
+├─────────────────────────────────────────────────────┤
+│  Normal Mode (whitelistEnabled = false)             │
+│  ├── Everyone can transfer                          │
+│  └── Except blacklisted addresses                   │
+├─────────────────────────────────────────────────────┤
+│  Whitelist Mode (whitelistEnabled = true)           │
+│  ├── Only whitelisted addresses can transfer        │
+│  └── Blacklisted remain excluded                    │
+└─────────────────────────────────────────────────────┘
+```
+
+**Compliance Mappings**
+
+```solidity
+mapping(address => bool) public isBlacklisted;   // Blocked addresses
+mapping(address => bool) public isWhitelisted;   // Authorized addresses
+bool public whitelistEnabled;                     // Whitelist mode active
+```
+
+**Management Functions**
+
+| Function | Required Role | Description |
+|----------|---------------|-------------|
+| `blacklistAddress(address)` | COMPLIANCE_ROLE | Block an address |
+| `unblacklistAddress(address)` | COMPLIANCE_ROLE | Unblock an address |
+| `whitelistAddress(address)` | COMPLIANCE_ROLE | Authorize an address |
+| `unwhitelistAddress(address)` | COMPLIANCE_ROLE | Remove authorization |
+| `toggleWhitelistMode()` | COMPLIANCE_ROLE | Enable/disable whitelist mode |
+
+**Batch Operations**
+
+For gas efficiency, batch operations are available:
+
+```solidity
+function batchBlacklistAddresses(address[] calldata accounts) external;
+function batchUnblacklistAddresses(address[] calldata accounts) external;
+function batchWhitelistAddresses(address[] calldata accounts) external;
+function batchUnwhitelistAddresses(address[] calldata accounts) external;
+```
+
+**Verification Logic**
+
+On each transfer, the `_update` function verifies:
+
+```
+1. Sender is not blacklisted
+2. Recipient is not blacklisted
+3. If whitelistEnabled:
+   - Sender must be whitelisted (except for minting)
+   - Recipient must be whitelisted (except for burning)
+```
+
+**Regulatory Use Cases**
+
+| Scenario | Configuration | Result |
+|----------|---------------|--------|
+| **Open public** | whitelistEnabled=false | Everyone can transfer except blacklisted |
+| **OFAC sanctions** | Blacklist sanctioned addresses | Sanctions compliance |
+| **KYC required** | whitelistEnabled=true | Only KYC'd users can use |
+| **Fund freeze** | Blacklist specific address | Funds frozen for investigation |
+
+**Emitted Events**
+
+```solidity
+event BlacklistUpdated(address indexed account, bool status);
+event WhitelistUpdated(address indexed account, bool status);
+event WhitelistModeToggled(bool enabled);
+```
+
+***
+
+### ⚠️ Emergency Controls
+
+**Emergency Controls Overview**
+
+| Control | Severity | Required Role | Reversible |
+|---------|----------|---------------|------------|
+| **Rate Limit** | 🟡 Medium | Automatic | ✅ Auto-reset |
+| **Killswitch** | 🟠 High | ADMIN | ✅ Yes |
+| **Pause** | 🔴 Critical | PAUSER | ✅ Yes |
+| **Blacklist** | 🟡 Targeted | COMPLIANCE | ✅ Yes |
+
+**Escalation Procedure**
+
+```
+Level 1: Rate Limiting (automatic)
+    ↓ If insufficient
+Level 2: Minting Killswitch (admin)
+    ↓ If insufficient  
+Level 3: Targeted Blacklist (compliance)
+    ↓ If insufficient
+Level 4: Full Pause (pauser/admin)
+```
+
+**Token Recovery**
+
+In case of tokens or ETH sent by mistake to the contract:
+
+```solidity
+// Recover ERC20 tokens
+function recoverToken(address token, uint256 amount) external onlyRole(DEFAULT_ADMIN_ROLE);
+
+// Recover ETH
+function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
+```
+
+> Recovered funds are sent to the configured `treasury` address.
 
 ***
 
@@ -255,56 +436,19 @@ Where:
 **Primary Revenue Sources**
 
 1. **Mint/Redeem Fees**: 0.1% on all QEURO operations
-2. **Yield Management**: 10% of collateral deployment returns
-3. **Liquidation Penalties**: 5% of liquidated positions
-4. **Cross-Chain Fees**: 0.2% for bridge operations
-5. **Premium Services**: Institutional-grade features
+2. **Yield Management**: 10% of Aave collateral deployment returns
+3. **Position Fees**: Entry/exit fees from hedger operations
 
-**💰 Financial Projections**
-
-**Conservative Scenario (€50M TVL)**
-
-```
-Annual Revenue Calculation:
-- Swap Volume: €500M (10x TVL turnover)
-- Swap Fees: €500M × 0.1% = €500K
-- Yield Revenue: €50M × 7% × 10% = €350K  
-- Liquidations: €2M volume × 5% = €100K
-Total Annual: €950K
-
-Operating Costs: €600K (development, infrastructure, legal)
-Net Profit: €350K (37% margin)
-```
-
-**Optimistic Scenario (€500M TVL)**
-
-```
-Annual Revenue Calculation:
-- Swap Volume: €5B (10x TVL turnover)  
-- Swap Fees: €5B × 0.1% = €5M
-- Yield Revenue: €500M × 7% × 10% = €3.5M
-- Liquidations: €20M volume × 5% = €1M
-Total Annual: €9.5M
-
-Operating Costs: €2M (scaled operations)
-Net Profit: €7.5M (79% margin)
-```
+> **Note**: Cross-chain bridge fees and additional vault fees are planned for future implementations.
 
 **🎯 Key Performance Indicators**
 
-**Growth Metrics**
-
-* **TVL Growth**: Target €100M by Month 12, €1B by Month 36
-* **Daily Volume**: 2-5% of TVL in trading activity
-* **User Adoption**: 10K+ active users by Year 2
-* **Cross-Chain**: 80% mainnet, 20% L2 distribution
-
 **Health Metrics**
 
-* **Peg Stability**: <2% deviation from EUR 99% of time
-* **Collateral Ratio**: Maintain >105% across all conditions
-* **Yield Consistency**: 4-8% APY range for conservative vaults
-* **Governance Activity**: >25% QTI voting participation
+* **Peg Stability**: Target <2% deviation from EUR
+* **Collateral Ratio**: Maintain >101% across all conditions
+* **Yield Consistency**: Dynamic based on Aave market conditions
+* **Governance Activity**: QTI holder participation
 
 ***
 
@@ -314,47 +458,71 @@ Net Profit: €7.5M (79% margin)
 
 **Technical Risks**
 
-| Risk Factor             | Probability | Impact   | Mitigation Strategy                    |
-| ----------------------- | ----------- | -------- | -------------------------------------- |
-| **Smart Contract Bug**  | Medium      | Critical | Multiple audits, formal verification   |
-| **Oracle Manipulation** | Low         | High     | Chainlink + backup feeds, time delays  |
-| **Cross-Chain Bridge**  | Medium      | Medium   | Multi-bridge strategy, insurance       |
-| **Liquidation Cascade** | Low         | High     | Circuit breakers, emergency procedures |
+| Risk Factor | Probability | Impact | Mitigation Strategy |
+| ----------- | ----------- | ------ | ------------------- |
+| **Smart Contract Bug** | Medium | Critical | Multiple audits, formal verification |
+| **Oracle Manipulation** | Low | High | Chainlink + circuit breakers, 5% deviation limit |
+| **Aave Protocol Risk** | Low | Medium | Emergency withdrawal, exposure limits |
+| **Liquidation Cascade** | Low | High | Circuit breakers, emergency pause |
 
 **Market Risks**
 
-| Risk Factor            | Probability | Impact | Mitigation Strategy                        |
-| ---------------------- | ----------- | ------ | ------------------------------------------ |
-| **EUR/USD Volatility** | High        | Medium | Delta-neutral hedging, yield shift         |
-| **USDC Depeg**         | Low         | High   | Multi-collateral strategy, diversification |
-| **Aave Protocol Risk** | Low         | Medium | Vault variants, risk distribution          |
-| **Regulatory Changes** | Medium      | High   | Legal compliance, jurisdiction flexibility |
+| Risk Factor | Probability | Impact | Mitigation Strategy |
+| ----------- | ----------- | ------ | ------------------- |
+| **EUR/USD Volatility** | High | Medium | Delta-neutral hedging, yield shift |
+| **USDC Depeg** | Low | High | 2% tolerance monitoring, circuit breaker |
+| **Interest Rate Changes** | Medium | Low | Dynamic yield adjustment |
+| **Regulatory Changes** | Medium | High | MiCA compliance, blacklist capability |
 
-### **Emergency Procedures**
+**Emergency Procedures**
 
 **Crisis Response Protocol**
 
-* **Level 1**: Automated circuit breakers (trading halts)
-* **Level 2**: Emergency DAO voting (6-hour execution)
-* **Level 3**: Multi-sig intervention (core team authority)
+* **Level 1**: Automatic circuit breakers (oracle pause)
+* **Level 2**: Emergency role intervention (pause operations)
+* **Level 3**: Admin intervention (parameter changes)
 * **Level 4**: Protocol pause (complete system halt)
 
 **Recovery Mechanisms**
 
-* **Insurance Fund**: 5% of revenue allocated to cover losses
-* **Governance Override**: Emergency parameter adjustments
-* **Cross-Vault Support**: Healthy vaults support distressed ones
-* **External Partnerships**: Professional market makers on standby
+* **Token Recovery**: Admin can recover accidentally sent tokens
+* **ETH Recovery**: Admin can recover accidentally sent ETH
+* **Governance Override**: Emergency parameter adjustments via governance
+
+***
+
+### Technical Reference
+
+**Contract Addresses**
+
+> Contract addresses will be published after mainnet deployment.
+
+**Key Constants**
+
+```solidity
+DEFAULT_MAX_SUPPLY = 1_000_000_000e18  // 1 billion QEURO
+MINT_FEE_RATE = 10                      // 0.10% (10 basis points)
+MAX_RATE_LIMIT = type(uint96).max       // Per-address rate limit
+RATE_LIMIT_RESET_PERIOD = 1 hours       // Rate limit window
+```
+
+**Events**
+
+* `Transfer(from, to, amount)` - Standard ERC20 transfer
+* `Mint(to, amount)` - QEURO minted
+* `Burn(from, amount)` - QEURO burned
+* `BlacklistUpdated(account, status)` - Compliance update
+* `MintingKillswitchSet(enabled)` - Emergency control activated
 
 ***
 
 #### Conclusion: The Future of Euro DeFi
 
-QEURO represents more than just another stablecoin—it constitutes a comprehensive financial infrastructure designed specifically for the European DeFi ecosystem. Through innovative dual-pool mechanics, dynamic yield redistribution, and modular vault architecture, QEURO creates a sustainable foundation for euro-denominated decentralized finance.
+QEURO represents more than just another stablecoin—it constitutes a comprehensive financial infrastructure designed specifically for the European DeFi ecosystem. Through innovative dual-pool mechanics, dynamic yield redistribution via YieldShift, and robust security controls, QEURO creates a sustainable foundation for euro-denominated decentralized finance.
+
+The MVP implementation focuses on core functionality with USDC collateral and Aave v3 yield generation. Future phases will expand to multi-collateral support, additional vault strategies, and cross-chain deployment.
 
 Our approach prioritizes user experience, regulatory compliance, and sustainable yield generation while maintaining the flexibility to adapt to an evolving financial landscape. The result is a stablecoin that bridges traditional European finance with the innovation and accessibility of decentralized protocols.
-
-As QEURO scales through our roadmap, it will evolve from a simple stablecoin into the cornerstone of a comprehensive euro-native financial ecosystem, enabling seamless interaction between traditional finance and DeFi innovation. This represents just the beginning of a transformative journey toward truly decentralized, European-centric digital finance.
 
 ***
 

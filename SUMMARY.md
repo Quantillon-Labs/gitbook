@@ -21,7 +21,13 @@
   * [QEURO Token](protocol/quantillon-protocols-tokens/qeuro-token.md)
   * [stQEURO Token](protocol/quantillon-protocols-tokens/stqeuro-token.md)
   * [QTI Token](protocol/quantillon-protocols-tokens/qti-token.md)
-* [Technical Appendices](protocol/appendices-techniques.md)
+* [Smart Contract Components](protocol/appendices-techniques.md)
+  * [UserPool](protocol/user-pool.md)
+  * [HedgerPool](protocol/hedger-pool.md)
+  * [YieldShift](protocol/yield-shift.md)
+  * [AaveVault](protocol/aave-vault.md)
+  * [ChainlinkOracle](protocol/chainlink-oracle.md)
+  * [Liquidation System](protocol/liquidation-system.md)
 
 ## 🛡️ Risk Management and Sustainability
 
