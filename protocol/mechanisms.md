@@ -1,4 +1,4 @@
-# Mechanisms
+# Core Mechanisms
 
 ## Mechanisms
 
@@ -101,12 +101,12 @@ Users are participants who mint/hold QEURO for euro exposure and yield generatio
 
 **Technical Parameters**
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `stakingAPY` | APY for staked positions | Governance-set |
-| `minStakeAmount` | Minimum stake amount | Configurable |
-| `unstakingCooldown` | Cooldown before unstake | Configurable |
-| `performanceFee` | Fee on yield | Governance-set |
+| Parameter           | Description              | Default        |
+| ------------------- | ------------------------ | -------------- |
+| `stakingAPY`        | APY for staked positions | Governance-set |
+| `minStakeAmount`    | Minimum stake amount     | Configurable   |
+| `unstakingCooldown` | Cooldown before unstake  | Configurable   |
+| `performanceFee`    | Fee on yield             | Governance-set |
 
 #### 🛡️ Hedger Pool (HedgerPool Contract)
 
@@ -128,7 +128,7 @@ The designated hedger provides delta-neutral EUR/USD hedging:
 
 * **Position Opening**: Depositer USDC margin to open hedge positions
 * **Leverage**: Configurable via `maxLeverage` parameter
-* **P&L Tracking**: Real-time unrealized and realized P&L calculation
+* **P\&L Tracking**: Real-time unrealized and realized P\&L calculation
 * **Yield Earning**: Receives yield allocation via YieldShift
 
 **Position Management**
@@ -162,12 +162,12 @@ Hedger Revenue Sources:
 
 **Risk Management**
 
-| Parameter | Description | Location |
-|-----------|-------------|----------|
-| `minMarginRatio` | Minimum margin ratio | CoreParams |
-| `maxLeverage` | Maximum leverage allowed | CoreParams |
-| `entryFee` | Fee for opening positions | CoreParams |
-| `exitFee` | Fee for closing positions | CoreParams |
+| Parameter        | Description               | Location   |
+| ---------------- | ------------------------- | ---------- |
+| `minMarginRatio` | Minimum margin ratio      | CoreParams |
+| `maxLeverage`    | Maximum leverage allowed  | CoreParams |
+| `entryFee`       | Fee for opening positions | CoreParams |
+| `exitFee`        | Fee for closing positions | CoreParams |
 
 **Position Health & Liquidation**
 
@@ -204,30 +204,23 @@ Quantillon uses overcollateralization to mitigate forex market volatility.
 
 **Minimum Ratios**
 
-| Actor | Minimum Ratio | Liquidation Threshold |
-|-------|---------------|----------------------|
-| **Protocol** | 101% | < 101% triggers alerts |
-| **Hedger** | Configurable (minMarginRatio) | < minMarginRatio |
+| Actor        | Minimum Ratio                 | Liquidation Threshold  |
+| ------------ | ----------------------------- | ---------------------- |
+| **Protocol** | 101%                          | < 101% triggers alerts |
+| **Hedger**   | Configurable (minMarginRatio) | < minMarginRatio       |
 
 **Accepted Collateral (MVP)**
 
-| Asset | Status | Notes |
-|-------|--------|-------|
-| **USDC** | ✅ Live | Primary collateral |
-| 🚧 ETH | Planned | Phase 2 |
-| 🚧 WBTC | Planned | Phase 2 |
-| 🚧 Governance-approved | Planned | Phase 3 |
+| Asset                  | Status  | Notes              |
+| ---------------------- | ------- | ------------------ |
+| **USDC**               | ✅ Live  | Primary collateral |
+| 🚧 ETH                 | Planned | Phase 2            |
+| 🚧 WBTC                | Planned | Phase 2            |
+| 🚧 Governance-approved | Planned | Phase 3            |
 
 #### Collateral Management
 
 **Vault Deployment (MVP)**
-
-| Vault Type | Backend | Status | Target APY |
-|------------|---------|--------|------------|
-| **aQEURO** | Aave v3 USDC | ✅ Live | 4-12% |
-| 🚧 mQEURO | MakerDAO DSR/PSM | Planned | 2-5% |
-| 🚧 bQEURO | Tokenized T-Bills | Planned | 4-6% |
-| 🚧 eQEURO | Advanced strategies | Planned | 5-12% |
 
 ***
 
@@ -272,11 +265,11 @@ poolRatio = eligibleUserPoolSize × 10000 / eligibleHedgerPoolSize
 
 #### Dynamic Rebalancing
 
-| Pool Condition | Current Shift | Direction | Result |
-|----------------|---------------|-----------|--------|
-| **User pool > Hedger pool** | High (>50%) | ↓ Decrease | More yield to hedger |
-| **Balanced pools** | ~50% | → Stable | Equal distribution |
-| **Hedger pool > User pool** | Low (<50%) | ↑ Increase | More yield to users |
+| Pool Condition              | Current Shift | Direction  | Result               |
+| --------------------------- | ------------- | ---------- | -------------------- |
+| **User pool > Hedger pool** | High (>50%)   | ↓ Decrease | More yield to hedger |
+| **Balanced pools**          | \~50%         | → Stable   | Equal distribution   |
+| **Hedger pool > User pool** | Low (<50%)    | ↑ Increase | More yield to users  |
 
 #### Holding Period Protection
 
@@ -288,9 +281,10 @@ if (TIME_PROVIDER.currentTime() < lastDepositTime[user] + MIN_HOLDING_PERIOD) {
 ```
 
 This prevents:
-- Flash deposit attacks
-- Yield farming manipulation
-- Short-term speculation
+
+* Flash deposit attacks
+* Yield farming manipulation
+* Short-term speculation
 
 ***
 
@@ -302,10 +296,10 @@ Accurate, tamper-resistant pricing is critical for all protocol mechanisms.
 
 **Price Feeds**
 
-| Feed | Purpose | Max Staleness |
-|------|---------|---------------|
-| EUR/USD | QEURO peg pricing | 1 hour |
-| USDC/USD | Collateral validation | 1 hour |
+| Feed     | Purpose               | Max Staleness |
+| -------- | --------------------- | ------------- |
+| EUR/USD  | QEURO peg pricing     | 1 hour        |
+| USDC/USD | Collateral validation | 1 hour        |
 
 **Security Parameters**
 
@@ -400,21 +394,21 @@ All protocol mechanisms operate under decentralized governance via QTI token.
 
 **Economic Variables**
 
-| Parameter | Contract | Role Required |
-|-----------|----------|---------------|
-| YieldShift base/max/speed | YieldShift | GOVERNANCE_ROLE |
-| Mint/redeem fees | QuantillonVault | GOVERNANCE_ROLE |
-| Hedger parameters | HedgerPool | GOVERNANCE_ROLE |
-| Oracle bounds | ChainlinkOracle | ORACLE_MANAGER_ROLE |
+| Parameter                 | Contract        | Role Required         |
+| ------------------------- | --------------- | --------------------- |
+| YieldShift base/max/speed | YieldShift      | GOVERNANCE\_ROLE      |
+| Mint/redeem fees          | QuantillonVault | GOVERNANCE\_ROLE      |
+| Hedger parameters         | HedgerPool      | GOVERNANCE\_ROLE      |
+| Oracle bounds             | ChainlinkOracle | ORACLE\_MANAGER\_ROLE |
 
 **Risk Management**
 
-| Parameter | Contract | Role Required |
-|-----------|----------|---------------|
-| Collateralization thresholds | QuantillonVault | GOVERNANCE_ROLE |
-| Rate limits | QEUROToken | DEFAULT_ADMIN_ROLE |
-| Compliance lists | QEUROToken | COMPLIANCE_ROLE |
-| Emergency pause | All | EMERGENCY_ROLE |
+| Parameter                    | Contract        | Role Required        |
+| ---------------------------- | --------------- | -------------------- |
+| Collateralization thresholds | QuantillonVault | GOVERNANCE\_ROLE     |
+| Rate limits                  | QEUROToken      | DEFAULT\_ADMIN\_ROLE |
+| Compliance lists             | QEUROToken      | COMPLIANCE\_ROLE     |
+| Emergency pause              | All             | EMERGENCY\_ROLE      |
 
 #### QTI Vote-Escrow System
 
@@ -457,7 +451,7 @@ vault.mintQEURO(usdcAmount, recipient);
 stQEURO.stake(qeuroAmount);
 
 // Get current exchange rate
-uint256 rate = stQEURO.exchangeRate();
+
 ```
 
 ***

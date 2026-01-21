@@ -35,15 +35,11 @@
 
 ## 🚀 Roadmap and Launch
 
-***
-
 * [Adoption Strategy](roadmap-and-adoption-strategy.md)
 * [Roadmap & Launch Plan](roadmap-and-launch-plan.md)
 * [MVP Technical Specification](mvp-technical-documentation.md)
 
 ## 🤝 Organization and Governance
-
-***
 
 * [Team & Operational Structure](team-and-operational-structure.md)
 * [Tokenomics & Governance](tokenomics-and-governance.md)
