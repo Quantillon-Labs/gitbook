@@ -3,6 +3,7 @@
 ## 👋 Introduction
 
 * [Overview](README.md)
+* [TL;DR - Quantillon in 5 Minutes](introduction/tldr.md)
 * [Why Quantillon Protocol](introduction/whitepaper.md)
 
 ## 🌎 Strategic Context
