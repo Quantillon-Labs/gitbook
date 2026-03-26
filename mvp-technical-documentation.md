@@ -16,6 +16,14 @@ This document outlines the technical architecture, smart contract specifications
 
 > **Three-Token MVP Scope**: Complete ecosystem implementation with QEURO minting/redemption, stQEURO auto-compounding mechanics, QTI governance foundations, and aQEURO vault with Aave v3 integration on Base mainnet.
 
+### Implementation Update Log (2026-03-26)
+
+- **Admin staking vault lifecycle UX**: The dApp admin flow was modularized and stabilized for post-deployment vault onboarding and maintenance actions.
+- **Admin user assets visibility**: User asset rendering now separates lines by token/vault and aligns staking ratio reporting with protocol-emitted QEURO metrics.
+- **Indexer monitoring coverage**: Event indexing now covers broader protocol contracts (including hedger and yield-management surfaces) and dynamic stQEURO token discovery.
+- **Indexer data model hardening**: Analytics/event filtering now use canonical semantic event identifiers (`<contract>.<event>`) to remove naming-collision ambiguity.
+- **Indexer operator UX**: Event table now supports explorer links per transaction hash and direct filtering by event type in the admin panel.
+
 ***
 
 ### 🏗️ Global Technical Architecture

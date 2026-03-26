@@ -16,6 +16,12 @@
 
 Built on top of **robust USD liquidity**, the protocol issues **$QEURO**, a euro stablecoin backed by stable USD reserves (e.g. USDC) with real-time risk-managed FX exposure. The protocol is governed by a decentralized community via the **$QTI** governance token.
 
+### 🔄 Latest Engineering Notes (2026-03-26)
+
+* Expanded event-indexer monitoring coverage across core protocol contracts and yield/hedger surfaces.
+* Introduced semantic event identity (`<contract>.<event>`) in indexer analytics to prevent event-name overlap ambiguity.
+* Improved admin operations UX in the dApp for staking-vault lifecycle and event-indexer event filtering.
+
 ***
 
 ### 🎯 What is Quantillon Protocol?
