@@ -1,99 +1,50 @@
-# Quantillon Protocol GitBook
+# CLAUDE.md
 
-Central documentation hub for the Quantillon Protocol - a Euro-native DeFi infrastructure project providing comprehensive knowledge base for developers, users, regulators, and investors.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Purpose
+## What This Repo Is
 
-This is a **documentation-only repository** (no smart contracts or application code). It contains:
+Documentation-only repository for the Quantillon Protocol. No application code, no build step, no tests. All content is Markdown rendered by GitBook at [docs.quantillon.money](https://docs.quantillon.money).
 
-- Protocol whitepaper and technical specifications
-- Three-token ecosystem documentation (QEURO, stQEURO, QTI)
-- Regulatory and compliance analysis (MiCA framework)
-- Business model and economic sustainability
-- Governance structure and tokenomics
-- MVP technical specifications and roadmap
+## Navigation Is Defined in SUMMARY.md
 
-## Protocol Overview
+`SUMMARY.md` is the single source of truth for GitBook's left-hand navigation. When adding a new page, it **must** be listed in `SUMMARY.md` or it will not appear in the published docs. The hierarchy in `SUMMARY.md` (indentation = nesting) controls the sidebar structure.
 
-**Quantillon Protocol** addresses the gap in Euro-native DeFi with:
+## CI/CD
 
-- **QEURO**: Euro-pegged stablecoin (101%+ USDC overcollateralized)
-- **stQEURO**: Yield-bearing auto-compounding wrapper with instant liquidity
-- **QTI**: Governance token with vote-escrow mechanics (veQTI)
-- **Dual-Pool Architecture**: Separates user deposits from hedging operations
-- **Native EUR/USD Hedging**: Integrated FX risk management
+Pushing to `main` or `dev` triggers `.github/workflows/Telegram Notifications.yml`, which sends a commit notification to a Telegram channel via two GitHub secrets: `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHANNEL_ID`.
 
-## Repository Structure
+## Content Conventions
 
-```
-gitbook/
-├── SUMMARY.md                     # Table of contents (GitBook navigation)
-├── introduction/
-│   └── whitepaper.md             # Why Quantillon: macro context
-├── protocol/                      # Core technical docs
-│   ├── quantillon-protocol-design-and-architecture.md
-│   ├── mechanisms.md             # QEURO mechanics, dual-pool, Yield Shift
-│   ├── appendices-techniques.md  # Smart contracts, oracles, formulas
-│   └── quantillon-protocols-tokens/
-│       ├── qeuro-token.md
-│       ├── stqeuro-token.md
-│       └── qti-token.md
-├── strategic-context/             # Business & regulatory
-│   ├── macro-and-regulatory-context.md
-│   ├── market-and-competitive-analysis.md
-│   ├── business-model-and-economic-sustainability.md
-│   └── regulatory-and-legal.md   # MiCA compliance, Recital 22
-├── risk-management-and-sustainability/
-├── complementary-information/     # FAQ, glossary, legal pages
-├── mvp-technical-documentation.md # Development phases 1-7
-├── roadmap-and-launch-plan.md    # Q2 2025 - Q4 2026
-├── tokenomics-and-governance.md
-└── team-and-operational-structure.md
-```
+- All files are GitBook-compatible Markdown (no MDX, no JSX).
+- Use relative paths for internal links (e.g., `../protocol/mechanisms.md`).
+- Assets go in `.gitbook/assets/`.
+- Commit messages follow conventional commits (`docs:`, `fix:`, `feat:`).
 
-## Key Technical Details
+## Protocol Domain Knowledge
 
-**Smart Contract Stack** (documented, not in this repo):
-- Solidity 0.8.x with OpenZeppelin upgradeable proxies
-- Foundry development framework
-- Base Mainnet deployment (L2)
-- Chainlink oracle feeds
+When editing documentation, the following are established facts about the protocol:
 
-**Governance Parameters**:
-- Proposal threshold: 100k QTI
-- Quorum: 20% voting power
-- Voting period: 4 days
-- Decision thresholds: 60-85% based on proposal type
+**Three-token ecosystem:**
+- **QEURO** — Euro-pegged stablecoin, 101%+ USDC overcollateralized
+- **stQEURO** — Yield-bearing auto-compounding wrapper with instant liquidity
+- **QTI** — Governance token with vote-escrow mechanics (veQTI), 100M total supply
 
-**Token Distribution** (100M QTI total):
-- Community & Ecosystem: 50%
-- Team & Founders: 15%
-- Investors: 13%
-- DAO Treasury: 10%
-- Strategic Partners: 5%
-- Advisors: 2%
-- Liquidity: 5%
+**Smart contract stack** (documented here, implemented in a separate repo):
+- Solidity 0.8.x, OpenZeppelin upgradeable proxies, Foundry framework
+- Base Mainnet (L2), Chainlink oracle feeds
+- Key contracts: `UserPool`, `HedgerPool`, `YieldShift`, `AaveVault`, `ChainlinkOracle`, `LiquidationSystem`
 
-## Development Status
+**Governance parameters:**
+- Proposal threshold: 100k QTI | Quorum: 20% | Voting period: 4 days
+- Decision thresholds: 60–85% depending on proposal type
 
-Currently in **Phase 3 (MVP Build)** of 7-phase roadmap:
-- Phase 1-2: Complete (Architecture & Whitepaper)
-- Phase 3: In Progress (Core contracts, internal alpha, 95%+ test coverage)
-- Phases 4-7: External audits → Public beta → Mainnet → Advanced features
+**QTI distribution (100M total):**
+- Community & Ecosystem 50%, Team & Founders 15%, Investors 13%, DAO Treasury 10%, Liquidity 5%, Strategic Partners 5%, Advisors 2%
 
-## Regulatory Framework
+**Regulatory positioning:**
+- Targeting MiCA Recital 22 exemption (fully decentralized, no central issuer)
+- Three-entity structure: Quantillon Protocol (on-chain), Quantillon Labs (dev), Quantillon Foundation (Swiss non-profit, regulatory interface)
+- Active engagement with French ACPR
 
-Protocol designed for **MiCA Recital 22 exemption** (fully decentralized):
-- No intermediaries or central issuer
-- Structured through three entities:
-  - **Quantillon Protocol**: On-chain governance
-  - **Quantillon Labs**: Development entity
-  - **Quantillon Foundation**: Swiss-style non-profit, regulatory interface
-- Early engagement with French ACPR
-
-## Conventions
-
-- Markdown-based, GitBook-compatible structure
-- Navigation defined in `SUMMARY.md`
-- Living documentation (continuously updated)
-- CI/CD: Telegram notifications on push to main/dev
+**Development phase** (as of 2026-04-07): Phase 3 of 7 — MVP Build in progress (core contracts, internal alpha, 95%+ test coverage target).
