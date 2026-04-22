@@ -178,12 +178,6 @@ interface IQTI {
 * **Parameter Control**: Collateral ratios, yield distribution, fee structures
 * **Treasury Management**: Protocol revenue allocation and strategic decisions
 
-**Token Distribution:**
-
-* **60%**: Community (users, liquidity providers, ecosystem growth)
-* **20%**: Team (long-term vesting with performance milestones)
-* **20%**: Backers/Investors (strategic funding with lock-up periods)
-
 #### VaultEngine (Enhanced Collateral Management)
 
 **Primary Role**: Multi-vault collateral management with advanced yield optimization

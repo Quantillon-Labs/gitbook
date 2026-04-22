@@ -40,7 +40,7 @@ When editing documentation, the following are established facts about the protoc
 - Decision thresholds: 60–85% depending on proposal type
 
 **QTI distribution (100M total):**
-- Community & Ecosystem 50%, Team & Founders 15%, Investors 13%, DAO Treasury 10%, Liquidity 5%, Strategic Partners 5%, Advisors 2%
+- Community & Ecosystem 50%, Team & Founders 15%, Investors 10%, DAO Treasury 13%, Liquidity 5%, Strategic Partners 5%, Advisors 2%
 
 **Regulatory positioning:**
 - Targeting MiCA Recital 22 exemption (fully decentralized, no central issuer)

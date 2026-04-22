@@ -16,8 +16,8 @@ The $QTI token serves as the governance backbone of the Quantillon Protocol, fea
 | ------------------------- | ---------- | -------------- | ----------- | --------------------------- |
 | **Community & Ecosystem** | 50%        | 50,000,000 QTI | Variable    | 48-month algorithmic curve  |
 | **Team & Founders**       | 15%        | 15,000,000 QTI | 12 months   | 36 months linear            |
-| **Investors (SAFT/BSA)**  | 13%        | 13,000,000 QTI | 6-18 months | 24-36 months tiered         |
-| **DAO Treasury**          | 10%        | 10,000,000 QTI | Immediate   | Governance-controlled       |
+| **Investors (SAFT/BSA)**  | 10%        | 10,000,000 QTI | 6 months    | 24-36 months tiered         |
+| **DAO Treasury**          | 13%        | 13,000,000 QTI | Immediate   | Governance-controlled       |
 | **Strategic Partners**    | 5%         | 5,000,000 QTI  | 6 months    | 18 months performance-based |
 | **Advisors**              | 2%         | 2,000,000 QTI  | 6 months    | 18 months milestone-driven  |
 | **Liquidity Provision**   | 5%         | 5,000,000 QTI  | Immediate   | Market-responsive release   |

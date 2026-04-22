@@ -45,8 +45,8 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 | ---------------------------- | ---------- | -------------- | ----------- | ------------------- | -------------------- |
 | **🌍 Community & Ecosystem** | 50%        | 50,000,000 QTI | Variable    | 48-month curve      | Governance-managed   |
 | **👥 Team & Founders**       | 15%        | 15,000,000 QTI | 12 months   | 36 months linear    | Governance-managed   |
-| **💼 Investors (SAFT/BSA)**  | 13%        | 13,000,000 QTI | 6-18 months | 24-36 months        | Governance-managed   |
-| **🏛️ DAO Treasury**         | 10%        | 10,000,000 QTI | Immediate   | Governance-gated    | Vote-controlled      |
+| **💼 Investors (SAFT/BSA)**  | 10%        | 10,000,000 QTI | 6 months    | 24-36 months        | Governance-managed   |
+| **🏛️ DAO Treasury**         | 13%        | 13,000,000 QTI | Immediate   | Governance-gated    | Vote-controlled      |
 | **🤝 Strategic Partners**    | 5%         | 5,000,000 QTI  | 6 months    | 18 months           | Governance-managed   |
 | **🎯 Advisors**              | 2%         | 2,000,000 QTI  | 6 months    | 18 months           | Governance-managed   |
 | **💧 Liquidity Provision**   | 5%         | 5,000,000 QTI  | Immediate   | Progressive release | Governance-managed   |

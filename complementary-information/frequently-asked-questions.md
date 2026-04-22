@@ -106,12 +106,6 @@ Welcome to the Quantillon Protocol FAQ! Here you'll find answers to the most com
 * Potential token buybacks from protocol surplus
 * Staking multipliers for enhanced yields
 
-**📊 Token Distribution**
-
-* **50%** → Community (liquidity mining, governance rewards)
-* **35%** → Early backers, strategic partners, DAO treasury
-* **15%** → Core development team (multi-year vesting)
-
 #### **Q: How does the "Yield Shift" mechanism work?**
 
 **A:** The **Yield Shift** is our innovative rebalancing engine that dynamically redistributes yield between Users and Hedgers:
