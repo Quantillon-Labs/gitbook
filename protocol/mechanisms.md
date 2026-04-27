@@ -2,7 +2,7 @@
 
 ## Mechanisms
 
-Understanding how Quantillon Protocol operates is essential for both users and developers. This comprehensive guide breaks down the core mechanisms that power QEURO—from the dual-pool architecture and overcollateralization model to the innovative Yield Shift system that maintains peg stability while generating sustainable returns.
+Understanding how Quantillon Protocol operates is essential for both users and developers. This guide describes the mechanisms used by the first deployment, QEURO, and shows how the broader protocol turns USD liquidity into local-currency exposure through FX hedging, overcollateralization, and Yield Shift incentives.
 
 > **📋 MVP Status**: This documentation reflects the current MVP implementation. Features marked with 🚧 are planned for future phases.
 
@@ -10,7 +10,7 @@ Understanding how Quantillon Protocol operates is essential for both users and d
 
 ### 🏗️ Protocol Architecture Overview
 
-Quantillon Protocol represents a paradigm shift in stablecoin design, combining the capital efficiency of overcollateralized systems with the liquidity advantages of forex markets. At its core, the protocol operates through interconnected mechanisms that ensure peg stability, yield generation, and capital efficiency.
+Quantillon Protocol represents a reusable pattern for local-currency DeFi markets, combining the capital efficiency of overcollateralized systems with the liquidity advantages of forex markets. In the current MVP, these mechanisms are expressed through QEURO as the first EUR deployment.
 
 #### Core Design Principles
 
@@ -83,7 +83,7 @@ The innovative dual-pool system creates natural peg stability through aligned ec
 
 #### 👥 Users Pool (UserPool Contract)
 
-Users are participants who mint/hold QEURO for euro exposure and yield generation.
+Users are participants who mint/hold QEURO for EUR exposure and yield generation in the first deployment.
 
 **User Motivations**
 

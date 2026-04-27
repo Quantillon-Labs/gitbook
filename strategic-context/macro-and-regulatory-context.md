@@ -6,15 +6,15 @@ The European monetary union represents a unique economic construct: a single cur
 
 Following the COVID-19 pandemic, these weaknesses became more visible. The ECB's asset purchase programs (APP, PEPP) ballooned its balance sheet while interest rates remained negative or near zero for an extended period. In parallel, the U.S. Federal Reserve embarked on a rapid tightening cycle beginning in 2022, leading to a widening rate differential between USD and EUR assets. The resulting capital outflows from euro-denominated instruments depressed the euro's value, culminating in a near-parity scenario with the U.S. dollar in mid-2022.
 
-> **Impact on DeFi**: From a DeFi standpoint, this divergence has structural consequences. With higher U.S. rates and deeper liquidity, DeFi protocols overwhelmingly adopted USD as the reference currency. The euro became underrepresented in decentralized markets, despite being the currency of one of the world's largest economic blocs. This creates a double penalty for European DeFi users: they face foreign exchange risk and lack native euro-yielding instruments.
+> **Impact on DeFi**: From a DeFi standpoint, this divergence has structural consequences. With higher U.S. rates and deeper liquidity, DeFi protocols overwhelmingly adopted USD as the reference currency. The euro became underrepresented in decentralized markets, despite being the currency of one of the world's largest economic blocs. This creates a double penalty for local-currency DeFi users: they face foreign exchange risk and lack user-facing assets that preserve their target currency exposure.
 
-### The Case for Euro-Native Instruments: Yield, Safety, and Monetary Sovereignty
+### Why EUR Is the First Deployment Case
 
 European savers face a paradox. While they exhibit high precautionary saving rates—estimated at over **12% of household income** across the eurozone—most of this capital is deployed in vehicles offering negligible returns: Livret A (France, 1.7%), regulated life insurance contracts, and pension products. These products are structurally constrained by regulation, subject to opaque fee structures, and offer limited capital appreciation.
 
-At the macro level, the lack of euro-native yield instruments exacerbates the **Cantillon Effect**. Monetary stimulus disproportionately benefits financial intermediaries and capital holders close to the central bank's monetary base. Retail savers, by contrast, receive only the diluted remnants of yield transmission. This creates a structural transfer from savers to asset managers—a pattern Quantillon explicitly seeks to reverse.
+At the macro level, the lack of EUR-denominated yield instruments exacerbates the **Cantillon Effect**. Monetary stimulus disproportionately benefits financial intermediaries and capital holders close to the central bank's monetary base. Retail savers, by contrast, receive only the diluted remnants of yield transmission. This creates a structural transfer from savers to asset managers—a pattern Quantillon explicitly seeks to reverse through its first deployment.
 
-By introducing QEURO as a euro-denominated, over-collateralized, and yield-bearing stablecoin, the protocol offers a bridge between monetary sovereignty and decentralized market participation. Users retain euro exposure while accessing yields comparable to U.S. dollar strategies, effectively equalizing global access to DeFi opportunities.
+By introducing QEURO as the first euro-denominated, over-collateralized deployment of the Quantillon architecture, the protocol offers a bridge between monetary sovereignty and decentralized market participation. Users retain euro exposure while accessing USD-sourced DeFi opportunities through a protocol-native FX hedging layer. The EUR market is therefore the first proof point, not the limit of the protocol's addressable design.
 
 ### Regulatory Context: MiCA and the Exemption Framework
 

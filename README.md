@@ -8,155 +8,86 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> A decentralized euro stablecoin with deep liquidity, radical transparency, and unmatched yields
+> FX-hedged local-currency infrastructure for DeFi
 
 ### 🧭 Welcome to the Quantillon Protocol Documentation
 
-**Quantillon Protocol** is a decentralized finance infrastructure designed to unlock the power of the euro in crypto ecosystems. While the USD dominates DeFi, Quantillon provides a stable, scalable, and euro-denominated solution to serve individuals, institutions, and protocols across Europe and beyond.
+**Quantillon Protocol** is a currency-agnostic DeFi architecture designed to turn deep USD liquidity and yield into **local-currency exposure**. Instead of asking users to hold raw dollar risk just to access DeFi, Quantillon inserts a protocol-native FX hedging layer between USD liquidity and the user-facing asset.
 
-Built on top of **robust USD liquidity**, the protocol issues **$QEURO**, a euro stablecoin backed by stable USD reserves (e.g. USDC) with real-time risk-managed FX exposure. The protocol is governed by a decentralized community via the **$QTI** governance token.
-
-### 🔄 Latest Engineering Notes (2026-03-26)
-
-* Expanded event-indexer monitoring coverage across core protocol contracts and yield/hedger surfaces.
-* Introduced semantic event identity (`<contract>.<event>`) in indexer analytics to prevent event-name overlap ambiguity.
-* Improved admin operations UX in the dApp for staking-vault lifecycle and event-indexer event filtering.
+**QEURO** is the first deployment of that architecture. It proves the model on EUR first, while the protocol itself is designed to support additional markets when governance, hedger participation, and economics justify expansion.
 
 ***
 
-### 🎯 What is Quantillon Protocol?
+### 🎯 What Quantillon Is
 
-Quantillon Protocol is a comprehensive DeFi ecosystem built around **QEURO**, a Euro-pegged stablecoin designed specifically for European markets and global euro-denominated operations.
+Quantillon is built around four reusable layers:
 
-#### Core Components:
+1. **USD liquidity and yield sources** as the economic base layer
+2. **A protocol hedging engine** that absorbs the FX leg
+3. **A local-currency asset layer** for the market being served
+4. **Governance, wrappers, and risk controls** that can be reused across deployments
 
-* **QEURO**: Euro-pegged stablecoin with overcollateralized backing via USDC reserves
-* **stQEURO**: Yield-bearing wrapper with automatic compounding mechanics
-* **QTI**: Governance token with vote-escrow mechanics for protocol control
-* **Dual-Pool Architecture**: Separation of user deposits from hedging operations
-* **Native EUR/USD Hedging**: Integrated foreign exchange risk management
+This documentation is therefore split into two perspectives:
 
-#### Key Innovation:
-
-**Leveraging USD liquidity depth** while providing **native EUR exposure** through sophisticated hedging mechanisms, enabling European users to participate in DeFi without currency risk.
+* **Protocol Foundation**: the generic architecture and economic logic
+* **QEURO: First Deployment**: the current EUR implementation of that architecture
 
 ***
 
-### 🚀 Key Points
+### 💶 QEURO Is the First Proof Point
 
-#### **🇪🇺 Euro First**
+Quantillon starts with the euro because it is one of the clearest non-dollar markets in DeFi:
 
-Purpose-built for European users and protocols in a USD-dominated DeFi landscape, eliminating currency conversion friction and FX exposure.
+* Strong demand for local-currency exposure
+* Deep EUR/USD hedging infrastructure
+* A clear mismatch between local-currency users and USD-denominated yield
 
-#### **💱 Robust FX Architecture**
-
-Leverages deep USD liquidity markets and hedges into euro through advanced financial engineering and decentralized forex mechanisms.
-
-#### **📜 MiCA Compliant**
-
-Built with European regulatory compliance in mind. Modular, upgradeable architecture designed to adapt to evolving regulatory requirements.
-
-#### **💸 Yield-Generating**
-
-Base stablecoin ($QEURO) generates returns on idle reserves through carefully selected low-risk on-chain strategies and efficient capital deployment.
-
-#### **🧩 Composable Integration**
-
-Seamlessly integrates with existing DeFi primitives including Aave, MakerDAO, Ethena, and other major protocols for maximum utility.
+QEURO should be understood as the **first production deployment**, not the full definition of Quantillon.
 
 ***
 
-### 🏗️ Protocol Architecture
+### 🏗️ Documentation Map
 
-| Component                      | Description                                            | Function                                             |
-| ------------------------------ | ------------------------------------------------------ | ---------------------------------------------------- |
-| **QEURO Stablecoin**           | Euro-pegged stablecoin collateralized by USDC          | Core stable value transfer and store of value        |
-| **QTI Governance**             | Vote-escrow governance token for protocol control      | Decentralized decision making and protocol evolution |
-| **Dual-Pool System**           | Separated user deposits and hedging operations         | Risk isolation and operational efficiency            |
-| **FX Hedging Vaults**          | On-chain EUR/USD hedging with transparency             | Currency risk management and parity maintenance      |
-| **DAO Governance**             | Community-led protocol evolution via proposals         | Distributed control and stakeholder alignment        |
-| **stQEURO & Yield Mechanisms** | Multiple revenue streams through USD-backed strategies | Sustainable returns rebalanced to EUR exposure       |
+#### **Protocol Foundation**
 
+* Why non-dollar users are underserved in DeFi
+* The reusable Quantillon architecture
+* Core protocol mechanisms and design choices
 
+#### **QEURO: First Deployment**
 
-***
+* QEURO, stQEURO, and QTI documentation
+* Deployment-specific smart contract components
+* EUR-focused implementation details and current token stack
 
-### 🏛️ Regulatory Positioning
+#### **Governance, Risk, and Launch**
 
-#### **MiCA Framework Alignment**
-
-* **Recital 22 Exemption**: DeFi protocol exemption status under European regulation
-* **ACPR Engagement**: Active dialogue with French regulatory authorities
-* **Compliance-First Design**: Built-in regulatory compliance mechanisms
-* **Institutional Ready**: Framework designed for institutional adoption
-
-#### **Legal Structure**
-
-* **Quantillon Foundation**: DAO representation in traditional legal framework
-* **Decentralized Operations**: On-chain governance with off-chain legal compliance
-* **European Focus**: EU-centric regulatory approach with global scalability
+* Strategic context and market analysis
+* Risk management and sustainability
+* Roadmap, organization, governance, and legal material
 
 ***
 
-### 💡 Key Value Propositions
+### 💡 Why This Matters
 
-#### **For European Users**
+Most DeFi liquidity still lives in dollar-denominated markets. For users, treasuries, and protocols that think in EUR, CHF, JPY, GBP, or another local currency, that creates a structural problem:
 
-* Native EUR exposure without currency conversion costs
-* Access to DeFi yields without FX risk
-* Regulatory compliant participation in decentralized finance
-* Integration with existing European financial infrastructure
+* the best liquidity is in USD
+* the best yield is often in USD
+* but the desired balance-sheet exposure is not necessarily USD
 
-#### **For DeFi Protocols**
-
-* EUR-denominated liquidity access for protocol expansion
-* Composable euro primitive for European market entry
-* Stable, reliable EUR-pegged asset for protocol reserves
-* Native European user onboarding capabilities
-
-#### **For Institutions**
-
-* MiCA-compliant DeFi participation framework
-* Professional-grade risk management and hedging
-* Transparent, auditable on-chain operations
-* Institutional custody and compliance integration
+Quantillon is built to close that gap.
 
 ***
 
 ### 💬 Community & Resources
 
-#### **Join the Movement**
-
-Quantillon is more than a protocol — it's a movement to decentralize euro finance and bring European capital into the DeFi ecosystem.
-
-#### **Connect With Us**
-
-* **🐦** [**X (Twitter)**](https://x.com/QuantillonLabs) - Latest updates and community discussions
-* **💬** [**Discord**](https://discord.gg/uk8T9GqdE5) - Technical discussions and community support
-* **📱** [**Telegram**](https://t.me/QuantillonLabs) - Real-time updates and announcements
-
-#### **Developer Resources**
-
-* **🔗** [**GitHub**](https://github.com/Quantillon-Labs) - Open source smart contracts and documentation
-* **📖** [**Technical Docs**](https://docs.quantillon.money) - Comprehensive technical documentation
-* **🌐** [**Website**](https://quantillon.money) - Official protocol website and resources
+* **🐦** [**X (Twitter)**](https://x.com/QuantillonLabs) - Updates and ecosystem news
+* **💬** [**Discord**](https://discord.gg/uk8T9GqdE5) - Community and technical discussion
+* **📱** [**Telegram**](https://t.me/QuantillonLabs) - Announcements and direct access
+* **🔗** [**GitHub**](https://github.com/Quantillon-Labs) - Open-source repositories
+* **🌐** [**Website**](https://quantillon.money) - Landing page and QEURO app access
 
 ***
 
-### 🧠 Executive Summary
-
-**The Challenge**: DeFi remains overwhelmingly USD-denominated, structurally excluding over 300 million European savers and institutions who operate natively in euros. This creates unnecessary currency risk and fails to capitalize on vast European capital pools.
-
-**The Solution**: Quantillon Protocol bridges this gap through a revolutionary three-token ecosystem that leverages deep USD liquidity while providing native EUR exposure, enabling Europeans to participate in DeFi without currency risk.
-
-**The Innovation**: By smartly combining USD collateral backing with decentralized EUR/USD hedging mechanisms, Quantillon creates a **stable euro primitive** that unlocks native European financial flows in Web3.
-
-**The Impact**: Whether you're a developer building euro-native applications, a DAO expanding to European markets, an investor seeking euro-denominated yields, or simply curious about the future of European DeFi — Quantillon provides the infrastructure for euro-native decentralized finance.
-
-***
-
-**Explore, contribute, and help shape the future of euro-native DeFi.**
-
-***
-
-**Built with ❤️ by the Quantillon Labs team**
+**Read this documentation as protocol first, deployment second: Quantillon is the architecture, and QEURO is the first market built on top of it.**

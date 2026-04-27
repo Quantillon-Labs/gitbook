@@ -1,10 +1,10 @@
 # QEURO Token
 
-## QEURO Tokenomics: Euro-Native Stablecoin Architecture
+## QEURO Tokenomics: First EUR Deployment Architecture
 
 ### 📋 Executive Summary
 
-The Quantillon Euro (QEURO) represents a revolutionary approach to euro-denominated digital assets, combining the stability of traditional stablecoins with the innovation of decentralized finance. Designed as an overcollateralized, yield-generating stablecoin backed by USDC and governed through democratic mechanisms, QEURO solves the fundamental liquidity and adoption challenges facing Euro DeFi markets.
+The Quantillon Euro (QEURO) is the first market-specific asset built on the Quantillon Protocol. It combines euro-denominated exposure with USD liquidity depth, protocol-native FX hedging, and DeFi yield infrastructure. QEURO is therefore the first deployment of the broader architecture, not the full definition of Quantillon.
 
 Our stablecoin architecture incorporates advanced mechanisms including overcollateralized minting/redemption via the QuantillonVault, delta-neutral hedging, and Aave v3 yield generation that delivers superior capital efficiency while maintaining regulatory compliance. The design prioritizes user experience, institutional adoption, and sustainable yield generation across diverse market conditions.
 
@@ -516,13 +516,13 @@ RATE_LIMIT_RESET_PERIOD = 1 hours       // Rate limit window
 
 ***
 
-#### Conclusion: The Future of Euro DeFi
+#### Conclusion: QEURO as the First Deployment
 
-QEURO represents more than just another stablecoin—it constitutes a comprehensive financial infrastructure designed specifically for the European DeFi ecosystem. Through innovative dual-pool mechanics, dynamic yield redistribution via YieldShift, and robust security controls, QEURO creates a sustainable foundation for euro-denominated decentralized finance.
+QEURO represents more than just another stablecoin: it is the first production deployment of Quantillon's FX-hedged local-currency architecture. Through innovative dual-pool mechanics, dynamic yield redistribution via YieldShift, and robust security controls, QEURO creates a sustainable foundation for EUR-denominated decentralized finance.
 
 The MVP implementation focuses on core functionality with USDC collateral and Aave v3 yield generation. Future phases will expand to multi-collateral support, additional vault strategies, and cross-chain deployment.
 
-Our approach prioritizes user experience, regulatory compliance, and sustainable yield generation while maintaining the flexibility to adapt to an evolving financial landscape. The result is a stablecoin that bridges traditional European finance with the innovation and accessibility of decentralized protocols.
+The first deployment prioritizes user experience, regulatory compliance, and sustainable yield generation while preserving the broader protocol's flexibility. The result is an EUR asset that bridges local-currency balance-sheet needs with the innovation and accessibility of decentralized protocols.
 
 ***
 

@@ -6,7 +6,7 @@ Quantillon's roadmap is structured in three phases, balancing rapid deployment w
 
 ### **Phase 1 — Three-Token Launch & Bootstrap (Q4 2025)**
 
-* 🪙 Mainnet deployment of complete three-token ecosystem: **QEURO, stQEURO, and QTI**
+* 🪙 Mainnet deployment of the first complete three-token deployment: **QEURO, stQEURO, and QTI**
 * 🏦 aQEURO vault launch with Aave USDC integration as primary collateral backend
 * 🗳️ veQTI system activation with vote-escrow mechanics and governance layer implementation
 * 🤝 Initial hedger onboarding and liquidity provisioning via Quantillon Labs
@@ -98,4 +98,4 @@ For developers building QEURO-integrated products (e.g., wallets, cross-chain br
 
 Financial literacy campaigns focused on DeFi yields, euro-denominated finance, and MiCA.
 
-> **Quantillon is not merely launching a product—it is fostering a movement. The roadmap emphasizes responsible growth, composability, and transparency to establish QEURO as the euro-native financial layer of Web3.**
+> **Quantillon is not merely launching a product—it is proving a reusable protocol pattern. The roadmap emphasizes responsible growth, composability, and transparency: QEURO is the first EUR deployment, while future local-currency expansion remains subject to governance, liquidity, hedger participation, and economics.**

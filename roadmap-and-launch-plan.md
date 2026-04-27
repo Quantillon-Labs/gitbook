@@ -4,9 +4,9 @@
 
 ### 📋 Executive Summary
 
-Quantillon Protocol's development follows a carefully orchestrated **7-phase roadmap** spanning from Q2 2025 to Q4 2026, designed to deliver a robust, secure, and community-driven euro stablecoin protocol. Each phase builds systematically upon the previous one, ensuring proper foundation, security, and sustainable growth.
+Quantillon Protocol's development follows a carefully orchestrated **7-phase roadmap** spanning from Q2 2025 to Q4 2026, designed to deliver a robust, secure, and community-driven FX-hedged protocol whose first deployment is QEURO. Each phase builds systematically upon the previous one, ensuring proper foundation, security, and sustainable growth.
 
-Our roadmap emphasizes **methodical development**, **security-first approach**, and **community engagement** to establish QEURO as the premier euro-native DeFi primitive.
+Our roadmap emphasizes **methodical development**, **security-first approach**, and **community engagement** to establish QEURO as the first production proof point of the broader Quantillon architecture.
 
 ***
 
@@ -277,7 +277,7 @@ Our roadmap emphasizes **methodical development**, **security-first approach**, 
 
 ### 🌟 Long-term Vision
 
-By Q4 2026, Quantillon Protocol will have established itself as the **premier euro stablecoin solution** for European DeFi users, offering:
+By Q4 2026, Quantillon Protocol should have established QEURO as the first production deployment of its FX-hedged local-currency architecture, offering:
 
 * **🔒 Security & Compliance** - Audited, MiCA-aligned protocol
 * **💰 Sustainable Yield** - Competitive returns for euro holders
@@ -285,4 +285,4 @@ By Q4 2026, Quantillon Protocol will have established itself as the **premier eu
 * **🌐 Ecosystem Integration** - Native support across major DeFi platforms
 * **📈 Proven Scale** - Demonstrated ability to handle significant TVL and user base
 
-> **Quantillon is not merely launching a product—we are fostering a movement. Our roadmap emphasizes responsible growth, security, and transparency to establish QEURO as the foundational euro layer of European Web3.**
+> **Quantillon is not merely launching a product—we are proving a protocol pattern. The roadmap emphasizes responsible growth, security, and transparency: QEURO is the first EUR deployment, while broader local-currency expansion remains governed by market depth, hedger participation, and protocol governance.**

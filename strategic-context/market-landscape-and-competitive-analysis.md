@@ -25,9 +25,9 @@ From a European perspective, engaging in DeFi through USD-based assets introduce
 
 Consequently, euro-based users and institutions either remain absent from DeFi altogether or engage through inefficient intermediaries. This creates an untapped market segment, particularly among family offices, corporate treasuries, and fintech platforms seeking native euro liquidity.
 
-### Quantillon's Competitive Edge
+### QEURO as Quantillon's First Competitive Edge
 
-Quantillon Protocol is positioned to resolve the failures of previous euro stablecoins by aligning incentives and market architecture through three innovations:
+QEURO is positioned to resolve the failures of previous euro stablecoins by applying Quantillon's broader protocol architecture through three innovations:
 
 **🌊 Liquidity by Design**
 
@@ -35,12 +35,12 @@ QEURO inherits USDC liquidity on the user side and Forex liquidity via the hedge
 
 **⚖️ Delta-Neutral Hedging**
 
-Unlike existing euro stablecoins, Quantillon introduces a permissionless hedging layer that allows collateral providers to neutralize EUR/USD exposure through protocol-native instruments. This supports peg stability and institutional hedging needs.
+Unlike existing euro stablecoins, the QEURO deployment uses Quantillon's permissionless hedging layer to let collateral providers neutralize EUR/USD exposure through protocol-native instruments. This supports peg stability and institutional hedging needs.
 
 **📈 Yield Shift Mechanism**
 
 QEURO is not only a stablecoin but a savings instrument. By redistributing most of the yield from collateral deployment (e.g., Aave) to users and hedgers via a dynamic 'Yield Shift', the protocol incentivizes long-term participation and peg maintenance.
 
-These components create a uniquely sustainable design that addresses both supply (hedgers) and demand (euro users) sides of the market. By leveraging DeFi primitives and real-world financial theory—including FX swap economics and interest rate parity—Quantillon delivers a euro stablecoin that is liquid, scalable, and yield-generating.
+These components create a sustainable first deployment that addresses both supply (hedgers) and demand (EUR users) sides of the market. By leveraging DeFi primitives and real-world financial theory—including FX swap economics and interest rate parity—Quantillon uses QEURO to prove that USD liquidity can be transformed into local-currency exposure.
 
-> **In short, Quantillon does not merely replicate a euro version of USDC or DAI—it reengineers stablecoin economics from the ground up to serve European needs in a structurally USD-centric DeFi landscape.**
+> **In short, QEURO does not merely replicate a euro version of USDC or DAI. It is the first deployment of Quantillon's reusable FX-hedged architecture for local-currency DeFi markets.**

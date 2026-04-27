@@ -1,141 +1,89 @@
 # Quantillon Protocol: Design & Architecture
 
-### QEURO Stablecoin Design: A Euro-Pegged, Overcollateralized Instrument
+Quantillon should be understood as a **protocol pattern** before it is understood as a specific asset. The architecture is designed to transform deep USD-based DeFi liquidity into a user-facing **local-currency market** through protocol-native FX hedging.
 
-At the core of the Quantillon Protocol lies the **QEURO**—a euro-pegged stablecoin minted against overcollateralized reserves in USD stablecoins, initially USDC. The choice of overcollateralization offers a high-integrity approach to maintaining the peg and minimizing counterparty risk.
+## The Protocol Pattern
 
-QEURO is minted permissionlessly at the oracle price, allowing any user to deposit accepted ERC20 assets which are then routed through the protocol's smart contracts to be swapped into USDC and locked as collateral. The protocol ensures a minimum **101% collateralization ratio**, with liquidation mechanisms triggered automatically via Chainlink or equivalent high-reliability oracles if the threshold is breached. Redeeming QEURO follows the same logic in reverse, enabling frictionless exit at minimal cost.
+At the highest level, Quantillon has four layers:
 
-The result is a stablecoin that provides euro exposure with USD-based liquidity depth, solving a crucial mismatch in DeFi's monetary architecture.
+| Layer | Role | Why It Exists |
+| --- | --- | --- |
+| **USD Liquidity Base** | Uses deep USD-denominated liquidity and yield sources | The deepest DeFi markets are still mostly dollar-based |
+| **FX Hedging Layer** | Offsets the currency leg between USD and the target market | Users should not be forced to hold unwanted USD exposure |
+| **Local-Currency Asset Layer** | Delivers market-specific exposure to end users | The product should match the user's target currency |
+| **Governance + Wrappers** | Coordinates incentives, parameters, wrappers, and expansion | The architecture must scale beyond one deployment |
 
-### The Dual-Pool Model: Users and Hedgers
+This is the core reason Quantillon is protocol-first. The asset visible to the user changes by market, while the economic logic underneath remains reusable.
 
-Quantillon introduces a dual-pool mechanism involving two symbiotic actor groups: **Users** and **Hedgers**.
+## Why Start From USD Liquidity
 
-**👥 Users**
+Quantillon does not try to rebuild the deepest DeFi markets from zero. It starts from the reality that:
 
-Users are DeFi participants who mint QEURO to access euro-denominated liquidity or stake QEURO in order to earn yield. They deposit volatile or stable crypto assets, which are swapped into USDC and locked as protocol collateral. These users maintain exposure to the euro while benefiting from DeFi-native financial products.
+* USD liquidity is deeper than most other on-chain currency markets
+* much of DeFi's best collateral and yield sits on top of that liquidity
+* the real problem for non-dollar users is not liquidity access alone, but **liquidity access without forced USD exposure**
 
-**🛡️ Hedgers**
+The protocol therefore treats USD liquidity as infrastructure, not as the desired end state.
 
-Hedgers are actors who take the opposite position—providing USDC upfront to hedge against euro exposure. They effectively short the EUR/USD pair by engaging in a leveraged, unidirectional perpetual future. In return, they earn compensation consisting of:
+## The FX Hedging Layer
 
-* (i) the EUR/USD interest rate differential (typically \~1% annually)
-* (ii) a variable "Yield Shift" bonus extracted from the collateral's DeFi yield.
+The defining feature of Quantillon is that the FX leg is handled inside the protocol architecture.
 
-The protocol enforces a liquidation mechanism for hedgers as well: if their margin ratio drops below 1%, they are liquidated and penalized. This mechanism ensures disciplined FX exposure management and peg resilience.
+This matters because the underlying problem is not "how do I buy a non-dollar stablecoin?" It is:
 
-### Liquidity Architecture: Inheriting Depth from USDC and Forex
+> how do I access DeFi liquidity and yield while still ending up exposed to the currency I actually care about?
 
-Unlike euro-stablecoin predecessors that relied heavily on centralized market makers or illiquid LP incentives, Quantillon's model ensures **"liquidity by design."**
+Quantillon answers that with a hedging layer that sits between the USD base and the user-facing local-currency asset.
 
-* **📈 On the user side**, all incoming deposits are swapped into USDC—the most liquid dollar-based stablecoin—thus ensuring instant deployability and deep routing.
-* **🌍 On the hedger side**, liquidity stems from traditional Forex markets, where EUR/USD is one of the most traded currency pairs globally. This design enables the protocol to scale capital efficiency without relying on shallow DEX pools or bribe-driven gauges.
+## The Local-Currency Asset Layer
 
-As a result, QEURO enjoys both upstream (USDC) and downstream (Forex) liquidity, reinforcing slippage-free mint/redeem operations and improved user experience.
+The output of the system is a market-specific asset that tracks the target currency exposure of the deployment.
 
-### Native Composability and Embedded DEX
+That means Quantillon can support a family of deployments that share one architecture but serve different target markets. The local-currency asset is therefore a **deployment layer**, not the full identity of the protocol.
 
-Quantillon is designed as a holistically integrated protocol stack. Rather than relying on external DEXs like Curve or Balancer, the protocol features its own embedded exchange mechanism. This ensures control over routing fees, eliminates bribing systems, and increases revenue retention.
+## Governance Above the Deployment Layer
 
-Smart contract logic for mint/redeem, hedging, staking, liquidation, and governance is unified under a modular Solidity-based architecture audited and battle-tested through external bug bounty programs. Governance functions, including Yield Shift calibration and vault whitelisting, are performed by holders of the $QTI token.\
+QTI governs the protocol above any one market. It exists to coordinate:
 
+* deployment policy
+* incentives
+* risk parameters
+* long-term protocol evolution
 
-### Vault Variants: Modular Architecture for Risk Segmentation
+This separation is important because a protocol that can expand beyond one currency should not bind governance to a single deployment narrative.
 
-Quantillon's modular design enables multiple vault variants, each corresponding to specific collateral backends and risk profiles. This architecture serves diverse user needs while maintaining unified euro peg mechanics across all variants.
+## QEURO as the First Deployment
 
-**Vault Portfolio Overview**
+QEURO is the first production implementation of the Quantillon architecture.
 
-| Vault Type | Collateral Backend           | Risk Profile | Target APY | Target Users       |
-| ---------- | ---------------------------- | ------------ | ---------- | ------------------ |
-| **aQEURO** | Aave USDC lending            | 🟢 Low       | 4-8%       | Retail investors   |
-| **mQEURO** | MakerDAO PSM/DSR             | 🟢 Very Low  | 3-6%       | Conservative users |
-| **bQEURO** | Tokenized T-Bills & RWAs     | 🟢 Low       | 5-7%       | Institutions       |
-| **eQEURO** | Ethena & advanced strategies | 🟡 Medium    | 6-12%      | Sophisticated DeFi |
+It demonstrates the model on EUR first:
 
-**Detailed Vault Specifications**
+* USD liquidity and yield serve as the base layer
+* the hedging layer neutralizes the EUR/USD leg
+* the user-facing asset delivers EUR exposure
+* wrappers such as stQEURO extend the first deployment into yield-bearing formats
 
-**aQEURO (Aave Integration - Default Configuration)**
+The token documentation and smart contract component pages under this section should therefore be read as **implementation-specific docs for the first deployment**, not as the whole scope of Quantillon.
 
-* **Collateral Deployment:** 85% Aave USDC lending, 10% emergency buffer, 5% operations
-* **Yield Mechanism:** Direct participation in Aave lending markets with dynamic APY
-* **Risk Factors:** Aave protocol risk, USDC depeg risk, smart contract risk
-* **Target Users:** Retail DeFi users seeking stable euro yield with proven infrastructure
+## Why EUR First
 
-**mQEURO (MakerDAO Integration)**
+The euro is a strong first deployment market because it combines:
 
-* **Collateral Deployment:** MakerDAO Peg Stability Module (PSM) and Dai Savings Rate (DSR)
-* **Yield Mechanism:** Conservative yield through DAI ecosystem stability mechanisms
-* **Risk Factors:** MakerDAO governance risk, DAI stability risk
-* **Target Users:** Ultra-conservative users prioritizing capital preservation
+* meaningful non-dollar demand
+* a recognizable DeFi access problem
+* deep FX infrastructure for the hedge side
 
-**bQEURO (Real World Assets Focus)**
+That makes QEURO a credible proof point. It does not mean the protocol is locked to EUR forever.
 
-* **Collateral Deployment:** Tokenized U.S. Treasury Bills, German Bunds, Corporate Bonds
-* **Yield Mechanism:** Traditional fixed-income yields through compliant tokenization platforms
-* **Risk Factors:** Custody risk, regulatory risk, lower liquidity
-* **Target Users:** Institutional investors requiring regulatory clarity and traditional yield sources
-* **Minimum Threshold:** €100,000 institutional access requirement
+## Reusable Expansion Model
 
-**eQEURO (Advanced DeFi Strategies)**
+The same architecture can be reused for future deployments when the economics are compelling. Illustrative examples include CHF, JPY, or GBP, but deployment decisions should be driven by governance and market conditions rather than brand ambition.
 
-* **Collateral Deployment:** Ethena USDe, Lido stETH, Rocketpool rETH, recursive strategies
-* **Yield Mechanism:** Leveraged yield farming up to 3x through sophisticated DeFi composability
-* **Risk Factors:** Higher smart contract risk, leverage risk, strategy complexity
-* **Target Users:** Sophisticated DeFi participants seeking maximum yield optimization
-* **Advanced Features:** Automated rebalancing, yield optimization bots, governance-adjustable parameters
+In that sense, Quantillon’s architecture is meant to be:
 
-**Cross-Vault Mechanics**
+* **modular**
+* **reusable**
+* **observable**
+* **governable across multiple markets**
 
-**Unified Peg Maintenance:** All vault variants maintain the same EUR target price through shared oracle infrastructure and arbitrage mechanisms.
-
-**Risk Isolation:** Individual vault failures are contained and do not affect other variants through modular smart contract architecture.
-
-**Arbitrage Opportunities:** Price differences between variants create natural trading incentives that support overall ecosystem liquidity.
-
-### stQEURO: Yield-Bearing Euro Infrastructure
-
-Beyond serving as a euro-pegged stablecoin, Quantillon introduces stQEURO—a yield-bearing wrapper that automatically compounds returns from QEURO collateral deployment while maintaining full liquidity and composability. This innovation bridges the gap between passive euro exposure and active DeFi yield generation.
-
-#### Auto-Compounding Mechanism
-
-Unlike traditional staking systems requiring manual reward claims, stQEURO automatically increases in intrinsic value over time. The quantity of stQEURO tokens in user wallets remains constant, but each token becomes worth more QEURO as yields accumulate:
-
-**Value Appreciation Formula:**
-
-```
-stQEURO Exchange Rate = 1 + (Cumulative Yield ÷ Total Days × Days Held)
-```
-
-**Example Timeline:**
-
-* **Day 0:** Stake 1,000 QEURO → Receive 1,000 stQEURO (Rate: 1.000)
-* **Day 365:** Still hold 1,000 stQEURO (Rate: 1.053 with 5.3% APY)
-* **Unstaking:** 1,000 stQEURO → 1,053 QEURO
-
-#### Yield Source & Distribution
-
-stQEURO's yield originates from the underlying QEURO collateral deployed across battle-tested DeFi protocols:
-
-```
-QEURO Collateral Deployment (100%)
-├── Aave USDC Lending: 85% (Base APY: 4-12%)
-├── Emergency Liquidity Buffer: 10%
-└── Protocol Operations Reserve: 5%
-
-Yield Distribution:
-├── Protocol Fees: 10% (Treasury + Development)
-├── Hedger Compensation: Variable 1-3% (EUR/USD spread + Yield Shift)
-└── stQEURO Holders: Remaining 87-89% (Auto-compounded)
-```
-
-#### Technical Advantages
-
-**Instant Liquidity:** stQEURO maintains full liquidity without lock periods, enabling immediate unstaking at current exchange rates.
-
-**DeFi Composability:** Users can deploy stQEURO in other protocols (lending, LP positions, collateral) while continuing to earn compounding yield.
-
-**Tax Efficiency:** No rebase events or reward distributions that could trigger taxable income in many jurisdictions.
-
-> **Quantillon's architecture reflects a principled design philosophy: capital efficiency, transparency, resilience, and modularity. It is engineered not only for market fit today, but for adaptability in the rapidly evolving regulatory and macroeconomic context of tomorrow.**
+> **Read the rest of the documentation with this framing in mind: Quantillon is the protocol architecture, and QEURO is the first market built on top of it.**

@@ -315,11 +315,11 @@ interface IstQEURO {
 
 ***
 
-### Conclusion: Pioneering Euro Yield Infrastructure
+### Conclusion: First-Deployment Yield Infrastructure
 
-stQEURO represents a fundamental advancement in European DeFi infrastructure, offering a truly euro-native yield-bearing token with instant liquidity and automatic compounding. Through the innovative exchange rate appreciation model, users can earn yield without token rebasing or manual reward claiming.
+stQEURO represents the yield-bearing wrapper for Quantillon's first EUR deployment, offering instant liquidity and automatic compounding around QEURO. Through the exchange rate appreciation model, users can earn yield without token rebasing or manual reward claiming.
 
-The integration with YieldShift ensures dynamic, market-responsive yield distribution that balances the interests of all protocol participants. As the Quantillon ecosystem grows, stQEURO will serve as the primary vehicle for passive euro yield generation in DeFi.
+The integration with YieldShift ensures dynamic, market-responsive yield distribution that balances the interests of all first-deployment participants. As the Quantillon ecosystem grows, stQEURO serves as the first template for how a deployment-specific local-currency asset can be wrapped into a yield-bearing format.
 
 ***
 

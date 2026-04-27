@@ -406,4 +406,4 @@ While focused on European compliance, Quantillon considers global regulatory dev
 
 _This regulatory analysis is current as of August 2025 and will be updated as the regulatory landscape evolves. For the most current regulatory information, visit_ [_quantillon.money/legal_](https://quantillon.money/legal) _or consult the Quantillon Foundation's regulatory updates._
 
-> **🎯 Ready to engage with compliant, decentralized euro finance?** Visit our [dApp](https://app.quantillon.money/) to participate in the future of European DeFi, built for regulatory clarity and sustainable operation.
+> **🎯 Ready to engage with compliant, decentralized local-currency DeFi?** Visit our [dApp](https://app.quantillon.money/) to explore QEURO as Quantillon's first deployment, built for regulatory clarity and sustainable operation.

@@ -2,7 +2,7 @@
 
 ## Market & Competitive Analysis
 
-The european stablecoin market represents one of the most significant opportunities in decentralized finance, yet it remains vastly underserved compared to USD-denominated alternatives. This comprehensive analysis examines the current market landscape, competitive positioning, and Quantillon Protocol's unique advantages in addressing the eurozone's DeFi infrastructure gap.
+Quantillon targets a broader structural gap in DeFi: most liquidity and yield remain USD-denominated, while many users, treasuries, and protocols need local-currency exposure. This analysis uses the euro market as the first deployment case because QEURO is the protocol's initial proof point and one of the clearest examples of the mismatch.
 
 ***
 
@@ -39,7 +39,7 @@ European savers exhibit high precautionary saving rates—**over 12% of househol
 * **Life Insurance Contracts**: Opaque fee structures with minimal capital appreciation
 * **Regulated Pension Products**: Structurally constrained by bureaucratic limitations
 
-This represents a massive untapped market for yield-bearing, euro-native DeFi instruments.
+This represents a massive untapped market for QEURO as the first local-currency deployment of the Quantillon architecture.
 
 ***
 
@@ -127,7 +127,7 @@ These frictions create a structural barrier that has prevented european institut
 
 #### Revolutionary Architecture
 
-Quantillon Protocol addresses the fundamental failures of existing euro stablecoins through three core innovations:
+QEURO addresses the fundamental failures of existing euro stablecoins by applying Quantillon's reusable protocol architecture through three core innovations:
 
 **1. 🌊 Liquidity by Design**
 
@@ -140,7 +140,7 @@ This dual-channel design eliminates the traditional chicken-and-egg problem of s
 
 **2. ⚖️ Delta-Neutral Hedging Infrastructure**
 
-Quantillon introduces the first permissionless hedging layer for euro stablecoins:
+Quantillon introduces a protocol-native hedging layer for the first EUR deployment:
 
 * **🛡️ Hedgers** provide USDC to assume EUR/USD exposure in exchange for yield
 * **👥 Users** mint QEURO while hedgers neutralize the FX risk
@@ -168,7 +168,7 @@ Through the innovative **Yield Shift** mechanism:
 
 #### Economic Sustainability Model
 
-Unlike existing euro stablecoins that lack sustainable revenue streams, Quantillon operates a dual-revenue model:
+Unlike existing euro stablecoins that lack sustainable revenue streams, the first QEURO deployment operates a dual-revenue model:
 
 * **💳 Protocol Fees**: 0.1% on all mint/redeem operations
 * **📊 Yield Share**: 10% of collateral deployment returns
@@ -190,7 +190,7 @@ Conservative projections at €20M TVL generate **€510,000 annual revenue** wi
 **🛠️ DeFi Native Segment**
 
 * **Protocol DAOs**: Euro-denominated treasury diversification
-* **European DeFi Users**: Native euro exposure without FX risk
+* **EUR DeFi Users**: Local-currency exposure without unmanaged FX risk
 * **Yield Farmers**: Access to euro-denominated strategies
 
 **🏦 CeFi Bridge Segment**
@@ -222,7 +222,7 @@ Quantillon's sustainable competitive advantages include:
 
 * **Euro-Denominated Yield Products**: €850 billion in underperforming savings
 * **DeFi-Ready Institutions**: €120 billion in progressive treasury management
-* **Retail DeFi Adoption**: €25 billion in crypto-native euro users
+* **Retail DeFi Adoption**: €25 billion in crypto-native EUR users
 
 #### Serviceable Obtainable Market (SOM)
 
@@ -281,11 +281,11 @@ Several trends favor Quantillon's architecture:
 
 #### Long-Term Vision
 
-Quantillon aims to become **the foundational euro layer** of European DeFi, enabling:
+QEURO aims to prove the first market-specific deployment of a broader local-currency DeFi protocol, enabling:
 
-* Native euro yield strategies across all major protocols
+* Native EUR exposure strategies across major protocols
 * Institutional-grade compliance with decentralized governance
-* Cross-border payment infrastructure for the eurozone
-* Monetary sovereignty tools for european crypto users
+* Cross-border payment infrastructure for the first deployment market
+* Monetary-sovereignty tools for non-USD crypto users
 
-> **The euro stablecoin market is not just underserved—it's structurally broken. Quantillon Protocol represents the first credible solution that combines liquidity, yield, compliance, and decentralization to serve europe's €2+ trillion digital asset opportunity.**
+> **The euro stablecoin market is not just underserved—it's structurally broken. QEURO is Quantillon's first proof point for combining liquidity, yield, compliance, and decentralization into a reusable FX-hedged protocol model.**

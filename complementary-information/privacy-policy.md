@@ -13,7 +13,7 @@ This privacy policy (hereinafter referred to as "Privacy Policy") together with 
 
 For more information about the Company, the User is invited to consult the legal notice [Legal Notice](http://todochangelink.com/).
 
-Quantillon Labs has developed a tool under the name "Quantillon" that offers, among other things, a euro-pegged DeFi stablecoin platform that combines deep USD-based liquidity, automated FX hedging, and modular yield vaults to provide secure, capital-efficient, and scalable euro exposure on-chain. (hereinafter referred to as the “Quantillon Protocol”).
+Quantillon Labs has developed a tool under the name "Quantillon" that offers, among other things, an FX-hedged DeFi protocol whose first deployment combines deep USD-based liquidity, automated FX hedging, and modular yield vaults to provide secure, capital-efficient, and scalable euro exposure on-chain through QEURO. (hereinafter referred to as the “Quantillon Protocol”).
 
 In this context, this Privacy Policy describes why and how we may collect and use Personal Information and provides information about individuals’ rights in relation to Personal Information.
 

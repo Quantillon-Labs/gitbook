@@ -384,13 +384,13 @@ Where:
 
 ***
 
-### Conclusion: Building the Future of Euro DeFi
+### Conclusion: Governance Above the First Deployment
 
-The QTI tokenomics represent more than just another governance token—they constitute a comprehensive economic system designed for the long-term success of decentralized Euro-denominated finance. Through careful balance of incentives, robust security measures, and progressive decentralization, QTI creates a sustainable foundation for the Quantillon ecosystem.
+The QTI tokenomics represent more than just another governance token: they constitute the economic and governance layer above Quantillon's first EUR deployment and future protocol evolution. Through careful balance of incentives, robust security measures, and progressive decentralization, QTI creates a sustainable foundation for the Quantillon ecosystem.
 
-Our approach prioritizes community ownership, regulatory compliance, and continuous innovation while maintaining the flexibility to adapt to an evolving DeFi landscape. The result is a tokenomic model that aligns all stakeholder interests toward the common goal of building the most trusted and widely-adopted Euro stablecoin protocol.
+The approach prioritizes community ownership, regulatory compliance, and continuous innovation while maintaining flexibility to adapt to an evolving DeFi landscape. The result is a tokenomic model that aligns stakeholders around QEURO as the first deployment and Quantillon as the broader protocol.
 
-As we progress through our roadmap, the QTI token will evolve from a governance mechanism into the cornerstone of a comprehensive financial ecosystem, bridging traditional European finance with the innovation and accessibility of decentralized protocols. This is just the beginning of a transformative journey toward truly decentralized, European-centric financial infrastructure.
+As the roadmap progresses, QTI should evolve from an initial governance mechanism into the coordination layer for risk, incentives, and deployment policy across Quantillon. This is the beginning of a broader journey toward decentralized FX-hedged infrastructure for local-currency DeFi markets.
 
 ***
 

@@ -1,38 +1,73 @@
 # Why Quantillon Protocol
 
-Over the past decade, decentralized finance (DeFi) has emerged as one of the most transformative movements in financial history. Yet, despite its global ambitions, DeFi remains overwhelmingly denominated in U.S. dollars, structurally excluding over 300 million European savers and institutions who operate natively in euros. This asymmetry not only exposes European participants to unnecessary currency risk but also fails to capitalize on a vast pool of capital currently parked in underperforming legacy products such as life insurance contracts, and regulated savings plans.
+DeFi has become global in reach but remains narrow in denomination. The deepest liquidity, most efficient collateral, and most attractive yield opportunities are still concentrated in USD-based markets. That works well for users who naturally think in dollars. It works much less well for anyone whose savings, treasury, or liabilities sit in another currency.
 
-Quantillon Protocol seeks to rectify this imbalance through a revolutionary three-token ecosystem: QEURO (euro-pegged stablecoin), stQEURO (yield-bearing auto-compounding wrapper), and QTI (governance token with vote-escrow mechanics). This synergistic architecture creates interconnected value flows where each token reinforces the utility and adoption of the others.
+This is the structural gap Quantillon addresses.
 
-QEURO operates through an innovative dual-pool architecture—composed of "Users" who mint and stake QEURO, and "Hedgers" who assume delta-neutral FX positions on the EUR/USD pair—achieving fully decentralized, scalable, and compliant stablecoin issuance. stQEURO automatically compounds yields from QEURO collateral deployment without token inflation, offering Europeans their first native yield-bearing euro instrument with instant liquidity and full DeFi composability. QTI enables sophisticated governance through vote-escrow mechanics, progressive decentralization, and sustainable incentive alignment. At its core lies a set of innovative mechanisms: permissionless hedging, yield redistribution through a variable "Yield Shift," and modular collateral management through vault variants (e.g., aQEURO, mQEURO, bQEURO, eQEURO).
+Quantillon is not fundamentally a one-market asset project. It is a protocol architecture that starts from the deepest USD-based liquidity in DeFi, inserts a protocol-native FX hedging layer, and delivers user-facing exposure in a target local currency. In other words, Quantillon is built to separate **yield access** from **unwanted dollar exposure**.
 
-#### 💡 Economic Philosophy: The Cantillon Effect
+## The Protocol Thesis
 
-The fundamental economic insight underpinning Quantillon is an application of the **Cantillon Effect**: in a financial ecosystem where monetary expansion benefits capital allocators first, the lack of euro-native DeFi instruments deprives European savers of fair access to yield. The current euro financial infrastructure systematically misallocates savings via opaque, fee-laden intermediaries and suboptimal risk-reward profiles. Quantillon reimagines this ecosystem by offering a highly liquid, capital-efficient, and decentralized alternative that can serve both as a euro-denominated savings product and a trusted stablecoin.
+Quantillon is based on a simple but powerful observation:
 
-#### 🌍 Macroeconomic Context
+* DeFi yield is often easiest to source in USD markets
+* many users do not want their final exposure to remain in USD
+* existing local-currency markets are usually too shallow or too disconnected from the best yield sources
 
-From a macroeconomic standpoint, the project responds to a structural divergence between the monetary policies of the Federal Reserve and the European Central Bank. While the Fed's aggressive tightening cycle post-COVID has created a strong dollar carry trade, the ECB has been slower to react, leaving the euro structurally weaker and more volatile. This has made USD-denominated DeFi attractive globally, but introduces a hedging need for eurozone participants—a need Quantillon meets through embedded FX mechanisms.
+So the protocol does not try to outcompete USD markets at their own base layer. Instead, it uses them. Quantillon treats USD liquidity as infrastructure, then transforms it through hedging into a local-currency market that users can actually hold.
 
-#### ⚖️ Regulatory Positioning
+## Why This Is Bigger Than QEURO
 
-Regulatorily, Quantillon stands apart through its alignment with **MiCA (Markets in Crypto Assets)** regulation. By operating as a decentralized protocol under Recital 22, it remains outside the scope of direct regulatory enforcement while retaining pathways for institutional compliance via the Quantillon Foundation. Early engagement with the French ACPR (Autorité de Contrôle Prudentiel et de Résolution) reinforces this legitimacy.
+QEURO is the first deployment of this model, not the entirety of the model.
 
-#### 💰 Economic Model
+The euro is a strong first market because:
 
-Economically, the protocol generates revenue through mint/redeem fees (0.1%) and by capturing a share of the yield generated from collateral deployed on trusted DeFi platforms such as Aave. A conservative projection at 20M TVL (Total Value Locked) with an average Aave APY of 7% and swap volume 20x TVL yields over **500K EUR/year** in protocol revenue. This supports a scalable model with low fixed infrastructure costs and exponential revenue potential.
+* it is one of the largest non-dollar currencies in the world
+* the EUR/USD pair is deep enough to support serious hedging activity
+* there is a clear mismatch between EUR users and USD-denominated DeFi opportunities
 
-#### 🏆 Competitive Advantages
+But the protocol logic is broader. The same architecture can, in principle, support other currencies where the same mismatch exists. CHF, JPY, and GBP are useful examples of the reach of the design. Whether and when they launch is a governance and market-depth question, not a branding question.
 
-Compared to existing euro-stablecoins such as EUROC (Circle), EURS (Stasis), or EURT (Tether), Quantillon represents the only comprehensive three-token euro-DeFi ecosystem, offering:
+## The Architectural Bet
 
-* ✅ **Superior capital efficiency** via delta-neutral hedging
-* ✅ **Composability** across multiple DeFi protocols
-* ✅ **Liquidity by design** through Forex and USDC markets
-* ✅ **Yield-bearing QEURO instruments** for both retail and institutional users
+Quantillon makes four design bets:
 
-#### 👥 Team & Structure
+### 1. Start from deep liquidity, do not rebuild it from zero
 
-Finally, the protocol is backed by a seasoned team with decades of experience in software architecture, financial systems, and DeFi engineering. It is structured through three distinct but complementary entities: Quantillon Protocol (on-chain governance), Quantillon Labs (development and liquidity bootstrapping), and Quantillon Foundation (regulatory interface).
+Instead of trying to bootstrap every market from a cold start, Quantillon uses the deepest existing DeFi liquidity as the economic base layer.
 
-> **In a European savings landscape marked by inertia, fragmentation, and regulatory complexity, Quantillon Protocol presents a credible, innovative, and technically rigorous solution. It is not merely a stablecoin—but a new paradigm for euro-based digital savings and decentralized capital formation.**
+### 2. Put the FX hedge inside the protocol
+
+If users have to self-manage the FX leg, the protocol has failed to solve the actual problem. Quantillon treats hedging as protocol infrastructure, not as a manual afterthought.
+
+### 3. Keep the asset layer market-specific
+
+The user-facing asset should match the target currency of the market being served. That is why QEURO matters so much: it is the first concrete proof that the architecture can close the loop from USD liquidity to EUR exposure.
+
+### 4. Keep governance above any single deployment
+
+QTI governs protocol risk, incentives, and expansion decisions. This is important because the governance surface is larger than any one market deployment.
+
+## Why QEURO Matters
+
+QEURO is strategically important because it proves the architecture where the mismatch is already obvious. It allows the protocol to demonstrate:
+
+* a user-facing non-USD market
+* a protocol-managed FX hedge
+* local-currency exposure built on top of deeper USD DeFi infrastructure
+* reusable deployment logic for future markets
+
+That makes QEURO a proof point with real economic and technical significance. It is the first chapter of the protocol story, not the final chapter.
+
+## What Success Looks Like
+
+Success for Quantillon is not simply a larger first deployment. Success means proving that non-dollar DeFi markets can be built on top of the same underlying economic engine:
+
+* source dollar liquidity
+* neutralize the FX leg
+* deliver local-currency exposure
+* reuse governance and risk infrastructure across markets
+
+If that pattern holds, Quantillon becomes an infrastructure layer for local-currency DeFi rather than a one-market product.
+
+> **Quantillon should therefore be read as protocol first and deployment second: QEURO is the first proof point, while the long-term thesis is a reusable FX-hedged architecture for local-currency DeFi.**

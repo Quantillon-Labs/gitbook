@@ -1,6 +1,6 @@
 # Business Model & Economic Sustainability
 
-Quantillon's three-token architecture generates multiple sustainable revenue streams that scale proportionally with ecosystem growth and user adoption.
+Quantillon's first deployment uses a three-token architecture that generates multiple sustainable revenue streams. QEURO and stQEURO are the EUR implementation of the model, while QTI governs the broader protocol and future deployment policy.
 
 ### Primary Revenue Sources
 
@@ -84,7 +84,7 @@ Quantillon's model avoids several common inefficiencies in DeFi protocols:
 * ❌ No bribing mechanisms for gauge voting or yield direction
 * ❌ Slippage-free mint/redeem operations eliminate arbitrage cost
 
-The dual-pool architecture with dynamic Yield Shift ensures internal market balance, reducing the need for external incentives or unsustainable emissions. This design is particularly adapted to the eurozone context, where investors tend to prioritize capital preservation and yield visibility.
+The dual-pool architecture with dynamic Yield Shift ensures internal market balance, reducing the need for external incentives or unsustainable emissions. In the first deployment, this design is particularly adapted to EUR users who tend to prioritize capital preservation and yield visibility.
 
 ### Institutional Fit and Monetization Pathways
 
@@ -92,7 +92,7 @@ Quantillon's infrastructure allows for multiple monetization pathways:
 
 **🏢 Institutional access**
 
-Hedge funds, wealth managers, and corporate treasuries can use QEURO for euro-native exposure in DeFi with reduced compliance overhead.
+Hedge funds, wealth managers, and corporate treasuries can use QEURO for EUR exposure in DeFi with reduced compliance overhead.
 
 **🔗 CeDeFi integration**
 
@@ -104,4 +104,4 @@ Future integrations with fiat gateways and custody providers may allow for sprea
 
 The protocol also supports cross-chain deployment, allowing it to tap into ecosystems like Arbitrum, Base, or LayerZero for added liquidity depth and composability. Treasury diversification and fixed-income DeFi strategies can further enhance yield capture without increasing risk.
 
-> **In sum, Quantillon is engineered as a low-cost, high-leverage protocol. It combines the efficiency of smart contract automation with the robustness of euro-denominated asset management, resulting in a rare alignment of financial viability and technical rigor in the DeFi space.**
+> **In sum, Quantillon is engineered as a low-cost, high-leverage protocol. Its first deployment combines smart contract automation with EUR-denominated asset exposure, while the underlying architecture is designed to remain reusable across future local-currency markets when governance and economics support them.**

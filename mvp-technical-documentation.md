@@ -12,7 +12,7 @@ description: >-
 
 ### Overview
 
-This document outlines the technical architecture, smart contract specifications, and implementation roadmap for the Quantillon Protocol MVP. The MVP introduces Quantillon's revolutionary **three-token ecosystem**: QEURO (euro-pegged stablecoin), stQEURO (yield-bearing auto-compounding wrapper), and QTI (governance token with vote-escrow mechanics).
+This document outlines the technical architecture, smart contract specifications, and implementation roadmap for the Quantillon Protocol MVP. The MVP implements Quantillon's first **three-token deployment**: QEURO (euro-pegged stablecoin), stQEURO (yield-bearing auto-compounding wrapper), and QTI (governance token with vote-escrow mechanics).
 
 > **Three-Token MVP Scope**: Complete ecosystem implementation with QEURO minting/redemption, stQEURO auto-compounding mechanics, QTI governance foundations, and aQEURO vault with Aave v3 integration on Base mainnet.
 
@@ -403,7 +403,7 @@ contract SecurityTests {
 
 **Production Environment:**
 
-* **Base Mainnet**: Complete three-token ecosystem deployment
+* **Base Mainnet**: Complete first three-token deployment
 * **Cross-Chain Infrastructure**: Future multi-chain synchronization
 * **Monitoring**: Real-time protocol health, yield tracking, and governance activity
 
@@ -516,7 +516,7 @@ jobs:
 
 **Production Deployment:**
 
-* \[ ] Complete three-token ecosystem launch on Base mainnet
+* \[ ] Complete first three-token deployment launch on Base mainnet
 * \[ ] Initial liquidity provision and market making across all tokens
 * \[ ] DeFi protocol integrations supporting all three tokens
 * \[ ] Institutional onboarding and custody provider partnerships
@@ -592,11 +592,11 @@ jobs:
 
 **Market Advantages:**
 
-* **First Euro DeFi Ecosystem**: Complete three-token architecture for European market
+* **First Deployment Template**: Complete three-token architecture for the EUR market that can inform future local-currency deployments
 * **Institutional Ready**: MiCA-compliant design with professional-grade features
 * **Capital Efficient**: Optimal collateral utilization across multiple DeFi protocols
 * **Community Driven**: Governance-first approach with sustainable tokenomics
 
 ***
 
-_This MVP Technical Documentation serves as the comprehensive blueprint for Quantillon Protocol's revolutionary three-token ecosystem. For questions or technical clarification, please refer to the complete protocol whitepaper or contact the development team._
+_This MVP Technical Documentation serves as the comprehensive blueprint for Quantillon Protocol's first three-token deployment. For questions or technical clarification, please refer to the complete protocol whitepaper or contact the development team._

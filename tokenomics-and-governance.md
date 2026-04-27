@@ -4,7 +4,7 @@
 
 #### 5.1 Three-Token Ecosystem Architecture
 
-Quantillon operates through a sophisticated three-token system designed to create sustainable value flows and optimal capital efficiency across the euro-DeFi ecosystem.
+Quantillon's first deployment operates through a three-token system designed to create sustainable value flows and optimal capital efficiency for the EUR market, while keeping governance at the broader protocol layer.
 
 **The $QTI Token: Governance & Value Accrual**
 
@@ -34,7 +34,7 @@ QTI holders can lock their tokens for periods ranging from 1 week to 4 years, re
 
 **stQEURO: Yield-Bearing Euro Infrastructure**
 
-stQEURO represents the protocol's yield-bearing token, automatically compounding returns from QEURO collateral deployment. Unlike traditional staking mechanisms, stQEURO maintains constant token quantity in user wallets while increasing intrinsic value over time through the formula:
+stQEURO represents the first deployment's yield-bearing wrapper, automatically compounding returns from QEURO collateral deployment. Unlike traditional staking mechanisms, stQEURO maintains constant token quantity in user wallets while increasing intrinsic value over time through the formula:
 
 **stQEURO Value = 1 stQEURO = (1 + Cumulative Yield Rate) QEURO**
 
@@ -73,4 +73,4 @@ Sustainability is further ensured by the protocol's lean cost structure. With an
 
 Governance mechanisms are engineered to be progressive. In early phases, protocol changes may require multi-signature validation from the Quantillon Foundation to ensure operational security. Over time, power will transition toward full DAO control, contingent on metrics like TVL, QTI token dispersion, and governance participation rates.
 
-> **Quantillon's tokenomics combine strong economic incentives with a governance architecture inspired by proven DeFi protocols such as Curve, Aave, and MakerDAO, while adapting them to the specific needs of eurozone compliance and FX stability.**
+> **Quantillon's tokenomics combine strong economic incentives with a governance architecture inspired by proven DeFi protocols such as Curve, Aave, and MakerDAO. QEURO and stQEURO instantiate the model for the EUR market first, while QTI remains the governance layer for protocol risk, incentives, and future deployment policy.**

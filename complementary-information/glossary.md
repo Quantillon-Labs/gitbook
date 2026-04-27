@@ -88,7 +88,7 @@ A risk-mitigation strategy aiming to make a position **neutral to price changes*
 
 ### EUR/USD
 
-The Euro/US Dollar currency pair. A key factor in volatility and currency risk for European users exposed to USD-based DeFi.
+The Euro/US Dollar currency pair. A key factor in volatility and currency risk for the QEURO deployment and for EUR users exposed to USD-based DeFi.
 
 ***
 
