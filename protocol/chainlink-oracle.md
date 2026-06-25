@@ -6,6 +6,8 @@
 
 The ChainlinkOracle is the contract that manages integration with Chainlink price feeds to obtain real-time EUR/USD and USDC/USD prices. It includes robust security mechanisms like circuit breakers, data freshness validation, and timestamp manipulation protection.
 
+> **Role in the current architecture:** the ChainlinkOracle is now the **fallback** EUR/USD source (slot 0) behind the [OracleRouter](oracle-architecture.md). QEURO mint/redeem is priced by default off the **Hyperliquid** EUR/USD market mid (the hedge venue) via the `HyperliquidEurUsdOracle`. The ChainlinkOracle still provides **USDC/USD validation** for the protocol and acts as a **one-transaction fallback** (`switchOracle(0)`). The page below documents the ChainlinkOracle contract itself; see **[Oracle Architecture](oracle-architecture.md)** for how the two sources fit together.
+
 ***
 
 ### 🏗️ Contract Architecture

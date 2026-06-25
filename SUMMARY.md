@@ -22,6 +22,7 @@
   * [HedgerPool](protocol/hedger-pool.md)
   * [YieldShift](protocol/yield-shift.md)
   * [AaveVault](protocol/aave-vault.md)
+  * [Oracle Architecture](protocol/oracle-architecture.md)
   * [ChainlinkOracle](protocol/chainlink-oracle.md)
   * [Liquidation System](protocol/liquidation-system.md)
 

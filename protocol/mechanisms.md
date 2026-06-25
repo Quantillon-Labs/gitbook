@@ -31,7 +31,7 @@ The QEURO minting mechanism is designed for simplicity and capital efficiency:
 **📥 Step-by-Step Minting**
 
 1. **USDC Deposit**: Users deposit USDC to the QuantillonVault
-2. **Oracle Price Check**: Chainlink oracles provide real-time EUR/USD exchange rates
+2. **Oracle Price Check**: the protocol's EUR/USD oracle provides the real-time exchange rate (the Hyperliquid market mid by default, with Chainlink as fallback — see [Oracle Architecture](oracle-architecture.md))
 3. **Collateral Verification**: Protocol verifies 101%+ collateralization ratio
 4. **QEURO Issuance**: Users receive QEURO at current oracle price minus 0.1% minting fee
 5. **Yield Deployment**: USDC is deployed to Aave v3 for yield generation
@@ -290,9 +290,15 @@ This prevents:
 
 ### 🔮 Oracle & Pricing Infrastructure
 
-Accurate, tamper-resistant pricing is critical for all protocol mechanisms.
+Accurate, tamper-resistant pricing is critical for all protocol mechanisms. Pricing is served through an **`OracleRouter`** with two interchangeable EUR/USD sources — see **[Oracle Architecture](oracle-architecture.md)** for the full design.
 
-#### Primary Oracle: ChainlinkOracle Contract
+#### Active source: Hyperliquid EUR/USD market mid
+
+QEURO mint/redeem is priced off the **Hyperliquid `EUR` perpetual mid** — the venue where the protocol's EUR/USD hedge is executed — published on-chain and read through the `HyperliquidEurUsdOracle`, so the on-chain valuation stays aligned with the hedge.
+
+#### Fallback source: ChainlinkOracle
+
+The **ChainlinkOracle** (Chainlink EUR/USD spot) is wired as a one-transaction governance fallback (`switchOracle(0)`) and provides **USDC/USD** collateral validation. Both sources enforce the same validation discipline below.
 
 **Price Feeds**
 
