@@ -76,16 +76,26 @@ New Exchange Rate = Current Exchange Rate + (Yield Amount / Total stQEURO Supply
 
 **Revenue Flow Architecture**
 
+All protocol USDC (hedger collateral + the USDC backing user mints) is pooled into a single curated
+yield strategy (Morpho on Base, via a vault adapter). The gross yield is split **in this order**:
+
 ```
-QEURO Collateral Deployed to Aave v3
-├── Gross Yield Generated (Variable APY: 4-12%)
+Gross yield realized from the strategy (variable APY)
 │
-├── Protocol Fee: 10% (to Treasury)
+├── 1. Hedger funding (FIRST) — an absolute, time-prorated funding rate on the hedged
+│       notional (governance-set; 0 at launch). Covers the cost of maintaining the hedge.
 │
-└── Net Yield Distribution via YieldShift
-    ├── stQEURO Holders: 50-90% (auto-compounded)
-    └── Hedgers: 10-50% (yield shift allocation)
+└── 2. Residual (= gross − hedger funding), split by the staking ratio:
+        ├── stQEURO holders: residual × (staked QEURO / circulating QEURO)
+        │     → credited into stQEURO, raising the exchange rate (auto-compounded)
+        └── Treasury: the remainder (yield attributable to unstaked QEURO)
 ```
+
+> The hedger share is an **absolute funding cost** (reflecting the perp funding rate), not a fixed
+> percentage of yield. Only the **staked** fraction of QEURO earns the residual; the unstaked share
+> accrues to the treasury. The protocol is only viable when the strategy yield exceeds the hedging
+> cost. At launch the funding rate is **0** (Quantillon is the sole hedger and bootstraps at a loss),
+> so the full residual flows to stakers and treasury.
 
 **📊 Value Appreciation Estimates**
 
@@ -105,71 +115,69 @@ QEURO Collateral Deployed to Aave v3
 
 | Parameter | Description | Governance-Adjustable |
 |-----------|-------------|----------------------|
-| **exchangeRate** | Current QEURO per stQEURO | Auto-updated |
-| **totalUnderlying** | Total QEURO value backing stQEURO | Auto-tracked |
-| **yieldFee** | Protocol fee on distributed yield | ✅ Yes |
-| **minYieldThreshold** | Minimum yield for distribution | ✅ Yes |
-| **maxUpdateFrequency** | Maximum rate of exchange rate updates | ✅ Yes |
+| **convertToAssets(1e18)** | Current QEURO per stQEURO (exchange rate) | Auto-updated as yield is credited |
+| **totalAssets()** | Total QEURO backing this stQEURO series | Auto-tracked |
+| **yieldFee** | Fee on credited yield, per stQEURO series (bps, cap 20%) | ✅ Yes |
+| **fundingRateAnnualBps** | Hedger funding carve-out before the staker split (on QuantillonVault) | ✅ Yes |
+| **hedgerYieldRecipient** | Recipient of the hedger funding share (on QuantillonVault) | ✅ Yes |
 
 **Access Control Roles**
 
 | Role | Permission | Typical Holder |
 |------|------------|----------------|
 | **GOVERNANCE_ROLE** | Update parameters, manage settings | Governance/Timelock |
-| **YIELD_MANAGER_ROLE** | Distribute yield, trigger compounding | YieldShift contract |
+| **YIELD_DISTRIBUTOR_ROLE** (on QuantillonVault) | Harvest + distribute yield, credit QEURO into stQEURO | Keeper / Governance Safe |
 | **EMERGENCY_ROLE** | Pause/unpause, emergency withdraw | Emergency multisig |
 
 ***
 
 ### Staking & Unstaking Operations
 
+stQEURO is an **ERC-4626** vault. Each staking vault has its own non-fungible stQEURO series
+(e.g. `stQEUROMORPHO1`), resolved from `stQEUROFactory` by `vaultId`.
+
 **📥 Staking (QEURO → stQEURO)**
 
 ```solidity
-function stake(uint256 qeuroAmount) external returns (uint256 stQEUROAmount);
+function deposit(uint256 qeuroAssets, address receiver) external returns (uint256 stQEUROShares);
 ```
 
-1. User approves QEURO for stQEURO contract
-2. User calls `stake()` with QEURO amount
-3. Contract calculates stQEURO based on current exchange rate
-4. QEURO transferred to contract, stQEURO minted to user
+1. User approves QEURO for the vault-specific stQEURO contract
+2. User calls `deposit()` — or `mintAndStakeQEURO()` on QuantillonVault to mint + stake in one transaction
+3. stQEURO shares are minted at the current exchange rate
 
 **📤 Unstaking (stQEURO → QEURO)**
 
 ```solidity
-function unstake(uint256 stQEUROAmount) external returns (uint256 qeuroAmount);
+function redeem(uint256 stQEUROShares, address receiver, address owner) external returns (uint256 qeuroAssets);
 ```
 
-1. User calls `unstake()` with stQEURO amount
-2. Contract calculates QEURO based on current exchange rate
-3. stQEURO burned, QEURO transferred to user
-4. User receives original stake + accumulated yield
+1. User calls `redeem()` with their stQEURO shares
+2. QEURO is returned at the current exchange rate (original stake + accrued yield)
+3. Instant — no lock period
 
-**Batch Operations**
-
-* `batchStake(amounts[])` - Stake multiple amounts efficiently
-* `batchUnstake(amounts[])` - Unstake multiple amounts efficiently
+**Preview / conversion helpers**: `convertToAssets`, `convertToShares`, `previewDeposit`, `previewRedeem` (standard ERC-4626).
 
 ***
 
-### YieldShift Integration
+### How Yield Is Credited
 
-**Dynamic Yield Distribution**
-
-stQEURO yield is distributed through the YieldShift mechanism which balances incentives between users and hedgers:
+stQEURO yield is credited on-chain by the protocol vault's `harvestAndDistributeVaultYield` function,
+which harvests the strategy yield, pays the hedger funding share first, and credits the staked-user
+share into stQEURO — raising the exchange rate. The **user** side reaches stakers through the exchange
+rate (no claim). YieldShift remains the accounting/claim ledger for the **hedger** side of protocol
+yield (`claimHedgerYield`).
 
 ```
 Yield Distribution Flow:
-1. Aave generates yield on USDC collateral
-2. AaveVault harvests yield (minus 10% protocol fee)
-3. YieldShift receives net yield
-4. YieldShift distributes to stQEURO based on current shift ratio
-5. stQEURO exchange rate increases automatically
+1. The strategy (Morpho/Aave) generates yield on the pooled USDC.
+2. harvestAndDistributeVaultYield realizes that yield into the vault.
+3. Hedger funding is carved out first; the residual is split staked / unstaked.
+4. The staked share is minted into stQEURO → exchange rate rises automatically.
 ```
 
-**Holding Period Requirement**
-
-> **Important**: The YieldShift mechanism enforces a **7-day minimum holding period** for yield claims. This prevents flash deposit attacks and ensures fair yield distribution.
+> **No claim, no lock**: stQEURO has no reward-claim call and no holding-period lock. Value accrues to
+> the exchange rate, so simply holding stQEURO earns yield, and unstaking is always immediate.
 
 ***
 
@@ -263,16 +271,18 @@ stQEURO is designed as a standard ERC-20 token for maximum composability:
 
 ```solidity
 interface IstQEURO {
-    // Read current exchange rate
-    function exchangeRate() external view returns (uint256);
-    
-    // Convert amounts
-    function getQEUROForStQEURO(uint256 stQEUROAmount) external view returns (uint256);
-    function getStQEUROForQEURO(uint256 qeuroAmount) external view returns (uint256);
-    
-    // Stake/Unstake
-    function stake(uint256 qeuroAmount) external returns (uint256 stQEUROAmount);
-    function unstake(uint256 stQEUROAmount) external returns (uint256 qeuroAmount);
+    // Underlying asset (QEURO) and total backing
+    function asset() external view returns (address);
+    function totalAssets() external view returns (uint256);
+
+    // Exchange-rate conversions (ERC-4626)
+    function convertToAssets(uint256 shares) external view returns (uint256 qeuroAssets);
+    function convertToShares(uint256 assets) external view returns (uint256 stQEUROShares);
+    function previewRedeem(uint256 shares) external view returns (uint256 qeuroAssets);
+
+    // Stake / unstake (ERC-4626)
+    function deposit(uint256 assets, address receiver) external returns (uint256 shares);
+    function redeem(uint256 shares, address receiver, address owner) external returns (uint256 assets);
 }
 ```
 
@@ -301,10 +311,10 @@ interface IstQEURO {
 
 **Key Events**
 
-* `Staked(user, qeuroAmount, stQEUROAmount)` - User staked QEURO
-* `Unstaked(user, stQEUROAmount, qeuroAmount)` - User unstaked stQEURO
-* `YieldDistributed(yieldAmount, newExchangeRate)` - Yield added to exchange rate
-* `ParametersUpdated(yieldFee, minThreshold)` - Governance update
+* `Deposit(sender, owner, assets, shares)` - User staked QEURO (ERC-4626)
+* `Withdraw(sender, receiver, owner, assets, shares)` - User unstaked stQEURO (ERC-4626)
+* `VaultYieldDistributed(vaultId, realizedYield, hedgerShare, userShare, treasuryShare)` - yield split (QuantillonVault)
+* `YieldParametersUpdated(yieldFee)` - per-series stQEURO fee update
 
 **Contract Dependencies**
 
