@@ -18,7 +18,7 @@ Our yield-bearing architecture incorporates cutting-edge mechanisms including au
 | --------- | ----- | --------- |
 | **Name** | Staked Quantillon Euro | Clear staking utility |
 | **Symbol** | stQEURO | Intuitive yield-bearing prefix |
-| **Standard** | ERC-20 (UUPS Upgradeable) | Auto-compounding functionality |
+| **Standard** | ERC-4626 vault, ERC-20 compatible (UUPS Upgradeable) | Standard vault API + auto-compounding |
 | **Network** | Base L2 (Primary) | L2 efficiency and lower costs |
 | **Exchange Rate** | Dynamic (yield-adjusted) | Automatic yield accumulation |
 | **Decimals** | 18 | Full ERC-20 compatibility |
@@ -99,13 +99,13 @@ Gross yield realized from the strategy (variable APY)
 
 **📊 Value Appreciation Estimates**
 
-| Market Condition | Aave APY | Estimated Net stQEURO APY | 1 stQEURO Value After 1 Year |
-| ---------------- | -------- | ------------------------- | ---------------------------- |
+| Market Condition | Strategy APY | Estimated Net stQEURO APY | 1 stQEURO Value After 1 Year |
+| ---------------- | ------------ | ------------------------- | ---------------------------- |
 | **Bear Market** | 4% | 2-3% | ~1.025 QEURO |
 | **Normal** | 7% | 4-6% | ~1.050 QEURO |
 | **Bull Market** | 12% | 8-10% | ~1.090 QEURO |
 
-> **Note**: Actual APY depends on Aave market conditions, YieldShift allocation, and protocol fee deductions. These are estimates, not guarantees.
+> **Note**: Actual APY depends on the external strategy's market conditions (currently Morpho USDC lending on Base), the hedger funding carve-out, and the per-series yield fee. These are estimates, not guarantees.
 
 ***
 
@@ -198,17 +198,17 @@ Yield Distribution Flow:
 | Component | Security Measure |
 | --------- | ---------------- |
 | **Exchange Rate Calculation** | Checked arithmetic, overflow protection |
-| **Yield Distribution** | Only authorized YieldShift can update |
-| **Oracle Integration** | Via YieldShift with Chainlink feeds |
+| **Yield Distribution** | Only QuantillonVault (`YIELD_DISTRIBUTOR_ROLE`) can credit yield |
+| **Oracle Integration** | Yield credit prices QEURO via the vault's active oracle (OracleRouter) |
 | **Emergency Response** | Pause + emergency withdrawal |
 
 **⚖️ Economic Risk Considerations**
 
 **Yield Variability**
 
-* Yields depend on Aave market conditions (supply/demand)
-* YieldShift allocation varies based on pool ratios
-* Protocol fees reduce gross yield by 10%
+* Yields depend on the external strategy's market conditions (currently Morpho on Base)
+* The hedger funding carve-out (`fundingRateAnnualBps`) is taken before the staker residual
+* A per-series yield fee (`yieldFee`, capped at 20%) reduces gross staker yield
 
 > **Note**: The documentation previously mentioned "Floor Protection" (2% APY) and "Ceiling Management" (15% APY). These are NOT currently implemented in the smart contracts. Yields are market-driven.
 
@@ -244,15 +244,15 @@ Key metrics to monitor:
 
 stQEURO value grows through:
 
-1. **Aave Yield**: Primary source from USDC lending
-2. **YieldShift Allocation**: Dynamic share of protocol yield
+1. **Strategy Yield**: Primary source from the vault's external strategy (currently Morpho USDC lending on Base)
+2. **Staker Residual**: The realized yield remaining after the hedger funding carve-out, credited pro-rata to the staked fraction
 3. **Compound Effect**: Automatic reinvestment without gas costs
 
 **📈 Growth Factors**
 
 * **TVL Growth**: More staked QEURO = more yield generation
-* **Aave APY**: Higher market rates = higher stQEURO yields
-* **YieldShift Ratio**: Favorable allocation to users = higher returns
+* **Strategy APY**: Higher market rates = higher stQEURO yields
+* **Funding Rate**: A lower hedger carve-out leaves a larger staker residual
 
 ***
 
@@ -318,9 +318,8 @@ interface IstQEURO {
 
 **Contract Dependencies**
 
-* `QEURO`: Underlying stablecoin token
-* `YieldShift`: Yield distribution controller
-* `USDC`: Yield denomination (converted via exchange)
+* `QEURO`: Underlying stablecoin token (the only asset the contract holds)
+* `QuantillonVault`: Yield distributor — realizes strategy yield and credits the staker share as QEURO backing
 * `Treasury`: Fee recipient
 
 ***

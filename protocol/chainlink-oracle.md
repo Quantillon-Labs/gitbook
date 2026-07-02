@@ -46,8 +46,9 @@ contract ChainlinkOracle is
 ### ⚙️ Security Constants
 
 ```solidity
-// Data freshness
-uint256 public constant MAX_PRICE_STALENESS = 3600;    // 1 hour max
+// Data freshness (EUR/USD; USDC/USD uses 25 hours to match its daily heartbeat)
+uint256 public constant MAX_PRICE_STALENESS = 2 hours;
+uint256 public constant MAX_USDC_PRICE_STALENESS = 25 hours;
 
 // Price deviation
 uint256 public constant MAX_PRICE_DEVIATION = 500;     // 5% max between updates

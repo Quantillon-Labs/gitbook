@@ -304,13 +304,14 @@ The **ChainlinkOracle** (Chainlink EUR/USD spot) is wired as a one-transaction g
 
 | Feed     | Purpose               | Max Staleness |
 | -------- | --------------------- | ------------- |
-| EUR/USD  | QEURO peg pricing     | 1 hour        |
-| USDC/USD | Collateral validation | 1 hour        |
+| EUR/USD  | QEURO peg pricing     | 2 hours       |
+| USDC/USD | Collateral validation | 25 hours (daily heartbeat) |
 
 **Security Parameters**
 
 ```solidity
-uint256 public constant MAX_PRICE_STALENESS = 3600;   // 1 hour
+uint256 public constant MAX_PRICE_STALENESS = 2 hours;       // EUR/USD
+uint256 public constant MAX_USDC_PRICE_STALENESS = 25 hours; // USDC/USD
 uint256 public constant MAX_PRICE_DEVIATION = 500;    // 5%
 uint256 public constant MAX_TIMESTAMP_DRIFT = 900;    // 15 minutes
 
