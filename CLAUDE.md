@@ -23,19 +23,31 @@ Pushing to `main` or `dev` triggers `.github/workflows/Telegram Notifications.ym
 
 ## Protocol Domain Knowledge
 
-When editing documentation, the following are established facts about the protocol:
+When editing documentation, the following are established facts about the protocol
+(as of 2026-07-03; the smart-contracts repo is the source of truth for on-chain behavior):
 
 **Three-token ecosystem:**
-- **QEURO** — Euro-pegged stablecoin, 101%+ USDC overcollateralized
-- **stQEURO** — Yield-bearing auto-compounding wrapper with instant liquidity
-- **QTI** — Governance token with vote-escrow mechanics (veQTI), 100M total supply
+- **QEURO** — Euro-pegged stablecoin, USDC-collateralized. Minting requires ≥105% protocol
+  collateralization; liquidation/critical mode engages at 101%.
+- **stQEURO** — Yield-bearing staked QEURO (ERC-4626 vault, one series per external vault via
+  `stQEUROFactory`); exchange rate rises as vault yield is distributed — no rebasing.
+- **QTI** — Governance token with vote-escrow mechanics (veQTI), 100M supply cap.
+  **Currently dormant**: no mint path is wired, supply is 0; lock/vote/propose activate with a
+  future upgrade.
 
-**Smart contract stack** (documented here, implemented in a separate repo):
-- Solidity 0.8.x, OpenZeppelin upgradeable proxies, Foundry framework
-- Base Mainnet (L2), Chainlink oracle feeds
-- Key contracts: `UserPool`, `HedgerPool`, `YieldShift`, `AaveVault`, `ChainlinkOracle`, `LiquidationSystem`
+**Smart contract stack** (documented here, implemented in the smart-contracts repo):
+- Solidity 0.8.24, OpenZeppelin UUPS upgradeable proxies, Foundry framework.
+- **Live on Base Mainnet (chain 8453)**, governed by a 2-of-3 Gnosis Safe; core-contract upgrades
+  route through an OZ TimelockController with a 12h delay.
+- Key contracts: `QuantillonVault` (mint/redeem + external-vault yield distribution), `QEUROToken`,
+  `UserPool`, `HedgerPool` (single-hedger EUR-short model), `YieldShift`, `FeeCollector`,
+  `stQEUROFactory`/`stQEUROToken`, `OracleRouter` (active EUR/USD source:
+  `HyperliquidEurUsdOracle`, fed on-chain via `SlippageStorage`; `ChainlinkOracle` as fallback and
+  the USDC/USD source), external staking adapters (MetaMorpho live as vaultId 2).
+- There is no `AaveVault` or `LiquidationSystem` contract — liquidation-mode redemption lives in
+  `QuantillonVault`; Aave/Morpho exposure goes through the staking vault adapters.
 
-**Governance parameters:**
+**Governance parameters** (as designed for QTI; inactive while QTI is dormant):
 - Proposal threshold: 100k QTI | Quorum: 20% | Voting period: 4 days
 - Decision thresholds: 60–85% depending on proposal type
 
@@ -47,4 +59,6 @@ When editing documentation, the following are established facts about the protoc
 - Three-entity structure: Quantillon Protocol (on-chain), Quantillon Labs (dev), Quantillon Foundation (Swiss non-profit, regulatory interface)
 - Active engagement with French ACPR
 
-**Development phase** (as of 2026-04-07): Phase 3 of 7 — MVP Build in progress (core contracts, internal alpha, 95%+ test coverage target).
+**Development phase** (as of 2026-07-03): live on Base mainnet since June 2026 — core protocol
+deployed and operating (mint/redeem, staking with external-vault yield distribution, autonomous
+hedging with an independent watchdog); QTI governance activation pending.
