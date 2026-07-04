@@ -28,7 +28,7 @@ As with all DAO-based systems, Quantillon faces the risk of governance capture o
 
 Although Quantillon benefits from the Recital 22 exemption under MiCA, regulatory interpretation can evolve, especially as EU authorities refine crypto oversight.
 
-**🛡️ Mitigation:** The protocol operates under a hybrid compliance architecture. Its decentralized nature is verifiable and publicly auditable. Meanwhile, the Quantillon Foundation interfaces with regulators and external auditors, maintaining legal dialogue (notably with the French ACPR). The Foundation can issue voluntary disclosures or risk assessments without compromising decentralization.
+**🛡️ Mitigation:** The protocol operates under a hybrid compliance architecture. Its decentralized nature is verifiable and publicly auditable. Meanwhile, Quantillon Labs (a French SAS) interfaces with regulators and external auditors, maintaining legal dialogue (notably with the French ACPR); the planned Quantillon Foundation — jurisdiction to be determined — is intended to take over this regulatory-interface role once established. These entities can issue voluntary disclosures or risk assessments without compromising decentralization.
 
 ### DeFi Contagion Risk
 

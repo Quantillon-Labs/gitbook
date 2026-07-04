@@ -28,11 +28,11 @@ To manage legal exposure, regulatory dialogue, and decentralized operations, Qua
 
 **🔬 Quantillon Labs (development)**
 
-A **legal entity** responsible for developing and launching the protocol. Initially acts as a liquidity provider and hedger, remunerated by the protocol. Labs ensures code security, DevOps, and integrations.
+A **French SAS** (Mérignac, France — see the [Legal Notice](complementary-information/legal-notice.md)) responsible for developing and launching the protocol. Initially acts as a liquidity provider and hedger, remunerated by the protocol. Labs ensures code security, DevOps, and integrations.
 
-**🏛️ Quantillon Foundation (compliance)**
+**🏛️ Quantillon Foundation (compliance — planned)**
 
-A **non-profit Swiss-style foundation** that interfaces with regulators, auditors, and legal stakeholders. It safeguards multisig access, publishes disclosures, and facilitates DAO transitions.
+A **planned future non-profit entity**, with jurisdiction to be determined, that will interface with regulators, auditors, and legal stakeholders once established. It is intended to safeguard multisig access, publish disclosures, and facilitate DAO transitions. Until then, these responsibilities sit with Quantillon Labs.
 
 > **This tripartite model preserves decentralization while ensuring institutional credibility and legal defensibility—especially relevant under MiCA's evolving guidance.**
 

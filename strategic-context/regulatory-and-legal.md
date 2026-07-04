@@ -101,8 +101,8 @@ Decentralization in the context of MiCA refers to the extent to which a crypto-a
 **Legal Entity Separation**
 
 * **⚖️ Protocol Layer**: Fully decentralized smart contracts (Recital 22 exempt)
-* **🔬 Development Layer**: Quantillon Labs (traditional legal entity)
-* **🏛️ Foundation Layer**: Quantillon Foundation (regulatory interface)
+* **🔬 Development Layer**: Quantillon Labs (French SAS)
+* **🏛️ Foundation Layer**: Quantillon Foundation (planned regulatory interface — not yet established)
 
 #### Regulatory Interpretation Challenges
 
@@ -132,30 +132,31 @@ Quantillon operates through a carefully designed multi-entity structure that bal
 
 **🔬 Quantillon Labs (Development Entity)**
 
-* **Legal Status**: Traditional legal entity (likely Swiss or Estonian)
+* **Legal Status**: French SAS (Mérignac, France; SIREN 988 682 613 — see the [Legal Notice](../complementary-information/legal-notice.md))
 * **Functions**: Protocol development, initial liquidity provision, technical maintenance
 * **Regulatory Position**: Standard corporate compliance requirements
 * **Transition**: Reduces role as protocol matures toward full DAO governance
 
-**🏛️ Quantillon Foundation (Compliance Interface)**
+**🏛️ Quantillon Foundation (Compliance Interface — planned)**
 
-* **Legal Status**: Non-profit foundation (Swiss-style structure)
-* **Functions**: Regulatory dialogue, voluntary disclosures, multisig management
+* **Legal Status**: Planned future non-profit entity — **not yet established; jurisdiction to be determined**
+* **Functions (once established)**: Regulatory dialogue, voluntary disclosures, multisig management
 * **Regulatory Position**: Interface with authorities when required
 * **Purpose**: Bridge between decentralized protocol and institutional needs
+* **Interim**: Until the Foundation exists, these functions are carried by Quantillon Labs
 
 #### Progressive Decentralization Model
 
 **Phase 1: Bootstrap (Current)**
 
 * **Development**: Quantillon Labs leads technical implementation
-* **Governance**: Foundation holds emergency multisigs
-* **Community**: Growing $QTI distribution and participation
+* **Governance**: a 2-of-3 Gnosis Safe operated by Quantillon Labs holds the privileged roles and emergency controls
+* **Community**: Growing community participation ahead of QTI distribution
 
-**Phase 2: Transition (2025-2026)**
+**Phase 2: Transition**
 
 * **Development**: Community contributors and grants
-* **Governance**: Shared between Foundation and $QTI holders
+* **Governance**: Shared between the Foundation (once established) and $QTI holders
 * **Decentralization**: Majority control transferred to community
 
 **Phase 3: Full DAO (2026+)**
@@ -214,7 +215,7 @@ While focused on European compliance, Quantillon considers global regulatory dev
 
 **🇨🇭 Switzerland**
 
-* **Foundation Domicile**: Swiss legal framework for Quantillon Foundation
+* **Candidate Foundation Domicile**: one of the jurisdictions under evaluation for the planned Quantillon Foundation — no domicile decision has been made
 * **Regulatory Clarity**: Well-established crypto legal framework
 * **Strategic Value**: Gateway for institutional European adoption
 
@@ -235,7 +236,7 @@ While focused on European compliance, Quantillon considers global regulatory dev
 * **💰 Anti-Money Laundering (AML)**: Protocol-level monitoring and reporting capabilities
 * **👤 Know Your Customer (KYC)**: Institutional interface options without compromising decentralization
 * **🛡️ Market Abuse**: Transparent operations and audit trails
-* **📊 Financial Reporting**: Voluntary transparency and Foundation disclosures
+* **📊 Financial Reporting**: Voluntary transparency disclosures (by Labs today; by the Foundation once established)
 
 **Mitigation Strategies**
 
@@ -294,7 +295,7 @@ While focused on European compliance, Quantillon considers global regulatory dev
 **Adaptation Mechanisms**
 
 * **🗳️ Governance Response**: Community voting on regulatory adaptations
-* **⚡ Emergency Procedures**: Foundation authority for urgent compliance needs
+* **⚡ Emergency Procedures**: governance Safe authority for urgent compliance needs (to transition to the Foundation once it is established)
 * **🔄 Structure Evolution**: Progressive modification capabilities
 * **📋 Documentation Updates**: Regular legal analysis and opinion updates
 
@@ -344,7 +345,7 @@ While focused on European compliance, Quantillon considers global regulatory dev
 
 **Entity Documentation**
 
-* **🏢 Foundation Charter**: Quantillon Foundation governing documents
+* **🏢 Foundation Charter**: Quantillon Foundation governing documents (planned — to be published once the Foundation is established)
 * **💼 Corporate Structure**: Entity relationship and control documentation
 * **📊 Compliance Policies**: AML, KYC, and risk management procedures
 * **🤝 Partnership Agreements**: Third-party integration compliance frameworks
@@ -355,7 +356,7 @@ While focused on European compliance, Quantillon considers global regulatory dev
 
 * **🇪🇺 European Crypto Law**: Specialized MiCA and DeFi regulatory expertise
 * **🇫🇷 French Financial Law**: ACPR relationship and French regulatory compliance
-* **🇨🇭 Swiss Foundation Law**: Foundation establishment and governance
+* **🌍 Foundation Structuring**: comparative advice on candidate jurisdictions for the planned Foundation
 * **🌍 International Expansion**: Multi-jurisdiction regulatory strategy
 
 **Compliance Partners**
@@ -422,6 +423,6 @@ While focused on European compliance, Quantillon considers global regulatory dev
 
 ***
 
-_This regulatory analysis is current as of August 2025 and will be updated as the regulatory landscape evolves. For the most current regulatory information, visit_ [_quantillon.money/legal_](https://quantillon.money/legal) _or consult the Quantillon Foundation's regulatory updates._
+_This regulatory analysis is current as of August 2025 and will be updated as the regulatory landscape evolves. For the most current regulatory information, visit_ [_quantillon.money/legal_](https://quantillon.money/legal) _or consult Quantillon Labs' regulatory updates._
 
 > **🎯 Ready to engage with compliant, decentralized local-currency DeFi?** Visit our [dApp](https://app.quantillon.money/) to explore QEURO as Quantillon's first deployment, built for regulatory clarity and sustainable operation.
