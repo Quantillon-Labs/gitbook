@@ -123,7 +123,9 @@ There is no standalone `AaveVault` contract. External yield exposure (currently 
 ### QEUROToken
 
 ```solidity
-uint256 public constant MAX_SUPPLY = 100_000_000e18;  // 100 million QEURO
+// No fixed tokenomic supply cap — supply is bounded by hedging capacity (105% minting CR).
+// Safety guardrails at token level:
+uint256 public constant DEFAULT_MAX_SUPPLY = 100_000_000e18;  // administrative ceiling, governance-raisable
 // Mint rate limit: 10,000,000 QEURO per 300-block window (~10 min on Base)
 // Mint/redeem fees: currently 0, governance-settable, capped at 5% (QuantillonVault)
 ```

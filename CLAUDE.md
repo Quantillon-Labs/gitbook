@@ -28,10 +28,12 @@ When editing documentation, the following are established facts about the protoc
 is the source of truth for on-chain behavior):
 
 **Three-token ecosystem:**
-- **QEURO** — Euro-pegged stablecoin, USDC-collateralized, max supply 100M. Minting requires
-  ≥105% protocol collateralization; liquidation/critical mode engages at 101% (pro-rata
-  redemption inside QuantillonVault). Mint/redeem fees are currently 0 (governance-settable,
-  max 5%). Mint rate limit: 10M QEURO per 300-block window.
+- **QEURO** — Euro-pegged stablecoin, USDC-collateralized. **No fixed tokenomic supply cap** —
+  supply is bounded by hedging capacity: minting requires ≥105% protocol collateralization;
+  liquidation/critical mode engages at 101% (pro-rata redemption inside QuantillonVault).
+  Token-level safety guardrails (not supply policy): administrative supply ceiling currently
+  100M (governance-raisable) and a mint/burn rate limit of 10M QEURO per 300-block window
+  (~10 min on Base). Mint/redeem fees are currently 0 (governance-settable, max 5%).
 - **stQEURO** — Yield-bearing staked QEURO (ERC-4626 vault, one series per external vault via
   `stQEUROFactory`); exchange rate rises as vault yield is distributed — no rebasing.
 - **QTI** — Governance token with vote-escrow mechanics (veQTI), 100M supply cap.

@@ -22,8 +22,12 @@ Our stablecoin architecture incorporates advanced mechanisms including overcolla
 | **Network**       | Base L2 (Primary)           | L2 efficiency and lower costs  |
 | **Peg Target**    | 1 QEURO = 1 EUR             | Direct euro denomination       |
 | **Decimals**      | 18                          | Full ERC-20 compatibility      |
-| **Max Supply**    | 100,000,000 QEURO           | Governance-adjustable cap      |
+| **Supply Model**  | No fixed cap — bounded by hedging capacity | Safety ceiling (currently 100M) is governance-raisable |
 | **Contract Type** | OpenZeppelin + Custom Logic | Battle-tested + innovation     |
+
+**Supply Model**
+
+QEURO has **no fixed tokenomic supply cap** — supply is bounded by the protocol's hedging capacity: minting reverts whenever protocol collateralization would drop below 105%. The token contract carries two adjustable safety guardrails on top of that economic limit: an **administrative supply ceiling** (currently 100,000,000 QEURO, raisable by governance at any time) and a **mint/burn rate limiter** (10M QEURO per 300-block window, ~10 minutes on Base) that contains blast radius if the mint path were ever compromised.
 
 **Implemented Features**
 
@@ -220,7 +224,7 @@ The Yield Shift represents QEURO's most innovative feature—automatically rebal
 
 ### 🚦 Rate Limiting System
 
-The rate limiting system protects the protocol against large-scale manipulation attacks by limiting mint/burn volume per address over a given period.
+The rate limiting system protects the protocol against large-scale manipulation attacks by limiting global mint/burn volume per 300-block window (~10 minutes on Base). It is a safety guardrail, not a supply policy.
 
 **Technical Implementation**
 
@@ -232,7 +236,7 @@ Mint rate limit: 10,000,000 QEURO per 300-block window (~10 minutes on Base)
 **Mechanism**
 
 1. **Per-address tracking**: Each address has its own mint/burn limit
-2. **Sliding window**: The limit resets after each 300-block window (~10 minutes on Base)
+2. **Window reset**: The limit resets after each 300-block window (~10 minutes on Base)
 3. **Accumulation**: Operations accumulate within the current window
 4. **Blocking**: If cumulative total exceeds the limit, operation fails
 
@@ -241,7 +245,7 @@ Mint rate limit: 10,000,000 QEURO per 300-block window (~10 minutes on Base)
 | Parameter | Live Value | Governable |
 |-----------|------------|------------|
 | Mint rate limit | 10,000,000 QEURO per window | ✅ Yes |
-| Rate limit window | 300 seconds | ❌ Constant |
+| Rate limit window | 300 blocks (~10 minutes on Base) | ❌ Constant |
 
 **Use Cases**
 
