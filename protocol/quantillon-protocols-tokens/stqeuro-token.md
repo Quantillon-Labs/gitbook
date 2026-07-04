@@ -117,7 +117,7 @@ Gross yield realized from the strategy (variable APY)
 |-----------|-------------|----------------------|
 | **convertToAssets(1e18)** | Current QEURO per stQEURO (exchange rate) | Auto-updated as yield is credited |
 | **totalAssets()** | Total QEURO backing this stQEURO series | Auto-tracked |
-| **yieldFee** | Fee on credited yield, per stQEURO series (bps, cap 20%) | ✅ Yes |
+| **yieldFee** | Fee on credited yield, per stQEURO series (currently 0; bps, cap 20%) | ✅ Yes |
 | **fundingRateAnnualBps** | Hedger funding carve-out before the staker split (on QuantillonVault) | ✅ Yes |
 | **hedgerYieldRecipient** | Recipient of the hedger funding share (on QuantillonVault) | ✅ Yes |
 
@@ -170,7 +170,7 @@ yield (`claimHedgerYield`).
 
 ```
 Yield Distribution Flow:
-1. The strategy (Morpho/Aave) generates yield on the pooled USDC.
+1. The strategy (currently Morpho) generates yield on the pooled USDC.
 2. harvestAndDistributeVaultYield realizes that yield into the vault.
 3. Hedger funding is carved out first; the residual is split staked / unstaked.
 4. The staked share is minted into stQEURO → exchange rate rises automatically.
@@ -208,7 +208,7 @@ Yield Distribution Flow:
 
 * Yields depend on the external strategy's market conditions (currently Morpho on Base)
 * The hedger funding carve-out (`fundingRateAnnualBps`) is taken before the staker residual
-* A per-series yield fee (`yieldFee`, capped at 20%) reduces gross staker yield
+* A per-series yield fee (`yieldFee`, currently 0, capped at 20%) reduces gross staker yield when set
 
 > **Note**: The documentation previously mentioned "Floor Protection" (2% APY) and "Ceiling Management" (15% APY). These are NOT currently implemented in the smart contracts. Yields are market-driven.
 
@@ -217,7 +217,7 @@ Yield Distribution Flow:
 Key metrics to monitor:
 
 * **Collateral Health**: Protocol collateralization ratio
-* **Yield Stability**: Aave APY fluctuations
+* **Yield Stability**: External strategy (Morpho) APY fluctuations
 * **Liquidity Depth**: stQEURO/QEURO liquidity availability
 * **Exchange Rate**: Consistent appreciation pattern
 

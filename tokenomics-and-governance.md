@@ -8,7 +8,7 @@ Quantillon's first deployment operates through a three-token system designed to 
 
 **The $QTI Token: Governance & Value Accrual**
 
-The $QTI token serves as the governance backbone of the Quantillon Protocol, featuring advanced vote-escrow (veQTI) mechanics and progressive decentralization. With a fixed total supply of 100,000,000 QTI tokens, the distribution is strategically structured as follows:
+The $QTI token serves as the governance backbone of the Quantillon Protocol, featuring advanced vote-escrow (veQTI) mechanics and progressive decentralization. **QTI is currently dormant**: the contract is deployed with a 100,000,000 QTI supply cap, but no tokens have been minted (supply is 0) and governance functions are inactive until a future activation upgrade. The distribution below is the planned strategy, not an on-chain state:
 
 **Strategic Token Allocation:**
 
@@ -24,13 +24,16 @@ The $QTI token serves as the governance backbone of the Quantillon Protocol, fea
 
 **Vote-Escrow (veQTI) System**
 
-QTI holders can lock their tokens for periods ranging from 1 week to 4 years, receiving voting power multipliers up to 4x base weight. This system ensures long-term alignment and prevents governance attacks while enabling meaningful decentralized decision-making.
+QTI holders can lock their tokens for periods ranging from 7 days to 365 days (1 year), receiving voting power multipliers up to 4x base weight. This system ensures long-term alignment and prevents governance attacks while enabling meaningful decentralized decision-making.
 
-**Governance operates through three layers:**
+**Governance parameters (as coded, inactive while QTI is dormant):**
 
-* **Constitutional Changes:** 85% threshold, 14-day timelock (protocol parameters, emergency procedures)
-* **Operational Decisions:** 60% threshold, 3-day timelock (fee structures, incentive programs)
-* **Community Proposals:** Simple majority, 24-hour timelock (grants, marketing initiatives)
+* **Proposal threshold:** 100,000 QTI
+* **Quorum:** 1,000,000 QTI
+* **Voting period:** 3 days minimum, 14 days maximum
+* **Execution delay:** 2 days
+
+A multi-layer proposal model (higher thresholds for constitutional changes than for operational decisions) is **aspirational — subject to governance design, not implemented in the deployed contracts**. Until QTI activation, the protocol is governed by a 2-of-3 Gnosis Safe with a 12-hour upgrade timelock (see [Quantillon DAO](quantillon-dao.md)).
 
 **stQEURO: Yield-Bearing Euro Infrastructure**
 
@@ -49,13 +52,13 @@ Key benefits include:
 
 Quantillon introduces an innovative mechanism called the **Yield Shift**, which serves as the protocol's internal rebalancing engine. It functions by redistributing yield between Users and Hedgers based on market conditions, supply/demand imbalances, and peg deviation pressures.
 
-Collateral deployed in DeFi protocols (e.g., Aave) generates a baseline APY. From this yield:
+Collateral deployed in external staking vaults (currently Morpho USDC lending on Base) generates a baseline APY. When that yield is harvested:
 
-1. A protocol fee of **10%** is applied.
-2. Hedgers receive a fixed compensation based on the EUR/USD interest rate spread (typically \~1%).
-3. The residual is then distributed variably:
+1. **Hedger funding is paid first** — a governance-set annual rate, capped at 50% of each harvest, compensating the EUR/USD hedge.
+2. **The residual is split between stQEURO stakers and the treasury** according to the staked share of QEURO.
+3. On the yield-pool allocation layer, the Yield Shift adjusts the user/hedger split (base 50%, up to 90% to users):
    * **Positive Yield Shift**: More yield incentivizes Hedgers when their supply is insufficient.
-   * **Negative Yield Shift**: More yield flows to Users when hedgers participation is high.
+   * **Negative Yield Shift**: More yield flows to Users when hedger participation is high.
 
 This creates a dynamic equilibrium. The Yield Shift is not discretionary; it is governed by predefined formulas based on real-time FX rate spreads and User/Hedger supply and demand. Governance can only modify its parameters within capped ranges, preserving systemic integrity.
 
@@ -71,6 +74,6 @@ In the longer term, the protocol aims to activate the **Fee Switch**, diverting 
 
 Sustainability is further ensured by the protocol's lean cost structure. With an estimated burn rate of **€400,000 per year** and projected revenues of **€500,000 at 20M TVL**, Quantillon achieves operating surplus early on. This surplus can be reinvested in growth or redistributed through token buybacks or veQTI-style locking mechanisms.
 
-Governance mechanisms are engineered to be progressive. In early phases, protocol changes may require multi-signature validation from the Quantillon Foundation to ensure operational security. Over time, power will transition toward full DAO control, contingent on metrics like TVL, QTI token dispersion, and governance participation rates.
+Governance mechanisms are engineered to be progressive. In the current phase, protocol changes require multi-signature validation by a 2-of-3 Gnosis Safe, with core-contract upgrades gated by a 12-hour timelock, to ensure operational security. Over time, power will transition toward full DAO control, contingent on metrics like TVL, QTI token dispersion, and governance participation rates.
 
 > **Quantillon's tokenomics combine strong economic incentives with a governance architecture inspired by proven DeFi protocols such as Curve, Aave, and MakerDAO. QEURO and stQEURO instantiate the model for the EUR market first, while QTI remains the governance layer for protocol risk, incentives, and future deployment policy.**

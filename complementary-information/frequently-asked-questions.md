@@ -161,7 +161,7 @@ If you are evaluating the protocol itself, read the architecture pages first and
 
 #### **Q: Who controls the protocol?**
 
-**A:** Quantillon is intended to move through **progressive decentralization**. Governance lives at the protocol layer, with QTI designed to play an increasing role in parameters, incentives, and future deployments over time.
+**A:** Quantillon is intended to move through **progressive decentralization**. Today the protocol is governed by a 2-of-3 Gnosis Safe, with core-contract upgrades gated by a 12-hour timelock. The QTI vote-escrow governance system is coded but dormant, and is designed to play an increasing role in parameters, incentives, and future deployments over time.
 
 #### **Q: How can I join the community?**
 

@@ -20,12 +20,14 @@ The annualized percentage return, measuring the real yield earned on an investme
 
 ### aQEURO / mQEURO / bQEURO / eQEURO
 
-Variants of QEURO vaults, each representing different collateral strategies:
+Early naming concepts for risk-segmented QEURO vault variants, each representing a different collateral strategy:
 
-* **aQEURO**: Backed by USDC deposited on Aave.
+* **aQEURO**: Backed by USDC deposited on a lending market.
 * **mQEURO**: Backed by MakerDAO vaults.
 * **bQEURO**: Backed by tokenized Treasury Bills (T-Bills).
 * **eQEURO**: Based on synthetic yield models.
+
+In the live deployment, vault variants are exposed as per-vault **stQEURO series** instead (e.g. `stQEUROMORPHO1`, backed by a Morpho USDC vault); the other variants remain roadmap concepts.
 
 ***
 
@@ -50,14 +52,14 @@ A hybrid approach combining centralized and decentralized systems, often integra
 
 ### Chainlink
 
-A decentralized oracle network used by Quantillon to fetch secure, tamper-proof data (e.g. EUR/USD exchange rate), crucial for maintaining QEURO’s peg and triggering liquidations.
+A decentralized oracle network used by Quantillon as the **fallback** EUR/USD source and for USDC/USD collateral validation. The active EUR/USD source is the Hyperliquid market mid — see the Oracle Architecture page.
 
 ***
 
 ### Overcollateralization
 
 A system where the value of pledged collateral exceeds the value of the issued loan or stablecoin.\
-**QEURO is overcollateralized by at least 101%.**
+**Minting QEURO requires a protocol collateralization ratio of at least 105%; 101% is the critical threshold that triggers liquidation mode.**
 
 ***
 
@@ -184,7 +186,7 @@ Participants who mint or stake QEURO to gain euro exposure and earn yield.
 
 ### Vaults
 
-Risk-segmented architecture modules where users deposit collateral across various DeFi backends (e.g., Aave, MakerDAO).
+Risk-segmented architecture modules where users deposit collateral across various DeFi backends (currently a Morpho USDC vault; other backends possible in future phases).
 
 ***
 

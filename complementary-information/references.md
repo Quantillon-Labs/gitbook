@@ -20,6 +20,8 @@
 #### 🔗 Official Links
 
 * **MiCA Regulation (Recital 22):** [https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32023R1114](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32023R1114)
+* **Morpho:** [https://docs.morpho.org](https://docs.morpho.org/)
+* **Hyperliquid:** [https://hyperliquid.gitbook.io/hyperliquid-docs](https://hyperliquid.gitbook.io/hyperliquid-docs)
 * **Aave:** [https://docs.aave.com](https://docs.aave.com/)
 * **MakerDAO:** [https://docs.makerdao.com](https://docs.makerdao.com/)
 * **Chainlink:** [https://docs.chain.link](https://docs.chain.link/)

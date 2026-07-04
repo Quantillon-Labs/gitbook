@@ -216,7 +216,7 @@ The circuit breaker is automatically triggered when:
 
 1. **Price out of bounds**: `price < minEurUsdPrice` or `price > maxEurUsdPrice`
 2. **Excessive deviation**: `|price - lastPrice| > 5%` (if devMode off)
-3. **Stale data**: Oracle hasn't been updated for 1h
+3. **Stale data**: EUR/USD not updated for 2 hours (USDC/USD: 25 hours)
 4. **Invalid timestamp**: Data in the future
 
 #### Manual Trigger
@@ -341,7 +341,7 @@ function updatePriceFeeds(address _eurUsdFeed, address _usdcUsdFeed)
 
 | Protection | Description |
 |------------|-------------|
-| **Staleness Check** | Price > 1h = stale |
+| **Staleness Check** | EUR/USD price > 2h = stale (USDC/USD: > 25h) |
 | **Timestamp Drift** | No future prices |
 | **Block Staleness** | Double-check based on blocks |
 | **Price Bounds** | EUR/USD between 0.80 and 1.40 |
@@ -408,7 +408,7 @@ event ETHRecovered(address indexed to, uint256 amount);
 Chainlink EUR/USD: 1.08000000 (8 decimals)
 → Converted to 18 decimals: 1.080000000000000000
 → Bounds: 0.80 ≤ 1.08 ≤ 1.40 ✅
-→ Staleness: 5 minutes < 1 hour ✅
+→ Staleness: 5 minutes < 2 hours ✅
 → Deviation: 0.5% < 5% ✅
 → Return: 1.08e18
 ```
@@ -416,8 +416,8 @@ Chainlink EUR/USD: 1.08000000 (8 decimals)
 #### Scenario 2: Stale Price
 
 ```
-Chainlink EUR/USD: 1.08 (2 hours ago)
-→ Staleness: 2 hours > 1 hour ❌
+Chainlink EUR/USD: 1.08 (3 hours ago)
+→ Staleness: 3 hours > 2 hours ❌
 → Circuit breaker triggered
 → Return: lastValidEurUsdPrice (fallback)
 ```
@@ -444,6 +444,8 @@ Chainlink USDC/USD: 0.95
 
 ### 🔗 Protocol Integration
 
+> The EUR/USD path below applies **when the ChainlinkOracle is the selected source in the OracleRouter** (fallback slot 0). In the live configuration, EUR/USD is served by the `HyperliquidEurUsdOracle` (slot 1) and the ChainlinkOracle serves USDC/USD validation — see [Oracle Architecture](oracle-architecture.md).
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                 ORACLE INTEGRATION                           │
@@ -469,4 +471,4 @@ Chainlink USDC/USD: 0.95
 
 ***
 
-> **Summary**: The ChainlinkOracle provides EUR/USD and USDC/USD prices to the protocol with robust validations. Security mechanisms (staleness, bounds, deviation, circuit breaker) protect against manipulation and corrupted data. Dev Mode enables testing but should never be enabled in production.
+> **Summary**: The ChainlinkOracle is the protocol's **fallback** EUR/USD source (OracleRouter slot 0) and its USDC/USD validation source, with robust validations. Security mechanisms (staleness — 2h EUR/USD, 25h USDC/USD — bounds, deviation, circuit breaker) protect against manipulation and corrupted data. Dev Mode enables testing but should never be enabled in production.

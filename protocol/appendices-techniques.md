@@ -12,8 +12,8 @@ This section provides a comprehensive technical reference for the Quantillon pro
 
 ```
                     ┌─────────────────────┐
-                    │   ChainlinkOracle   │
-                    │   (EUR/USD, USDC)   │
+                    │    OracleRouter     │
+                    │(Hyperliquid + Chainlink)
                     └──────────┬──────────┘
                                │
             ┌──────────────────┼──────────────────┐
@@ -24,8 +24,8 @@ This section provides a comprehensive technical reference for the Quantillon pro
    └────────┬────────┘ └───────┬───────┘ └───────┬───────┘
             │                  │                  │
    ┌────────▼────────┐ ┌───────▼───────┐ ┌───────▼───────┐
-   │  stQEUROToken   │ │   AaveVault   │ │  YieldShift   │
-   │ (Yield Bearing) │ │(Aave v3 Yield)│ │(Distribution) │
+   │  stQEUROToken   │ │ Staking Vault │ │  YieldShift   │
+   │ (Yield Bearing) │ │Adapter (Morpho)│ │(Distribution) │
    └────────┬────────┘ └───────────────┘ └───────────────┘
             │
    ┌────────▼────────┐
@@ -103,14 +103,9 @@ This section provides a comprehensive technical reference for the Quantillon pro
 | `YIELD_MANAGER_ROLE` | `keccak256("YIELD_MANAGER_ROLE")` | Yield distribution |
 | `EMERGENCY_ROLE` | `keccak256("EMERGENCY_ROLE")` | Pause distribution |
 
-### AaveVault
+### External Staking Vault Adapters
 
-| Role | Hash Value | Permissions |
-|------|------------|-------------|
-| `DEFAULT_ADMIN_ROLE` | `0x00` | Role management |
-| `GOVERNANCE_ROLE` | `keccak256("GOVERNANCE_ROLE")` | Aave parameters |
-| `VAULT_MANAGER_ROLE` | `keccak256("VAULT_MANAGER_ROLE")` | Deploy/withdraw Aave |
-| `EMERGENCY_ROLE` | `keccak256("EMERGENCY_ROLE")` | Emergency withdrawal |
+There is no standalone `AaveVault` contract. External yield exposure (currently a MetaMorpho USDC vault) goes through staking vault adapters registered on `QuantillonVault`; deployment, harvest, and emergency withdrawal are gated by the vault's `GOVERNANCE_ROLE`/`EMERGENCY_ROLE`. See [External Staking Vaults](aave-vault.md).
 
 ### ChainlinkOracle
 
@@ -128,17 +123,16 @@ This section provides a comprehensive technical reference for the Quantillon pro
 ### QEUROToken
 
 ```solidity
-uint256 public constant DEFAULT_MAX_SUPPLY = 1_000_000_000e18;  // 1 billion
-uint256 public constant MAX_RATE_LIMIT = type(uint96).max;
-uint256 public constant RATE_LIMIT_RESET_PERIOD = 1 hours;
-uint256 public constant MINT_FEE_RATE = 10;  // 0.10% in basis points
+uint256 public constant MAX_SUPPLY = 100_000_000e18;  // 100 million QEURO
+// Mint rate limit: 10,000,000 QEURO per 300-second window
+// Mint/redeem fees: currently 0, governance-settable, capped at 5% (QuantillonVault)
 ```
 
 ### QTIToken
 
 ```solidity
 uint256 public constant TOTAL_SUPPLY_CAP = 100_000_000e18;  // 100 million
-uint256 public constant MAX_LOCK_TIME = 4 * 365 days;  // 4 years
+uint256 public constant MAX_LOCK_TIME = 365 days;  // 1 year
 uint256 public constant MIN_LOCK_TIME = 7 days;  // 1 week
 uint256 public constant WEEK = 7 days;
 uint256 public constant MAX_VE_QTI_MULTIPLIER = 4;  // 4x max voting power
@@ -162,7 +156,8 @@ uint256 targetPoolRatio = 10000;  // 100%
 ### ChainlinkOracle
 
 ```solidity
-uint256 public constant MAX_PRICE_STALENESS = 3600;  // 1 hour
+uint256 public constant MAX_PRICE_STALENESS = 7200;       // 2 hours (EUR/USD)
+uint256 public constant MAX_USDC_PRICE_STALENESS = 25 hours;  // USDC/USD daily heartbeat
 uint256 public constant MAX_PRICE_DEVIATION = 500;   // 5%
 uint256 public constant BASIS_POINTS = 10000;
 uint256 public constant MAX_TIMESTAMP_DRIFT = 900;   // 15 minutes
@@ -173,15 +168,13 @@ uint256 maxEurUsdPrice = 1.40e18;   // 1.40 USD/EUR
 uint256 usdcToleranceBps = 200;     // 2%
 ```
 
-### AaveVault
+### External Staking Vaults (QuantillonVault)
 
-```solidity
-// Defaults (configurable)
-uint256 maxAaveExposure = 50_000_000e6;   // 50M USDC
-uint256 harvestThreshold = 1000e6;         // 1000 USDC
-uint256 yieldFee = 1000;                   // 10%
-uint256 rebalanceThreshold = 500;          // 5%
-uint256 utilizationLimit = 9500;           // 95%
+```
+// Live configuration
+Active adapter: MetaMorphoStakingVaultAdapter (vaultId 2)
+Hedger funding: governance-set annual rate, capped at 50% of each harvest
+stQEURO yieldFee: currently 0, capped at 20% per series
 ```
 
 ***
@@ -269,17 +262,10 @@ event YieldSourceRevoked(address indexed source);
 event HoldingPeriodProtectionUpdated(uint256 minHoldingPeriod, uint256 baseDiscount, uint256 maxTimeFactor);
 ```
 
-### AaveVault
+### External Staking Vaults (QuantillonVault)
 
 ```solidity
-event DeployedToAave(string indexed operationType, uint256 amount, uint256 aTokensReceived, uint256 newBalance);
-event WithdrawnFromAave(string indexed operationType, uint256 amountRequested, uint256 amountWithdrawn, uint256 newBalance);
-event AaveYieldHarvested(string indexed harvestType, uint256 yieldHarvested, uint256 protocolFee, uint256 netYield);
-event AaveRewardsClaimed(address indexed rewardToken, uint256 rewardAmount, address recipient);
-event PositionRebalanced(string indexed reason, uint256 oldAllocation, uint256 newAllocation);
-event AaveParameterUpdated(string indexed parameter, uint256 oldValue, uint256 newValue);
-event EmergencyWithdrawal(string indexed reason, uint256 amountWithdrawn, uint256 timestamp);
-event EmergencyModeToggled(string indexed reason, bool enabled);
+event VaultYieldDistributed(uint256 indexed vaultId, uint256 realizedYield, uint256 hedgerShare, uint256 userShare, uint256 treasuryShare);
 ```
 
 ### ChainlinkOracle
@@ -359,41 +345,38 @@ function _authorizeUpgrade(address newImplementation)
 
 ## 8. External Dependencies
 
-### Chainlink Price Feeds (Base Mainnet)
+### Oracle Sources (Base Mainnet)
 
-| Feed | Decimals | Usage |
-|------|----------|-------|
-| EUR/USD | 8 | Main exchange rate |
-| USDC/USD | 8 | USDC stability validation |
+| Source | Usage |
+|--------|-------|
+| Hyperliquid EUR/USD market mid (via `SlippageStorage` → `HyperliquidEurUsdOracle`) | Active EUR/USD source (OracleRouter slot 1) |
+| Chainlink EUR/USD feed (8 decimals) | Fallback EUR/USD source (OracleRouter slot 0) |
+| Chainlink USDC/USD feed (8 decimals) | USDC stability validation |
 
-### Aave v3 (Base Mainnet)
+### Morpho / MetaMorpho (Base Mainnet)
 
 | Contract | Function |
 |----------|----------|
-| PoolAddressesProvider | Pool address retrieval |
-| Pool | Supply/Withdraw USDC |
-| aUSDC | Yield receipt token |
-| RewardsController | Claim Aave rewards |
+| MetaMorpho USDC vault (ERC-4626) | Yield-generating USDC deposit venue |
+| `MetaMorphoStakingVaultAdapter` (`0xb2f253Cd74ebfa16894339438B467396De9e8EA3`, vaultId 2) | Adapter between QuantillonVault and the MetaMorpho vault |
 
 ***
 
 ## 9. Deployment References
 
-> **Note**: Contract addresses will be published after mainnet deployment.
+### Mainnet
+
+| Network | Status | Key Addresses |
+|---------|--------|---------------|
+| Base Mainnet (8453) | **Live since June 2026** | QuantillonVault `0x833E5Ba510a241b21F1C60c987D1c49eB52E4a07` · Governance Safe (2-of-3) `0x1d7fF432a93d0085Fb69474c7E567f859829e6cd` · Timelock (12h) `0x7Ade8f3Bf1FdaF0785efE9Ea5C6339D1aD6B8342` |
+
+Oracle contract addresses are listed in [Oracle Architecture](oracle-architecture.md).
 
 ### Testnets
 
-| Network | Status | Explorer |
-|---------|--------|----------|
-| Base Sepolia | Active | basescan.org/address/... |
-
-### Mainnet
-
-| Network | Status | Explorer |
-|---------|--------|----------|
-| Base Mainnet | Planned | basescan.org/address/... |
+Base Sepolia was used for pre-launch testing; the testnet deployment is historical and no longer maintained as a reference environment.
 
 ***
 
-> **Documentation updated**: January 2026  
-> **Contract version**: MVP v1.0
+> **Documentation updated**: July 2026  
+> **Contract version**: QuantillonVault v1.1.1

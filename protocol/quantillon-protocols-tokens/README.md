@@ -25,7 +25,7 @@ The first market-specific exposure asset built on Quantillon. QEURO represents E
 The yield-bearing wrapper for the first deployment. stQEURO packages the QEURO market into a yield-accruing format while staying tied to the EUR deployment.
 
 **🏛️** [**QTI**](qti-token.md)\
-The governance layer for the broader protocol. QTI is not only about QEURO; it coordinates risk, incentives, and future deployment policy across Quantillon.
+The governance layer for the broader protocol. QTI is not only about QEURO; it coordinates risk, incentives, and future deployment policy across Quantillon. QTI is currently **dormant** (supply 0, no mint path) — governance today is exercised by a 2-of-3 Safe with a 12h upgrade timelock.
 
 ***
 

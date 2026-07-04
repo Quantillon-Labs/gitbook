@@ -6,25 +6,24 @@ description: The Guardian to take rapid decisions in a crisis
 
 ## 🔎 TL;DR <a href="#tl-dr" id="tl-dr"></a>
 
-* Like in any protocol, it may be necessary to rapidly pause some functionalities, to change some parameters or references in the protocol in order to react rapidly to unforeseen events.
-* The protocol has a multisig on each of the chains on which it is deployed which has the rights to perform such changes.
+* Like in any protocol, it may be necessary to rapidly pause some functionalities, or to change some parameters or references in the protocol, in order to react rapidly to unforeseen events.
+* On Base — the only chain where the protocol is deployed — this guardian capability is held by the protocol's **2-of-3 Gnosis Safe**.
 
 ## 💡 Need for a Guardian <a href="#need-for-a-guardian" id="need-for-a-guardian"></a>
 
-The Guardian role is a privileged role granted to some addresses on every chain where the protocol is deployed. All the privileges of the guardian are also available to the governor addresses (e.g. the `Timelock` addresses) of the Quantillon Protocol.
+The Guardian role is a privileged capability granted to specific addresses. Today it is exercised by the **2-of-3 Gnosis Safe** (`0x1d7fF432a93d0085Fb69474c7E567f859829e6cd`) controlled by Quantillon Labs team members, which also holds the protocol's other privileged roles — see [Quantillon DAO](quantillon-dao.md).
 
-This guardian role is held on every chain by a 2/3 Gnosis Multisig controlled by the same Quantillon Labs team members as those in the emergency multisig TBD.
+If a guardian capability with specific rights is needed, it is because some situations in the protocol are time sensitive. If a flaw is found in one of the contracts where an attacker can systematically make a profit, the necessary parts of the contract must be pausable immediately, without waiting for a governance process or an upgrade timelock.
 
-If a guardian role with specific rights is needed, it is because there could be some situations in the protocol which are time sensitive. In case there is a flaw in one of the contracts where an attacker can systematically make a profit, we should be able to pause the necessary parts of the contract without having to wait for the end of a governance vote for its execution.
-
-Note however that governance can revoke the guardian ability to any address at any time.
+Note that governance can revoke guardian rights from any address at any time.
 
 ## 🔘 Responsibilities <a href="#responsibilities" id="responsibilities"></a>
 
-In clear terms, the guardian role enables to:
+In clear terms, the guardian capability enables to:
 
-* Pause and unpause some contracts functionalities
-* Update rapidly some parameters like users minting and burning fees, or the debt ceiling for an asset in the borrowing module
-* The guardian is reponsible for the planned emissions of the QTI token.
+* Pause and unpause contract functionalities (full pause, minting killswitch)
+* Trigger and reset oracle circuit breakers
+* Update time-sensitive parameters, such as mint and redeem fees or hedging parameters
+* Close a hedger position in an emergency
 
-Quantillonsmart contracts have been designed to limit a guardian's ability to impact the protocol in a way that is harmful to the system. For instance, a guardian cannot modify references to an oracle contract and hence manipulate prices at its advantage.
+Quantillon smart contracts have been designed to limit a guardian's ability to impact the protocol in a way that is harmful to the system: core-contract upgrades always go through the 12-hour timelock, and emergency actions are reversible operations (pause/unpause) rather than value transfers.

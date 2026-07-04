@@ -2,6 +2,8 @@
 
 ## QTI Tokenomics: Advanced Economic Design
 
+> **⏸️ Current Status: DORMANT.** The QTI contract is deployed on Base with a 100,000,000 QTI supply cap, but **live supply is 0** — no mint path is wired, and no tokens have been issued or distributed. Lock (veQTI), voting, and proposal functions are inactive until a future activation upgrade. Until then, the protocol is governed by a 2-of-3 Gnosis Safe with a 12-hour upgrade timelock (see [Quantillon DAO](../../quantillon-dao.md)). Everything below describes the coded design and the planned distribution strategy, not a live token.
+
 ### 📋 Executive Summary
 
 The Quantillon Governance Token (QTI) represents a sophisticated approach to DeFi governance and value accrual, designed specifically for the Euro stablecoin ecosystem. Built on advanced tokenomic principles including vote-escrow mechanics, dynamic reward systems, and progressive decentralization, QTI creates sustainable incentives for long-term protocol growth while maintaining robust security and community alignment.
@@ -37,7 +39,7 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 
 ### Token Distribution Architecture
 
-> **Important**: La distribution des tokens QTI est gérée via la governance et les décisions opérationnelles. Le smart contract définit uniquement le `TOTAL_SUPPLY_CAP = 100,000,000 QTI`. Les allocations ci-dessous représentent la **stratégie de distribution planifiée**, non des contraintes on-chain.
+> **Important**: QTI token distribution is managed through governance and operational decisions. The smart contract only defines `TOTAL_SUPPLY_CAP = 100,000,000 QTI`. The allocations below represent the **planned distribution strategy**, not on-chain constraints — and no tokens have been minted yet (supply is 0 while QTI is dormant).
 
 #### Strategic Allocation Framework
 
@@ -79,61 +81,56 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 
 **Vote-Escrow (veQTI) System**
 
-* **Lock Periods**: 1 week to 4 years
-* **Voting Power**: Linear multiplier up to 4x base weight
+* **Lock Periods**: 7 days minimum to 365 days (1 year) maximum
+* **Voting Power**: Linear multiplier up to 4x base weight at max lock
 * **Decay Mechanism**: Gradual reduction until unlock
 * **Delegation**: Transferable voting rights with penalties
 
-**Governance Layers**
+**Governance Parameters (as coded, inactive while QTI is dormant)**
 
-```
-Layer 1: Constitutional Changes (85% threshold, 14-day timelock)
-├── Protocol parameters modification
-├── Emergency procedure updates
-└── Tokenomics adjustments
+| Parameter | Value |
+|-----------|-------|
+| **Proposal threshold** | 100,000 QTI |
+| **Quorum** | 1,000,000 QTI |
+| **Voting period** | 3 days minimum, 14 days maximum |
+| **Execution delay** | 2 days |
 
-Layer 2: Operational Decisions (60% threshold, 3-day timelock)  
-├── Fee structure changes
-├── Incentive program modifications
-└── Partner integrations
-
-Layer 3: Community Proposals (Simple majority, 24h timelock)
-├── Grant allocations
-├── Marketing initiatives  
-└── Non-critical upgrades
-```
+> **Aspirational — subject to governance design, not implemented in the deployed contracts**: a multi-layer proposal model (e.g. higher thresholds and longer timelocks for constitutional changes than for operational decisions) is under consideration for the activation upgrade.
 
 #### 💰 Revenue Generation & Distribution
 
-**Primary Revenue Streams (MVP)**
+**Primary Revenue Streams (live framework)**
 
-1. **QEURO Operations** (0.1% on mint/redeem via QuantillonVault)
-2. **Yield Fees** (10% of Aave yield via AaveVault)
-3. **Hedger Position Fees** (Entry/exit fees configurable via governance)
+1. **QEURO Operations**: mint/redeem fees via QuantillonVault — currently 0, governance-settable up to 5%
+2. **Yield Fees**: per-series stQEURO yield fee (currently 0, capped at 20%) and the treasury share of harvested external-vault yield
+3. **Hedger Position Fees**: entry/exit/margin fees (currently 0, governance-settable) plus a 20% reward fee split on hedger rewards
 
-> **🚧 Future Revenue**: Cross-chain bridge fees, liquidation penalties, and additional vault fees are planned for future protocol phases.
+> **🚧 Future Revenue**: Cross-chain bridge fees and additional vault fees are planned for future protocol phases.
 
-**Revenue Allocation Model**
+**Revenue Allocation Model (as coded — FeeCollector)**
 
 ```
-Protocol Revenue (100%)
-├── 50% → QTI Stakers (veQTI weighted)
-├── 15% → DAO Treasury  
-├── 25% → Protocol Development
-├── 5% → Insurance Fund
-└── 5% → Buyback & Burn
+Collected protocol fees (100%)
+├── 60% → Treasury
+├── 25% → Dev Fund
+└── 15% → Community
+(governance-adjustable, must sum to 100%)
 ```
+
+> **Aspirational — subject to governance design, not implemented in the deployed contracts**: routing a share of protocol revenue to veQTI stakers, an insurance fund, or buyback-and-burn programs would require future governance decisions once QTI is activated.
 
 #### 🔄 Dynamic Reward Systems
 
-**Adaptive Emission Schedule**
+> **Aspirational — subject to governance design, not implemented in the deployed contracts.** QTI is dormant with zero supply and no mint path; no emissions of any kind are occurring. The schedule and reward formula below are a design sketch for the future activation, not coded behavior.
+
+**Adaptive Emission Schedule (illustrative)**
 
 * **Year 1**: 15M QTI (15% of total supply)
 * **Year 2**: 12M QTI (emission decay: -20%)
 * **Year 3**: 9.6M QTI (emission decay: -20%)
 * **Year 4+**: Market-responsive emissions based on TVL growth
 
-**Multi-Factor Reward Calculation**
+**Multi-Factor Reward Calculation (illustrative)**
 
 ```
 User Reward = Base Reward × Lock Multiplier × Participation Bonus × Loyalty Factor
@@ -177,8 +174,8 @@ Where:
 
 **Operational Security**
 
-* **Multi-Sig Treasury**
-* **Time-Lock Upgrades**: 7-day minimum for protocol changes
+* **Multi-Sig Treasury**: 2-of-3 Gnosis Safe
+* **Time-Lock Upgrades**: 12-hour OZ TimelockController on core-contract upgrades
 * **Emergency Procedures**: Rapid response for critical threats
 * **Insurance Coverage**
 
@@ -261,7 +258,7 @@ Where:
 | Risk Factor                 | Probability | Impact   | Mitigation Strategy                             |
 | --------------------------- | ----------- | -------- | ----------------------------------------------- |
 | **Smart Contract Exploits** | Medium      | Critical | Multiple audits, formal verification, insurance |
-| **Oracle Manipulation**     | Low         | High     | Chainlink integration, multiple data sources    |
+| **Oracle Manipulation**     | Low         | High     | Hyperliquid mid + Chainlink fallback, circuit breakers |
 | **Governance Attacks**      | Low         | High     | Vote-escrow system, time delays, caps           |
 | **Cross-Chain Failures**    | Medium      | Medium   | Bridge redundancy, emergency procedures         |
 
@@ -289,11 +286,10 @@ Where:
 
 #### Legal Structure Optimization
 
-**Foundation Setup ( Loi 1901 Association - France)**
+**Foundation Setup (planned)**
 
-* **Quantillon Foundation**: Non-profit entity for protocol governance
-* **Regulatory Classification**: Utility token under DLT Act
-* **Tax Optimization**: Minimal corporate tax burden
+* **Quantillon Foundation**: planned future non-profit entity for protocol governance — jurisdiction to be determined
+* **Regulatory Classification**: QTI intended as a utility/governance token
 * **Operational Flexibility**: Global team coordination
 
 **Compliance Requirements**

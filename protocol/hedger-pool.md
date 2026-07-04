@@ -265,7 +265,7 @@ function recordLiquidationRedeem(uint256 qeuroAmount, uint256 usdcAmount)
     external onlyVault;
 ```
 
-Similar to standard redeem, but may apply special conditions.
+Called when the vault is in liquidation mode (protocol collateralization ratio ≤ 101%). In that mode the hedger's effective margin is treated as 0 and redemptions draw pro-rata on remaining collateral — there is no per-position keeper liquidation. See [Liquidation System](liquidation-system.md).
 
 ***
 
@@ -273,9 +273,11 @@ Similar to standard redeem, but may apply special conditions.
 
 #### Hedger Revenue Sources
 
-1. **YieldShift Allocation**: Share of Aave yield (10-50% depending on ratios)
-2. **EUR/USD Rate Differential**: Compensation for FX risk
-3. **Position Fees**: Entry/exit fees if configured
+1. **Hedger Funding**: paid first out of each external-vault yield harvest (governance-set annual rate, capped at 50% of the harvest), accounted through YieldShift's hedger ledger
+2. **EUR/USD Rate Differential**: compensation for FX risk (currently 3.50% EUR / 4.50% USD, governance-set)
+3. **Position Fees**: entry/exit/margin fees are currently 0 (governance-settable)
+
+> **Reward fee split**: a 20% fee (`rewardFeeSplit`) is taken on hedger rewards when they are claimed.
 
 #### Claim Rewards
 
@@ -309,14 +311,18 @@ struct CoreParams {
 }
 ```
 
-**Defaults**
+**Live Values**
 
-| Parameter | Default Value | Description |
-|-----------|---------------|-------------|
-| `minMarginRatio` | 1000 (10%) | Minimum margin/position ratio |
-| `maxLeverage` | 10 | Max 10x leverage |
-| `entryFee` | 0 | No entry fee |
-| `exitFee` | 0 | No exit fee |
+| Parameter | Live Value | Description |
+|-----------|------------|-------------|
+| `minMarginRatio` | 500 (5%) | Minimum margin/position ratio |
+| `maxLeverage` | 20 | Max 20x leverage |
+| `entryFee` | 0 | Currently 0 (governance-settable) |
+| `exitFee` | 0 | Currently 0 (governance-settable) |
+| `marginFee` | 0 | Currently 0 (governance-settable) |
+| `eurInterestRate` | 350 (3.50%) | EUR leg interest rate |
+| `usdInterestRate` | 450 (4.50%) | USD leg interest rate |
+| `minMarginAmount` | 100 USDC | Minimum margin per position |
 
 #### Configuration Functions
 
@@ -387,8 +393,8 @@ Recovers tokens sent by mistake (cannot recover active USDC).
 uint96 public constant MAX_POSITION_SIZE = type(uint96).max;
 uint96 public constant MAX_MARGIN = type(uint96).max;
 uint96 public constant MAX_ENTRY_PRICE = type(uint96).max;
-uint8 public constant MAX_LEVERAGE = 10;
-uint16 public constant MAX_MARGIN_RATIO = 10000;  // 100%
+uint8 public constant MAX_LEVERAGE = 20;
+uint16 public constant MAX_MARGIN_RATIO = 5000;  // 50%
 
 // Global limits
 uint128 public constant MAX_TOTAL_MARGIN = type(uint128).max;
@@ -436,11 +442,12 @@ IYieldShift public yieldShift;
 **Distribution Flow**
 
 ```
-Aave generates yield
+External staking vault (Morpho) generates yield
     ↓
-YieldShift calculates allocations
+QuantillonVault harvests; hedger funding is carved out first
+(governance-set annual rate, capped at 50% of each harvest)
     ↓
-HedgerPool receives its share (10-50%)
+YieldShift tracks the hedger's claimable share
     ↓
 Hedger claims via claimHedgingRewards()
 ```

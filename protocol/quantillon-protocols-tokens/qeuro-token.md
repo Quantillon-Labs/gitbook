@@ -6,7 +6,7 @@
 
 The Quantillon Euro (QEURO) is the first market-specific asset built on the Quantillon Protocol. It combines euro-denominated exposure with USD liquidity depth, protocol-native FX hedging, and DeFi yield infrastructure. QEURO is therefore the first deployment of the broader architecture, not the full definition of Quantillon.
 
-Our stablecoin architecture incorporates advanced mechanisms including overcollateralized minting/redemption via the QuantillonVault, delta-neutral hedging, and Aave v3 yield generation that delivers superior capital efficiency while maintaining regulatory compliance. The design prioritizes user experience, institutional adoption, and sustainable yield generation across diverse market conditions.
+Our stablecoin architecture incorporates advanced mechanisms including overcollateralized minting/redemption via the QuantillonVault, delta-neutral hedging, and external staking vault yield generation (currently Morpho/MetaMorpho) that delivers superior capital efficiency while maintaining regulatory compliance. The design prioritizes user experience, institutional adoption, and sustainable yield generation across diverse market conditions.
 
 ***
 
@@ -22,13 +22,13 @@ Our stablecoin architecture incorporates advanced mechanisms including overcolla
 | **Network**       | Base L2 (Primary)           | L2 efficiency and lower costs  |
 | **Peg Target**    | 1 QEURO = 1 EUR             | Direct euro denomination       |
 | **Decimals**      | 18                          | Full ERC-20 compatibility      |
-| **Max Supply**    | 1,000,000,000 QEURO         | Governance-adjustable cap      |
+| **Max Supply**    | 100,000,000 QEURO           | Governance-adjustable cap      |
 | **Contract Type** | OpenZeppelin + Custom Logic | Battle-tested + innovation     |
 
 **Implemented Features**
 
-* **Oracle Integration**: Chainlink EUR/USD and USDC/USD feeds with circuit breakers
-* **Slippage-Free Operations**: Mint/redeem at oracle rates with 0.1% fees
+* **Oracle Integration**: Hyperliquid EUR/USD market mid (active source) with Chainlink as fallback and USDC/USD validation, all behind circuit breakers — see [Oracle Architecture](../oracle-architecture.md)
+* **Slippage-Free Operations**: Mint/redeem at oracle rates; fees are currently 0 (governance-settable, capped at 5%)
 * **Emergency Controls**: Pausable with time-locked upgrades via UUPS pattern
 * **Compliance System**: Blacklist/whitelist functionality for regulatory compliance
 * **Rate Limiting**: Protection against large-scale manipulation attacks
@@ -46,13 +46,13 @@ Our stablecoin architecture incorporates advanced mechanisms including overcolla
 
 | Collateral Type | Status | Minimum Ratio | Accepted Assets |
 | --------------- | ------ | ------------- | --------------- |
-| **Primary**     | ✅ Live | 101%+         | USDC            |
+| **Primary**     | ✅ Live | 105%+ (minting floor; 101% is the critical/liquidation threshold) | USDC |
 
 > **Note**: Multi-collateral support (ETH, WBTC, governance-approved assets) is planned for future protocol upgrades.
 
 **🔒 Security Mechanisms**
 
-* **Real-time Monitoring**: Chainlink oracles with 1-hour maximum staleness
+* **Real-time Monitoring**: Oracle staleness checks (Hyperliquid feed: 15-minute default; Chainlink fallback: 2 hours EUR/USD, 25 hours USDC/USD)
 * **Price Deviation Protection**: 5% maximum price change tolerance
 * **Circuit Breakers**: Automatic pause on oracle failures or extreme conditions
 * **Multi-Sig Controls**: Time-locked upgrades for critical parameter changes
@@ -63,14 +63,14 @@ Our stablecoin architecture incorporates advanced mechanisms including overcolla
 **📥 Minting Workflow (MVP)**
 
 ```
-User USDC → QuantillonVault → Oracle Price Check → QEURO Mint → Aave Deployment
+User USDC → QuantillonVault → Oracle Price Check → QEURO Mint → External Vault Deployment
 ```
 
 1. **USDC Deposit**: Users deposit USDC to the QuantillonVault
-2. **Oracle Price Check**: Real-time EUR/USD rate verification via Chainlink
-3. **Collateral Lock**: Protocol enforces minimum collateralization ratio
-4. **QEURO Issuance**: Vault mints QEURO at oracle rate minus 0.1% fee
-5. **Yield Deployment**: Collateral automatically deployed to Aave v3
+2. **Oracle Price Check**: Real-time EUR/USD rate verification via the oracle router (Hyperliquid mid, Chainlink fallback)
+3. **Collateral Lock**: Protocol enforces the 105% minimum collateralization ratio for minting
+4. **QEURO Issuance**: Vault mints QEURO at the oracle rate; the minting fee is currently 0 (governance-settable, max 5%)
+5. **Yield Deployment**: Collateral can be deployed to external staking vaults (currently Morpho/MetaMorpho)
 
 > **Important**: Minting occurs via the QuantillonVault contract which holds the MINTER_ROLE. Users interact through the Vault interface, not directly with the QEURO token contract.
 
@@ -91,23 +91,19 @@ QEURO Burn → Oracle Verification → Collateral Release → USDC Transfer
 
 **💰 Collateral Deployment**
 
-USDC collateral is deployed to Aave v3 on Base to generate yield. The deployment is managed by governance with the following constraints:
+USDC collateral can be deployed to external staking vaults — currently a MetaMorpho (Morpho) USDC vault via a dedicated adapter — to generate yield. Deployment is managed by governance, and emergency withdrawal is available for crisis situations. See [External Staking Vaults](../aave-vault.md) for details.
 
-* **Maximum Aave Exposure**: 50,000,000 USDC (governance-adjustable)
-* **Harvest Threshold**: 1,000 USDC minimum for yield harvesting
-* **Emergency Withdrawal**: Available for crisis situations
-
-**Revenue Distribution Model (Dynamic YieldShift)**
+**Revenue Distribution Model (Harvest + YieldShift)**
 
 ```
-Aave Yield (Variable APY)
-├── 10% → Protocol Fees (Treasury)
-└── 90% → Dynamic Distribution via YieldShift
-    ├── Users (stQEURO holders): 50-90% based on pool ratios
-    └── Hedgers: 10-50% based on pool ratios
+External Vault Yield (Variable APY), harvested by QuantillonVault
+├── 1. Hedger funding paid first
+│      (governance-set annual rate, capped at 50% of each harvest)
+└── 2. Residual split between stQEURO stakers and the treasury
+       according to the staked share
 ```
 
-> **Note**: The YieldShift mechanism dynamically adjusts yield distribution between Users and Hedgers based on pool utilization ratios. The base shift is 50% to users, with a maximum of 90%.
+> **Note**: On top of the harvest split, the YieldShift mechanism governs the user/hedger allocation layer of the yield pools based on pool utilization ratios. The base shift is 50% to users, with a maximum of 90%.
 
 ***
 
@@ -125,7 +121,7 @@ Aave Yield (Variable APY)
 **Participation Requirements**:
 
 * **Minimum Stake**: Configurable via governance (minStakeAmount)
-* **Collateral Ratio**: Protocol maintains 101%+ collateralization automatically
+* **Collateral Ratio**: Minting requires 105%+ protocol collateralization (101% is the critical threshold)
 * **Holding Period**: 7-day minimum for yield claims (anti-manipulation)
 
 **🛡️ Hedger Pool Mechanics**
@@ -195,19 +191,16 @@ The Yield Shift represents QEURO's most innovative feature—automatically rebal
 
 **🏗️ Current Implementation**
 
-**aQEURO Vault (Live)**
+**External Staking Vault (Live)**
 
 | Parameter | Value | Description |
 |-----------|-------|-------------|
-| **Backend** | Aave v3 USDC | Primary yield source |
+| **Backend** | MetaMorpho (Morpho) USDC vault | Primary yield source, accessed via `MetaMorphoStakingVaultAdapter` (vaultId 2) |
+| **Staked series** | stQEUROMORPHO1 | Per-vault stQEURO series deployed by `stQEUROFactory` |
 | **Risk Profile** | 🟢 Low | Established DeFi protocol |
-| **Target APY** | 4-12% | Market-dependent |
-| **Max Exposure** | 50M USDC | Risk limit |
+| **Target APY** | Market-dependent | Variable Morpho lending yield |
 
-> **🚧 Future Vault Variants** (Roadmap):
-> - **mQEURO**: MakerDAO PSM/DSR integration
-> - **bQEURO**: Tokenized T-Bills & RWAs
-> - **eQEURO**: Ethena & advanced strategies
+> **🚧 Future Vault Variants** (Roadmap): additional external staking vaults (other lending markets, tokenized T-Bills/RWAs, advanced strategies) can be added by governance via the adapter and factory pattern.
 
 ***
 
@@ -231,25 +224,24 @@ The rate limiting system protects the protocol against large-scale manipulation 
 
 **Technical Implementation**
 
-```solidity
-// Rate Limiting Constants
-MAX_RATE_LIMIT = type(uint96).max    // Maximum configurable limit
-RATE_LIMIT_RESET_PERIOD = 1 hours    // Reset window
+```
+// Rate Limiting (live values)
+Mint rate limit: 10,000,000 QEURO per 300-second window
 ```
 
 **Mechanism**
 
 1. **Per-address tracking**: Each address has its own mint/burn limit
-2. **Sliding window**: The limit resets after 1 hour of inactivity
+2. **Sliding window**: The limit resets at the end of each 300-second window
 3. **Accumulation**: Operations accumulate within the current window
 4. **Blocking**: If cumulative total exceeds the limit, operation fails
 
 **Configuration**
 
-| Parameter | Default Value | Governable |
-|-----------|---------------|------------|
-| `rateLimitCaps[address]` | MAX_RATE_LIMIT | ✅ Yes |
-| `RATE_LIMIT_RESET_PERIOD` | 1 hour | ❌ Constant |
+| Parameter | Live Value | Governable |
+|-----------|------------|------------|
+| Mint rate limit | 10,000,000 QEURO per window | ✅ Yes |
+| Rate limit window | 300 seconds | ❌ Constant |
 
 **Use Cases**
 
@@ -435,9 +427,9 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 
 **Primary Revenue Sources**
 
-1. **Mint/Redeem Fees**: 0.1% on all QEURO operations
-2. **Yield Management**: 10% of Aave collateral deployment returns
-3. **Position Fees**: Entry/exit fees from hedger operations
+1. **Mint/Redeem Fees**: currently 0 (governance-settable, capped at 5%); when collected, routed to the FeeCollector (60% treasury / 25% dev fund / 15% community)
+2. **Yield Management**: stQEURO yield fee (currently 0, max 20%) and the treasury share of harvested external-vault yield
+3. **Position Fees**: hedger entry/exit/margin fees (currently 0, governance-settable) plus a 20% reward fee split on hedger rewards
 
 > **Note**: Cross-chain bridge fees and additional vault fees are planned for future implementations.
 
@@ -446,8 +438,8 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 **Health Metrics**
 
 * **Peg Stability**: Target <2% deviation from EUR
-* **Collateral Ratio**: Maintain >101% across all conditions
-* **Yield Consistency**: Dynamic based on Aave market conditions
+* **Collateral Ratio**: Maintain ≥105% (minting floor) across all conditions; 101% is the critical threshold
+* **Yield Consistency**: Dynamic based on external staking vault (Morpho) market conditions
 * **Governance Activity**: QTI holder participation
 
 ***
@@ -462,7 +454,7 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 | ----------- | ----------- | ------ | ------------------- |
 | **Smart Contract Bug** | Medium | Critical | Multiple audits, formal verification |
 | **Oracle Manipulation** | Low | High | Chainlink + circuit breakers, 5% deviation limit |
-| **Aave Protocol Risk** | Low | Medium | Emergency withdrawal, exposure limits |
+| **External Vault (Morpho) Risk** | Low | Medium | Emergency withdrawal, governance-controlled deployment |
 | **Liquidation Cascade** | Low | High | Circuit breakers, emergency pause |
 
 **Market Risks**
@@ -495,15 +487,14 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 
 **Contract Addresses**
 
-> Contract addresses will be published after mainnet deployment.
+> The protocol is live on Base mainnet (chain 8453) since June 2026. QuantillonVault: `0x833E5Ba510a241b21F1C60c987D1c49eB52E4a07`. See [Oracle Architecture](../oracle-architecture.md) for the oracle contract addresses.
 
 **Key Constants**
 
 ```solidity
-DEFAULT_MAX_SUPPLY = 1_000_000_000e18  // 1 billion QEURO
-MINT_FEE_RATE = 10                      // 0.10% (10 basis points)
-MAX_RATE_LIMIT = type(uint96).max       // Per-address rate limit
-RATE_LIMIT_RESET_PERIOD = 1 hours       // Rate limit window
+MAX_SUPPLY = 100_000_000e18   // 100 million QEURO (governance-adjustable cap)
+// Mint/redeem fees: currently 0, governance-settable, capped at 5%
+// Mint rate limit: 10,000,000 QEURO per 300-second window
 ```
 
 **Events**
@@ -520,7 +511,7 @@ RATE_LIMIT_RESET_PERIOD = 1 hours       // Rate limit window
 
 QEURO represents more than just another stablecoin: it is the first production deployment of Quantillon's FX-hedged local-currency architecture. Through innovative dual-pool mechanics, dynamic yield redistribution via YieldShift, and robust security controls, QEURO creates a sustainable foundation for EUR-denominated decentralized finance.
 
-The MVP implementation focuses on core functionality with USDC collateral and Aave v3 yield generation. Future phases will expand to multi-collateral support, additional vault strategies, and cross-chain deployment.
+The live deployment focuses on core functionality with USDC collateral and external staking vault yield generation (currently Morpho/MetaMorpho). Future phases will expand to multi-collateral support, additional vault strategies, and cross-chain deployment.
 
 The first deployment prioritizes user experience, regulatory compliance, and sustainable yield generation while preserving the broader protocol's flexibility. The result is an EUR asset that bridges local-currency balance-sheet needs with the innovation and accessibility of decentralized protocols.
 

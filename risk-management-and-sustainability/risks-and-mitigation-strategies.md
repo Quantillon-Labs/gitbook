@@ -4,13 +4,13 @@
 
 Quantillon's first deployment serves EUR users via USD-collateralized instruments, which requires active hedging of EUR/USD exposure. Volatility in this currency pair, especially under divergent monetary policies between the ECB and the Fed, presents a persistent risk to QEURO peg maintenance.
 
-**🛡️ Mitigation:** The protocol's architecture is explicitly delta-neutral. Hedgers assume long EUR/USD positions in exchange for predictable compensation, aligning their incentives with peg stability. Liquidation thresholds and real-time FX oracles (e.g., Chainlink) enforce discipline. Additionally, the Yield Shift mechanism acts as a buffer: as FX volatility rises, incentives for hedgers increase dynamically.
+**🛡️ Mitigation:** The protocol's architecture is explicitly delta-neutral. Hedgers take the offsetting side of the protocol's EUR/USD exposure in exchange for predictable compensation, aligning their incentives with peg stability. Liquidation thresholds and real-time FX oracles (the Hyperliquid EUR/USD market mid, with Chainlink as fallback) enforce discipline. Additionally, the Yield Shift mechanism acts as a buffer: as FX volatility rises, incentives for hedgers increase dynamically.
 
 ### Liquidity Risk: Capital Flight and Redemption Pressure
 
 Periods of market stress may trigger mass redemptions, potentially challenging the protocol's ability to unwind positions or liquidate collateral efficiently.
 
-**🛡️ Mitigation:** Quantillon inherits the deep liquidity of USDC on the user side and leverages the Forex market on the hedger side. Redemption operations are slippage-free, and collateral is deployed on liquid DeFi markets (e.g., Aave) with short withdrawal queues. Furthermore, vault variants allow diversification of exposure (e.g., T-Bills, Maker vaults), improving redemption resiliency.
+**🛡️ Mitigation:** Quantillon inherits the deep liquidity of USDC on the user side and leverages the Forex market on the hedger side. Redemption operations are slippage-free, and collateral is deployed on liquid DeFi markets (currently Morpho USDC lending on Base) with instant withdrawal. Furthermore, future vault variants can diversify exposure (e.g., T-Bills, other lending markets), improving redemption resiliency.
 
 ### Smart Contract and Oracle Risk
 
@@ -22,7 +22,7 @@ The protocol relies on smart contracts for collateral management, minting, and l
 
 As with all DAO-based systems, Quantillon faces the risk of governance capture or low voter participation, especially in early phases.
 
-**🛡️ Mitigation:** Governance powers are progressively decentralized. Initially, the Quantillon Foundation holds veto rights over critical upgrades to ensure stability. Over time, governance evolves toward $QTI token holders. A quorum-based system and time-locked proposals provide transparency and delay in decision-making.
+**🛡️ Mitigation:** Governance powers are progressively decentralized. Initially, a 2-of-3 Gnosis Safe controls privileged roles, with core-contract upgrades gated by a 12-hour timelock to ensure stability. Over time, governance evolves toward QTI token holders (the veQTI system is coded but dormant). A quorum-based system and time-locked execution provide transparency and delay in decision-making.
 
 ### Regulatory Risk: Legal Classification and MiCA
 
@@ -32,7 +32,7 @@ Although Quantillon benefits from the Recital 22 exemption under MiCA, regulator
 
 ### DeFi Contagion Risk
 
-Quantillon interacts with other DeFi platforms, notably Aave. In the event of failure or depegging on these platforms, collateral could be impaired.
+Quantillon interacts with other DeFi platforms, notably Morpho (the current external yield venue). In the event of failure or depegging on these platforms, collateral could be impaired.
 
 **🛡️ Mitigation:** Collateral is diversified across whitelisted protocols. Vault variants can be adjusted via governance to reduce exposure. The protocol monitors real-time risk parameters, including liquidity ratios and asset volatility. In extreme scenarios, emergency pause mechanisms are available.
 
@@ -50,19 +50,17 @@ The introduction of yield-bearing euro infrastructure creates additional risk ve
 * Formal mathematical verification of yield calculation algorithms
 * Real-time monitoring with automated circuit breakers for anomalous calculations
 * Emergency pause functionality with governance-controlled restart procedures
-* Segregated insurance fund (3% of yield) specifically for compounding mechanism failures
+* A segregated insurance fund for compounding mechanism failures is **under consideration — not implemented in the deployed protocol**
 
 **Yield Volatility and User Expectation Risk**
 
-**Risk:** Rapid changes in underlying Aave yields could create user dissatisfaction or mass unstaking events if stQEURO returns fall below expectations.
+**Risk:** Rapid changes in underlying external-vault yields (currently Morpho) could create user dissatisfaction or mass unstaking events if stQEURO returns fall below expectations.
 
 **🛡️ Mitigation:**&#x20;
 
 * 7-day moving average smoothing for APY display to reduce short-term volatility perception
-* 5% protocol yield reserve buffer to maintain consistent distributions during temporary yield drops
-* Guaranteed minimum 2% APY floor through protocol treasury backing
-* Maximum 15% APY ceiling to prevent unsustainable user expectations during yield spikes
 * Transparent communication about yield sources and market dependency
+* A protocol yield reserve buffer and APY floor/ceiling mechanisms have been discussed but are **under consideration — not implemented in the deployed protocol**; stQEURO yields are market-driven with no guaranteed floor or ceiling
 
 **Cross-Protocol Composability Risk**
 

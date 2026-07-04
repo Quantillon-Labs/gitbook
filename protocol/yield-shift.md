@@ -28,7 +28,7 @@ contract YieldShift is
 | `IERC20` | `usdc` | Yield token |
 | `IUserPool` | `userPool` | User pool metrics |
 | `IHedgerPool` | `hedgerPool` | Hedger pool metrics |
-| `IAaveVault` | `aaveVault` | Aave yield source |
+| `IQuantillonVault` | `vault` | Yield source — harvests external staking vault (Morpho) yield |
 | `IstQEURO` | `stQEURO` | User yield distribution |
 | `TimeProvider` | `TIME_PROVIDER` | Centralized time management |
 
@@ -127,7 +127,7 @@ struct PoolSnapshot {
 
 ```solidity
 PoolSnapshot[] public poolHistory;
-uint256 public constant MAX_HISTORY_LENGTH = 168; // 7 days @ 1h
+uint256 public constant MAX_HISTORY_LENGTH = 1000; // Max stored snapshots
 ```
 
 **TWAP Calculation**
@@ -198,9 +198,9 @@ mapping(address => bytes32) public sourceToYieldType;
 
 | Source | Type | Description |
 |--------|------|-------------|
-| `AaveVault` | AAVE_YIELD | Yield from USDC lending on Aave |
-| `QuantillonVault` | PROTOCOL_FEES | Mint/redeem fees |
-| `HedgerPool` | HEDGING_FEES | Hedger operation fees |
+| `QuantillonVault` | VAULT_YIELD | Harvested yield from the external staking vault (Morpho) |
+| `QuantillonVault` | PROTOCOL_FEES | Mint/redeem fees (currently 0) |
+| `HedgerPool` | HEDGING_FEES | Hedger operation fees (currently 0) |
 
 #### Source Management
 
@@ -224,7 +224,7 @@ bytes32[] public yieldSourceNames;
 Allows tracking yield origin:
 
 ```solidity
-yieldSources["AAVE_YIELD"] = 1_000_000e6;     // 1M USDC from Aave
+yieldSources["VAULT_YIELD"] = 1_000_000e6;    // 1M USDC from the external staking vault
 yieldSources["PROTOCOL_FEES"] = 50_000e6;     // 50K USDC from fees
 ```
 
@@ -258,8 +258,9 @@ mapping(address => uint256) public userPendingYield;
 ┌─────────────────────────────────────────────────────────────┐
 │                    YIELD DISTRIBUTION FLOW                   │
 ├─────────────────────────────────────────────────────────────┤
-│  1. AaveVault.harvestYield()                                │
-│     └── Sends yield to YieldShift                           │
+│  1. QuantillonVault.harvestAndDistributeVaultYield()        │
+│     ├── Harvests external staking vault (Morpho) yield      │
+│     └── Forwards the hedger/protocol share to YieldShift    │
 │                                                              │
 │  2. YieldShift.receiveYield(amount, source)                 │
 │     ├── Verify authorized source                            │

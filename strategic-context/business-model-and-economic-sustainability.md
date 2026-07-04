@@ -4,42 +4,49 @@ Quantillon's first deployment uses a three-token architecture that generates mul
 
 ### Primary Revenue Sources
 
+The deployed protocol ships with a complete fee framework, most of which is deliberately set to **zero at launch** to bootstrap adoption. The levers below are live in the contracts and governance-adjustable; collected fees route through the FeeCollector, which splits them **60% treasury / 25% dev fund / 15% community** (governance-adjustable).
+
 #### 1. QEURO Operations (Core Stablecoin Activity)
 
-* **Mint/redeem fees**: 0.1% on all QEURO operations
-* **Yield management**: 10% of returns from collateral deployment (primarily Aave USDC)
-* **Liquidation penalties**: 2-5% of liquidated hedger and user positions
+* **Mint/redeem fees**: currently 0, governance-settable up to a 5% cap
+* **Yield management**: the treasury share of harvested external-vault yield (currently Morpho USDC lending) — the portion attributable to unstaked QEURO accrues to the treasury
 
 #### 2. stQEURO Yield Infrastructure
 
-* **Staking operation fees**: 0.05% on stake/unstake transactions
+* **Yield fee**: a per-series fee on credited staker yield — currently 0, capped at 20%
 * **Enhanced trading volume** through improved user retention
 * **Premium yield optimization services** for institutional users
 
-#### 3. Cross-Protocol Integration
+#### 3. Hedging Operations
 
-* **Cross-chain bridge fees**: 0.1-0.3% of transfers (Ethereum, Base, Arbitrum, Optimism)
+* **Hedger position fees**: entry/exit/margin fees — currently 0, governance-settable
+* **Reward fee split**: 20% of hedger rewards at claim time
+
+#### 4. Cross-Protocol Integration (planned)
+
+* **Cross-chain bridge fees**: 0.1-0.3% of transfers (future multi-chain phases)
 * **Premium institutional services**: advanced analytics, custom integrations
 * **Partnership revenue sharing**: integrations with CeDeFi platforms
 
 ### Financial Projections
+
+> **Illustrative and aspirational**: the projections below assume fee levels that are **not currently active** (fees are 0 at launch) and volumes that depend on adoption. They model what the fee framework could yield if governance activates it — they are not forecasts of current revenue.
 
 #### Conservative Growth Scenario (€50M TVL by Year 1)
 
 **Revenue Breakdown:**
 
 ```
-Annual Revenue Calculation:
-├── Swap Volume: €500M (10x TVL turnover)
-│   └── Swap Fees: €500M × 0.1% = €500K
-├── Yield Management: €50M × 7% × 10% = €350K
-├── stQEURO Operations: €20M staked × 2% annual turnover × 0.05% = €20K
-├── Cross-Chain Fees: €100M volume × 0.2% average = €200K
-└── Liquidation Penalties: €2M volume × 3% average = €60K
+Annual Revenue Calculation (illustrative fee assumptions):
+├── Mint/Redeem Volume: €500M (10x TVL turnover)
+│   └── Fees if activated at 0.1% (cap 5%): €500M × 0.1% = €500K
+├── Yield Management: €50M × 7% yield × 10% treasury share = €350K
+├── stQEURO Yield Fee if activated at 5% (cap 20%): €20M staked × 5% yield × 5% = €50K
+└── Cross-Chain Fees (future phases): €100M volume × 0.2% average = €200K
 
-Total Annual Revenue: €1,130K
+Total Annual Revenue: €1,100K
 Operating Costs: €600K (development, infrastructure, legal, audits)
-Net Operating Profit: €530K (47% margin)
+Net Operating Profit: €500K (45% margin)
 ```
 
 #### Optimistic Growth Scenario (€500M TVL by Year 2)
@@ -47,17 +54,16 @@ Net Operating Profit: €530K (47% margin)
 **Revenue Breakdown:**
 
 ```
-Annual Revenue Calculation:
-├── Swap Volume: €5B (10x TVL turnover)
-│   └── Swap Fees: €5B × 0.1% = €5M
-├── Yield Management: €500M × 7% × 10% = €3.5M
-├── stQEURO Operations: €300M staked × 3% annual turnover × 0.05% = €450K
-├── Cross-Chain Fees: €1.5B volume × 0.2% average = €3M
-└── Liquidation Penalties: €50M volume × 3% average = €1.5M
+Annual Revenue Calculation (illustrative fee assumptions):
+├── Mint/Redeem Volume: €5B (10x TVL turnover)
+│   └── Fees if activated at 0.1% (cap 5%): €5B × 0.1% = €5M
+├── Yield Management: €500M × 7% yield × 10% treasury share = €3.5M
+├── stQEURO Yield Fee if activated at 5% (cap 20%): €300M staked × 5% yield × 5% = €750K
+└── Cross-Chain Fees (future phases): €1.5B volume × 0.2% average = €3M
 
-Total Annual Revenue: €13.45M
+Total Annual Revenue: €12.25M
 Operating Costs: €2.5M (scaled operations)
-Net Operating Profit: €10.95M (81% margin)
+Net Operating Profit: €9.75M (80% margin)
 ```
 
 ### Key Performance Indicators
@@ -67,7 +73,7 @@ Net Operating Profit: €10.95M (81% margin)
 * **TVL Growth**: Target €100M by Month 12, €1B by Month 36
 * **Staking Adoption**: 50%+ of QEURO supply in stQEURO by Year 2
 * **Daily Volume**: 2-5% of TVL in trading activity
-* **Cross-Chain Distribution**: 30% mainnet, 70% L2 by Year 2
+* **Cross-Chain Distribution**: Base-first today; multi-chain expansion targeted from Year 2
 
 #### Sustainability Metrics
 
@@ -102,6 +108,6 @@ Through partnerships with platforms like Quantfury or Cadmos, QEURO can serve as
 
 Future integrations with fiat gateways and custody providers may allow for spread-based revenue models.
 
-The protocol also supports cross-chain deployment, allowing it to tap into ecosystems like Arbitrum, Base, or LayerZero for added liquidity depth and composability. Treasury diversification and fixed-income DeFi strategies can further enhance yield capture without increasing risk.
+The architecture is also designed for future cross-chain deployment, allowing it to tap into additional EVM ecosystems beyond Base for added liquidity depth and composability. Treasury diversification and fixed-income DeFi strategies can further enhance yield capture without increasing risk.
 
 > **In sum, Quantillon is engineered as a low-cost, high-leverage protocol. Its first deployment combines smart contract automation with EUR-denominated asset exposure, while the underlying architecture is designed to remain reusable across future local-currency markets when governance and economics support them.**

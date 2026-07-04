@@ -49,10 +49,10 @@ contract UserPool is
 
 #### Staking Parameters
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `stakingAPY` | `uint256` | Staking APY in basis points | 500 = 5% |
-| `depositAPY` | `uint256` | Base APY on deposits in basis points | 200 = 2% |
+| Parameter | Type | Description | Live Value |
+|-----------|------|-------------|------------|
+| `stakingAPY` | `uint256` | Staking APY in basis points | 800 = 8% |
+| `depositAPY` | `uint256` | Base APY on deposits in basis points | 400 = 4% |
 | `minStakeAmount` | `uint256` | Minimum amount to stake (in QEURO) | 100e18 = 100 QEURO |
 | `unstakingCooldown` | `uint256` | Cooldown period before unstake (in seconds) | 604800 = 7 days |
 
@@ -69,9 +69,9 @@ function updateStakingParameters(
 
 #### Performance Fee
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `performanceFee` | `uint256` | Fee on distributed yield (basis points) | 1000 = 10% |
+| Parameter | Type | Description | Live Value |
+|-----------|------|-------------|------------|
+| `performanceFee` | `uint256` | Fee on distributed yield (basis points) | 0 (currently; governance-settable) |
 
 > **Note**: Mint and redemption fees are managed by QuantillonVault, not UserPool.
 
@@ -178,7 +178,7 @@ Rewards = (stakedAmount × stakingAPY × timeElapsed) / (10000 × 365 days)
 | Variable | Description |
 |----------|-------------|
 | `stakedAmount` | QEURO amount staked |
-| `stakingAPY` | Annual rate in BPS (500 = 5%) |
+| `stakingAPY` | Annual rate in BPS (live: 800 = 8%) |
 | `timeElapsed` | Time since last calculation |
 
 **Reward Update**
@@ -306,7 +306,7 @@ The `performanceFee` is deducted from yield distributed to users.
 ```
 Gross Yield (from YieldShift)
     │
-    ├── Performance Fee (10%) → Treasury
+    ├── Performance Fee (currently 0, governance-settable) → Treasury
     │
     └── Net Yield → Users (via accumulatedYieldPerShare)
 ```
