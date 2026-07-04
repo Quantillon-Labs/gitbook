@@ -57,7 +57,7 @@ The protocol neutralizes the EUR/USD leg by holding a hedge on Hyperliquid. If Q
 The router holds two oracle slots and routes all reads to the currently active one.
 
 ```solidity
-enum OracleType { CHAINLINK, STORK }   // slot 0, slot 1
+enum OracleType { CHAINLINK, MARKET }  // slot 0, slot 1 (MARKET was named STORK before router v1.1.0)
 function getEurUsdPrice() external returns (uint256 price, bool isValid);
 function switchOracle(OracleType newOracle) external;        // ORACLE_MANAGER_ROLE (governance)
 function updateOracleAddresses(address chainlink, address slot1) external;
