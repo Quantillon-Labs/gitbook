@@ -121,7 +121,7 @@ An independent, separately-hosted watchdog continuously polls a read-only health
 - **Stale / circuit-broken** active oracle → unhealthy → freeze.
 - **Basis blow-out** — the active oracle diverges from the Chainlink reference by more than a configured band (e.g. 100 bps) → unhealthy → freeze.
 
-The watchdog is reason-agnostic: any unhealthy verdict triggers a pause, so an oracle dislocation is contained automatically while it is investigated. See [Liquidation System](liquidation-system.md) and the protocol's risk controls for the broader safety hierarchy.
+The watchdog is reason-agnostic: any unhealthy verdict triggers a pause, so an oracle dislocation is contained automatically while it is investigated. See [Liquidation Mode](liquidation-system.md) and the protocol's risk controls for the broader safety hierarchy.
 
 ***
 

@@ -21,18 +21,16 @@
   * [UserPool](protocol/user-pool.md)
   * [HedgerPool](protocol/hedger-pool.md)
   * [YieldShift](protocol/yield-shift.md)
-  * [AaveVault](protocol/aave-vault.md)
+  * [External Staking Vaults](protocol/aave-vault.md)
   * [Oracle Architecture](protocol/oracle-architecture.md)
   * [ChainlinkOracle](protocol/chainlink-oracle.md)
-  * [Liquidation System](protocol/liquidation-system.md)
+  * [Liquidation Mode](protocol/liquidation-system.md)
 
 ## 🌎 Strategic Context
 
-* [Macro & Regulatory Context](strategic-context/macro-and-regulatory-context.md)
-* [Market Analysis Overview](strategic-context/market-and-competitive-analysis.md)
+* [Macro, Regulatory & Legal Context](strategic-context/regulatory-and-legal.md)
 * [Market Landscape & Competitive Analysis](strategic-context/market-landscape-and-competitive-analysis.md)
 * [Business Model & Economic Sustainability](strategic-context/business-model-and-economic-sustainability.md)
-* [Regulatory Compliance](strategic-context/regulatory-and-legal.md)
 
 ## 🛡️ Risk Management and Sustainability
 
@@ -40,9 +38,7 @@
 
 ## 🚀 Roadmap and Launch
 
-* [Adoption Strategy](roadmap-and-adoption-strategy.md)
-* [Roadmap & Launch Plan](roadmap-and-launch-plan.md)
-* [MVP Technical Specification](mvp-technical-documentation.md)
+* [Roadmap & Adoption Strategy](roadmap-and-adoption-strategy.md)
 
 ## 🤝 Organization and Governance
 

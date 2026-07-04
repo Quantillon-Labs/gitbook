@@ -1,514 +1,85 @@
-# AaveVault
+# External Staking Vaults
 
-## AaveVault: Aave v3 Integration for Yield Generation
+## External Staking Vaults: Yield Generation Through Adapters
 
 ### 📋 Overview
 
-The AaveVault is the contract that manages integration with the Aave v3 protocol. It deploys protocol USDC to Aave for yield generation via lending, then distributes revenue to the YieldShift system.
+The Quantillon Protocol generates yield by deploying part of its USDC collateral into **external yield vaults** (money markets such as Morpho or Aave) through a standardized adapter layer. Each external vault is onboarded under a numeric **`vaultId`** and receives its own dedicated **stQEURO series** deployed by the `stQEUROFactory`.
+
+> **There is no `AaveVault` contract.** Earlier protocol designs described a monolithic Aave-specific vault; the production architecture replaced it with lightweight, vault-agnostic adapters implementing a common `IExternalStakingVault` interface. Aave and Morpho are both supported through this same pattern.
 
 ***
 
-### 🏗️ Contract Architecture
+### 🏗️ The Adapter Pattern
 
-**Inheritance**
+Every external vault is wrapped by an adapter that exposes an identical, minimal interface to `QuantillonVault`:
 
-```solidity
-contract AaveVault is 
-    Initializable,
-    ReentrancyGuardUpgradeable,
-    AccessControlUpgradeable,
-    PausableUpgradeable,
-    SecureUpgradeable
-```
+| Function | Purpose |
+| --- | --- |
+| `depositUnderlying(uint256 usdcAmount)` | Deploys USDC from the protocol into the external vault |
+| `withdrawUnderlying(uint256 usdcAmount)` | Withdraws USDC back to the protocol |
+| `harvestYieldToVault()` | Realizes accrued yield and returns it to `QuantillonVault` |
+| `totalUnderlying()` | Reports the current principal + accrued value |
 
-**Aave Dependencies**
+Because all adapters share this interface, the protocol can onboard, migrate, or retire external vaults without changing core contracts — governance simply registers the adapter under a `vaultId` and the runtime routes by that id.
 
-| Interface | Variable | Role |
-|-----------|----------|------|
-| `IERC20` | `usdc` | Underlying USDC token |
-| `IERC20` | `aUSDC` | Aave deposit token |
-| `IPool` | `aavePool` | Main Aave pool |
-| `IPoolAddressesProvider` | `aaveProvider` | Aave address registry |
-| `IRewardsController` | `rewardsController` | Aave rewards (if available) |
-| `IYieldShift` | `yieldShift` | Yield distribution |
+Available adapter implementations:
+
+* **`MetaMorphoStakingVaultAdapter`** — wraps a MetaMorpho (Morpho) vault. **This is the adapter currently live in production.**
+* **`MorphoStakingVaultAdapter`** — Morpho markets adapter (symmetric pattern).
+* **`AaveStakingVaultAdapter`** — Aave-style adapter (symmetric pattern), used with mock vaults for local development and available for a future Aave onboarding.
 
 ***
 
-### 🔐 Roles & Permissions
+### 🚀 Live Deployment (Base Mainnet)
 
-| Role | Responsibilities |
-|------|-----------------|
-| `DEFAULT_ADMIN_ROLE` | General administration |
-| `GOVERNANCE_ROLE` | Parameters (exposure, fees, thresholds) |
-| `VAULT_MANAGER_ROLE` | Deploy/withdraw operations |
-| `EMERGENCY_ROLE` | Emergency mode, pause, emergency withdrawal |
+| Component | Value |
+| --- | --- |
+| Active external vault | MetaMorpho USDC vault (`0xBEEFE94c8aD530842bfE7d8B397938fFc1cb83b2`) |
+| Adapter | `MetaMorphoStakingVaultAdapter` — `0xb2f253Cd74ebfa16894339438B467396De9e8EA3` |
+| `vaultId` | `2` |
+| stQEURO series | `stQEUROMORPHO1` — `0x17CD8ed967d17072297CcAe3D379C9e86aeBEb1d` |
 
-***
-
-### ⚙️ Configuration Parameters
-
-#### Limits and Thresholds
-
-| Parameter | Type | Description | Default Value |
-|-----------|------|-------------|---------------|
-| `maxAaveExposure` | `uint256` | Max Aave exposure (USDC 6 dec) | 50,000,000e6 (50M) |
-| `harvestThreshold` | `uint256` | Min yield for harvest (USDC) | 1,000e6 (1K) |
-| `rebalanceThreshold` | `uint256` | Threshold to trigger rebalance (BPS) | 500 (5%) |
-| `utilizationLimit` | `uint256` | Aave utilization limit (BPS) | 9500 (95%) |
-| `emergencyExitThreshold` | `uint256` | Emergency exit threshold (BPS) | 110 (1.1%) |
-
-#### Fees
-
-| Parameter | Type | Description | Default Value |
-|-----------|------|-------------|---------------|
-| `yieldFee` | `uint256` | Fee on harvested yield (BPS) | 1000 (10%) |
+> The vaultId-2 adapter was migrated from a previous address (`0x103aEBD0059AAA3DcCaa9ab0cCb901382Bd48978`) to the current one on 2026-07-01. Migrations like this are possible precisely because of the adapter indirection — stakers' positions and the stQEURO series are unaffected.
 
 ***
 
-### 💰 Deployment Operations
+### 🏭 One stQEURO Series per Vault
 
-#### Deploy to Aave
+`stQEUROFactory` deploys a dedicated stQEURO proxy for every registered external vault and keeps the registry:
 
-```solidity
-function deployToAave(uint256 amount) 
-    external onlyRole(VAULT_MANAGER_ROLE) whenNotPaused nonReentrant;
-```
+* `getStQEUROByVaultId(vaultId)` → the stQEURO token for that vault
+* `getVaultById(vaultId)` → the underlying vault address
+* `getVaultName(vaultId)` → human-readable label (e.g. `MORPHO1`)
 
-**Flow**
-
-```
-1. Verify emergencyMode == false
-2. Verify current + amount <= maxAaveExposure
-3. Verify _isAaveHealthy() == true
-4. Approve USDC for aavePool
-5. aavePool.supply(usdc, amount, address(this), 0)
-6. principalDeposited += amount
-7. Emit DeployedToAave event
-```
-
-**Validations**
-
-| Check | Error if Failed |
-|-------|-----------------|
-| `!emergencyMode` | `EmergencyModeActive` |
-| `newExposure <= maxAaveExposure` | `MaxExposureExceeded` |
-| `_isAaveHealthy()` | `AaveNotHealthy` |
-
-#### Withdraw from Aave
-
-```solidity
-function withdrawFromAave(uint256 amount) 
-    external onlyRole(VAULT_MANAGER_ROLE) whenNotPaused nonReentrant;
-```
-
-**Flow**
-
-```
-1. Verify amount <= aUSDC.balanceOf(this)
-2. aavePool.withdraw(usdc, amount, address(this))
-3. Adjust principalDeposited (proportionally)
-4. Emit WithdrawnFromAave event
-```
+Each series carries its own exchange rate, so the yield performance of one external vault never dilutes stakers of another. See [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md) for the exchange-rate mechanics.
 
 ***
 
-### 🏥 Health Monitoring
+### 💰 Yield Flow
 
-#### _isAaveHealthy Function
+1. **Deploy** — governance moves idle USDC into an external vault via `QuantillonVault.deployUsdcToVault(vaultId, amount)`.
+2. **Accrue** — the external vault (e.g. MetaMorpho) generates money-market yield on that USDC.
+3. **Harvest & distribute** — `QuantillonVault.harvestAndDistributeVaultYield(vaultId)` realizes the yield and splits it:
+   * a **hedger funding share** first (absolute, time-prorated, at a governance-set annual rate capped at 50%),
+   * the **residual** is split between the vault's stQEURO stakers and the protocol treasury in proportion to the staked share of circulating QEURO.
+4. **Compound** — the staker share raises the stQEURO series' exchange rate; no rebasing, no claim transaction needed.
 
-```solidity
-function _isAaveHealthy() internal view returns (bool);
-```
-
-**Checks Performed**
-
-```
-┌──────────────────────────────────────────────────────────┐
-│                    AAVE HEALTH CHECKS                     │
-├──────────────────────────────────────────────────────────┤
-│ 1. Utilization Rate                                       │
-│    └── currentUtilization <= utilizationLimit (95%)       │
-│                                                           │
-│ 2. Pool Liquidity                                         │
-│    └── availableLiquidity > 0                             │
-│                                                           │
-│ 3. Reserve Status                                         │
-│    └── Reserve is active and not frozen                   │
-│                                                           │
-│ 4. aToken Balance                                         │
-│    └── aUSDC balance reflects deposits correctly          │
-└──────────────────────────────────────────────────────────┘
-```
-
-**When to Use**
-
-- Before each deployment (`deployToAave`)
-- During periodic health checks
-- Before auto-rebalance
+An off-chain keeper triggers harvests on a schedule; the distribution math is fully on-chain. See [YieldShift](yield-shift.md) for the user/hedger yield-allocation layer.
 
 ***
 
-### 🔄 Auto-Rebalancing
+### 🛡️ Governance & Risk Controls
 
-#### autoRebalance Function
-
-```solidity
-function autoRebalance() 
-    external onlyRole(VAULT_MANAGER_ROLE) whenNotPaused nonReentrant;
-```
-
-**When to Trigger a Rebalance**
-
-```
-currentAllocation = principalDeposited / totalAvailableUSDC
-optimalAllocation = calculateOptimalAllocation()
-
-IF |currentAllocation - optimalAllocation| > rebalanceThreshold:
-    → Execute rebalance
-```
-
-**Rebalance Flow**
-
-```
-┌───────────────────────────────────────────────────────────┐
-│                    REBALANCE FLOW                          │
-├───────────────────────────────────────────────────────────┤
-│  IF optimalAllocation > currentAllocation:                │
-│     → Deploy more to Aave                                  │
-│                                                            │
-│  IF optimalAllocation < currentAllocation:                │
-│     → Withdraw from Aave                                   │
-│                                                            │
-│  EMIT PositionRebalanced(reason, oldAlloc, newAlloc)      │
-└───────────────────────────────────────────────────────────┘
-```
-
-#### Optimal Allocation Calculation
-
-```solidity
-function calculateOptimalAllocation() 
-    public view returns (uint256 optimalPercent, uint256 expectedYield);
-```
-
-**Factors Considered**
-
-| Factor | Weight | Description |
-|--------|--------|-------------|
-| **Aave APY** | Primary | Current lending yield |
-| **Utilization** | Safety | Available liquidity |
-| **Protocol Needs** | Reserve | Buffer for redemptions |
-
-**Simplified Formula**
-
-```
-optimalAllocation = min(
-    maxAaveExposure,
-    totalUSDC × (1 - liquidityBuffer) × healthFactor
-)
-```
+* Deploying and withdrawing protocol USDC to/from external vaults is **governance-gated** (2-of-3 Safe; core-contract upgrades additionally route through a 12h timelock).
+* Adapters are deliberately thin pass-throughs — no fixed exposure or rebalance constants live in the adapter; exposure sizing is an operational governance decision per `vaultId`.
+* External-vault risk (smart-contract risk of Morpho/Aave, underlying market risk) is isolated per vault: each stQEURO series bears only its own vault's performance.
+* Onboarding a new external vault follows a runbook: deploy the adapter, register it with the factory (new `vaultId` + stQEURO series), then progressively fund it.
 
 ***
 
-### 🌾 Yield Harvesting
-
-#### harvestYield Function
-
-```solidity
-function harvestYield() 
-    external onlyRole(VAULT_MANAGER_ROLE) whenNotPaused nonReentrant
-    returns (uint256 netYield);
-```
-
-**Yield Calculation**
-
-```
-currentValue = aUSDC.balanceOf(address(this))
-yieldGenerated = currentValue - principalDeposited
-
-IF yieldGenerated >= harvestThreshold:
-    protocolFee = yieldGenerated × yieldFee / 10000
-    netYield = yieldGenerated - protocolFee
-    
-    → Withdraw yield from Aave
-    → Send fee to treasury
-    → Send netYield to YieldShift
-```
-
-**Tracking**
-
-```solidity
-uint256 public lastHarvestTime;      // Last harvest timestamp
-uint256 public totalYieldHarvested;  // Total yield harvested
-uint256 public totalFeesCollected;   // Total fees collected
-```
-
-#### Claim Aave Rewards
-
-```solidity
-function claimAaveRewards() 
-    external onlyRole(VAULT_MANAGER_ROLE) nonReentrant
-    returns (uint256 rewardsClaimed);
-```
-
-If Aave distributes rewards (bonus tokens), this function collects them.
-
-***
-
-### 🚨 Emergency Mode
-
-#### Activation
-
-```solidity
-bool public emergencyMode;
-
-function toggleEmergencyMode(bool enabled) 
-    external onlyRole(EMERGENCY_ROLE);
-```
-
-**Emergency Mode Impact**
-
-| Function | Normal | Emergency Mode |
-|----------|--------|----------------|
-| `deployToAave` | ✅ Allowed | ❌ Blocked |
-| `withdrawFromAave` | ✅ Allowed | ✅ Allowed |
-| `harvestYield` | ✅ Allowed | ⚠️ Limited |
-| `emergencyWithdrawAll` | ❌ Blocked | ✅ Allowed |
-
-#### Emergency Withdraw All
-
-```solidity
-function emergencyWithdrawAll() 
-    external onlyRole(EMERGENCY_ROLE) nonReentrant;
-```
-
-**Flow**
-
-```
-1. Verify emergencyMode == true
-2. Withdraw ALL funds from Aave
-3. USDC stays in vault (no distribution)
-4. Emit EmergencyWithdrawal event
-```
-
-**When to Use**
-
-- Vulnerability detected on Aave
-- Aave liquidity problem
-- Urgent protocol liquidity need
-- Security incident
-
-***
-
-### 📊 View Functions
-
-#### Main Metrics
-
-```solidity
-function getVaultStatus() external view returns (
-    uint256 principalDeposited,
-    uint256 currentValue,
-    uint256 unharvestedYield,
-    uint256 totalYieldHarvested,
-    bool emergencyMode,
-    bool isHealthy
-);
-```
-
-#### Aave Metrics
-
-```solidity
-function getAaveMetrics() external view returns (
-    uint256 currentAPY,
-    uint256 utilizationRate,
-    uint256 availableLiquidity,
-    bool isActive
-);
-```
-
-#### Risk Metrics
-
-```solidity
-function getRiskMetrics() external view returns (
-    uint256 exposureRatio,       // Current exposure ratio
-    uint256 maxExposure,         // Max limit
-    uint256 utilizationBuffer,   // Margin before limit
-    bool isWithinLimits          // Within limits?
-);
-```
-
-***
-
-### ⚙️ Configuration
-
-#### Update Parameters
-
-```solidity
-function updateAaveParameters(
-    uint256 _maxAaveExposure,
-    uint256 _harvestThreshold,
-    uint256 _yieldFee,
-    uint256 _rebalanceThreshold
-) external onlyRole(GOVERNANCE_ROLE);
-```
-
-#### Update Safety Thresholds
-
-```solidity
-function updateSafetyThresholds(
-    uint256 _utilizationLimit,
-    uint256 _emergencyExitThreshold
-) external onlyRole(GOVERNANCE_ROLE);
-```
-
-***
-
-### 🛡️ Security
-
-#### Implemented Protections
-
-| Protection | Description |
-|------------|-------------|
-| **Max Exposure** | Absolute deployment limit |
-| **Utilization Check** | Verify available liquidity |
-| **Health Monitoring** | Checks before each operation |
-| **Emergency Mode** | Quick exit if necessary |
-| **Reentrancy Guard** | Reentrancy protection |
-| **Role-Based Access** | Permission separation |
-
-#### Recovery
-
-```solidity
-function recoverToken(address token, uint256 amount) 
-    external onlyRole(DEFAULT_ADMIN_ROLE);
-
-function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
-```
-
-> **Note**: Cannot recover active USDC or aUSDC.
-
-***
-
-### 📋 Events
-
-```solidity
-event DeployedToAave(
-    string indexed operationType, 
-    uint256 amount, 
-    uint256 aTokensReceived, 
-    uint256 newBalance
-);
-
-event WithdrawnFromAave(
-    string indexed operationType, 
-    uint256 amountRequested, 
-    uint256 amountWithdrawn, 
-    uint256 newBalance
-);
-
-event AaveYieldHarvested(
-    string indexed harvestType, 
-    uint256 yieldHarvested, 
-    uint256 protocolFee, 
-    uint256 netYield
-);
-
-event AaveRewardsClaimed(
-    address indexed rewardToken, 
-    uint256 rewardAmount, 
-    address recipient
-);
-
-event PositionRebalanced(
-    string indexed reason, 
-    uint256 oldAllocation, 
-    uint256 newAllocation
-);
-
-event AaveParameterUpdated(
-    string indexed parameter, 
-    uint256 oldValue, 
-    uint256 newValue
-);
-
-event EmergencyWithdrawal(
-    string indexed reason, 
-    uint256 amountWithdrawn, 
-    uint256 timestamp
-);
-
-event EmergencyModeToggled(
-    string indexed reason, 
-    bool enabled
-);
-```
-
-***
-
-### 📐 Calculation Examples
-
-#### Example 1: Yield Harvest
-
-```
-State:
-- principalDeposited = 10,000,000 USDC
-- aUSDC balance = 10,500,000 USDC (after interest)
-- yieldFee = 1000 (10%)
-
-Calculation:
-- yieldGenerated = 10,500,000 - 10,000,000 = 500,000 USDC
-- protocolFee = 500,000 × 10% = 50,000 USDC → Treasury
-- netYield = 500,000 - 50,000 = 450,000 USDC → YieldShift
-```
-
-#### Example 2: Rebalance
-
-```
-Initial state:
-- totalProtocolUSDC = 20,000,000 USDC
-- principalDeposited = 8,000,000 USDC (40%)
-- optimalAllocation = 60%
-- rebalanceThreshold = 5%
-
-Decision:
-- Gap = |40% - 60%| = 20% > 5% threshold
-→ Trigger rebalance
-→ Deploy 4,000,000 additional USDC to Aave
-→ New allocation = 60%
-```
-
-***
-
-### 🔗 Protocol Integration
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    PROTOCOL INTEGRATION                      │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  QuantillonVault                                            │
-│       │                                                      │
-│       │ USDC for deployment                                  │
-│       ▼                                                      │
-│  AaveVault                                                  │
-│       │                                                      │
-│       │ supply/withdraw                                      │
-│       ▼                                                      │
-│  Aave v3 Protocol                                           │
-│       │                                                      │
-│       │ Yield (aUSDC appreciation)                          │
-│       ▼                                                      │
-│  AaveVault.harvestYield()                                   │
-│       │                                                      │
-│       ├── 10% → Treasury (yieldFee)                         │
-│       │                                                      │
-│       └── 90% → YieldShift                                  │
-│              │                                               │
-│              ├── Users (stQEURO)                             │
-│              └── Hedgers (HedgerPool)                        │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-```
-
-***
-
-> **Summary**: The AaveVault manages integration with Aave v3 to generate yield on protocol USDC. It includes health monitoring, auto-rebalancing, and emergency mode mechanisms to ensure fund security. Yield is harvested periodically and distributed via YieldShift after deducting protocol fees (10%).
+### 🔗 Related Pages
+
+* [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md) — exchange-rate mechanics and staking UX
+* [Core Mechanisms](mechanisms.md) — protocol-wide mint/redeem and collateral flows
+* [YieldShift](yield-shift.md) — dynamic yield split between user and hedger pools

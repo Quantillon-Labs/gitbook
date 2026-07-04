@@ -1,8 +1,26 @@
-# Regulatory & Legal
+# Macro, Regulatory & Legal Context
 
-## Regulatory & Legal
+## Macro, Regulatory & Legal Context
 
-Quantillon Protocol operates at the forefront of European crypto regulation, strategically positioned to leverage the evolving regulatory landscape while maintaining full decentralization. This comprehensive guide explains our compliance strategy, legal structure, and approach to navigating MiCA and other relevant regulations.
+Quantillon Protocol operates at the forefront of European crypto regulation, strategically positioned to leverage the evolving regulatory landscape while maintaining full decentralization. This page covers the macro-economic context that motivates the protocol's first EUR deployment, followed by our compliance strategy, legal structure, and approach to navigating MiCA and other relevant regulations.
+
+***
+
+### 🌍 The Eurozone's Monetary Landscape: A Fragile Equilibrium
+
+The European monetary union represents a unique economic construct: a single currency deployed across divergent fiscal sovereignties. This foundational asymmetry introduces persistent challenges in monetary policy transmission, fiscal coordination, and currency stability. Since its inception, the euro has oscillated between being a symbol of unity and a structural constraint for its member states. Crucially, its monetary architecture lacks a unified treasury, rendering the European Central Bank (ECB) simultaneously omnipotent in setting interest rates and impotent in addressing fiscal imbalances.
+
+Following the COVID-19 pandemic, these weaknesses became more visible. The ECB's asset purchase programs (APP, PEPP) ballooned its balance sheet while interest rates remained negative or near zero for an extended period. In parallel, the U.S. Federal Reserve embarked on a rapid tightening cycle beginning in 2022, leading to a widening rate differential between USD and EUR assets. The resulting capital outflows from euro-denominated instruments depressed the euro's value, culminating in a near-parity scenario with the U.S. dollar in mid-2022.
+
+> **Impact on DeFi**: From a DeFi standpoint, this divergence has structural consequences. With higher U.S. rates and deeper liquidity, DeFi protocols overwhelmingly adopted USD as the reference currency. The euro became underrepresented in decentralized markets, despite being the currency of one of the world's largest economic blocs. This creates a double penalty for local-currency DeFi users: they face foreign exchange risk and lack user-facing assets that preserve their target currency exposure.
+
+### 💶 Why EUR Is the First Deployment Case
+
+European savers face a paradox. While they exhibit high precautionary saving rates—estimated at over **12% of household income** across the eurozone—most of this capital is deployed in vehicles offering negligible returns: Livret A (France, 1.7%), regulated life insurance contracts, and pension products. These products are structurally constrained by regulation, subject to opaque fee structures, and offer limited capital appreciation.
+
+At the macro level, the lack of EUR-denominated yield instruments exacerbates the **Cantillon Effect**. Monetary stimulus disproportionately benefits financial intermediaries and capital holders close to the central bank's monetary base. Retail savers, by contrast, receive only the diluted remnants of yield transmission. This creates a structural transfer from savers to asset managers—a pattern Quantillon explicitly seeks to reverse through its first deployment.
+
+By introducing QEURO as the first euro-denominated, over-collateralized deployment of the Quantillon architecture, the protocol offers a bridge between monetary sovereignty and decentralized market participation. Users retain euro exposure while accessing USD-sourced DeFi opportunities through a protocol-native FX hedging layer. The EUR market is therefore the first proof point, not the limit of the protocol's addressable design.
 
 ***
 
