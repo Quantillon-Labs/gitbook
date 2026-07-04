@@ -24,11 +24,14 @@ Pushing to `main` or `dev` triggers `.github/workflows/Telegram Notifications.ym
 ## Protocol Domain Knowledge
 
 When editing documentation, the following are established facts about the protocol
-(as of 2026-07-03; the smart-contracts repo is the source of truth for on-chain behavior):
+(as of 2026-07-04, verified against live Base mainnet state via cast; the smart-contracts repo
+is the source of truth for on-chain behavior):
 
 **Three-token ecosystem:**
-- **QEURO** — Euro-pegged stablecoin, USDC-collateralized. Minting requires ≥105% protocol
-  collateralization; liquidation/critical mode engages at 101%.
+- **QEURO** — Euro-pegged stablecoin, USDC-collateralized, max supply 100M. Minting requires
+  ≥105% protocol collateralization; liquidation/critical mode engages at 101% (pro-rata
+  redemption inside QuantillonVault). Mint/redeem fees are currently 0 (governance-settable,
+  max 5%). Mint rate limit: 10M QEURO per 300-block window.
 - **stQEURO** — Yield-bearing staked QEURO (ERC-4626 vault, one series per external vault via
   `stQEUROFactory`); exchange rate rises as vault yield is distributed — no rebasing.
 - **QTI** — Governance token with vote-escrow mechanics (veQTI), 100M supply cap.
@@ -47,18 +50,28 @@ When editing documentation, the following are established facts about the protoc
 - There is no `AaveVault` or `LiquidationSystem` contract — liquidation-mode redemption lives in
   `QuantillonVault`; Aave/Morpho exposure goes through the staking vault adapters.
 
-**Governance parameters** (as designed for QTI; inactive while QTI is dormant):
-- Proposal threshold: 100k QTI | Quorum: 20% | Voting period: 4 days
-- Decision thresholds: 60–85% depending on proposal type
+**Governance parameters** (as coded in QTIToken; inactive while QTI is dormant):
+- Proposal threshold: 100k QTI | Quorum: 1M QTI | Voting period: 3–14 days | Execution delay: 2 days
+- veQTI locks: 7 days min, 365 days max, up to 4× voting power
+- Older "60–85% decision thresholds / 4-year lock" figures were aspirational design, not code
 
-**QTI distribution (100M total):**
+**Key live parameters (verified 2026-07-04):** HedgerPool max leverage 20× (5% min margin,
+100 USDC min, fees 0, eur/usd interest 350/450 bps, rewardFeeSplit 20%, single-hedger model);
+UserPool stakingAPY 8% / depositAPY 4%, 100 QEURO min stake, 7-day cooldown; stQEURO yieldFee 0
+(max 20%); FeeCollector split 60/25/15 treasury/dev/community; YieldShift base 50% / max 90%,
+7-day holding, MAX_HISTORY_LENGTH 1000; oracle staleness: Hyperliquid 900 s (1 h hard cap),
+Chainlink 2 h EUR/USD / 25 h USDC/USD, 5% deviation breakers, 0.80–1.40 bounds.
+
+**QTI distribution (100M total — planned/aspirational; supply is currently 0):**
 - Community & Ecosystem 50%, Team & Founders 15%, Investors 10%, DAO Treasury 13%, Liquidity 5%, Strategic Partners 5%, Advisors 2%
 
 **Regulatory positioning:**
 - Targeting MiCA Recital 22 exemption (fully decentralized, no central issuer)
-- Three-entity structure: Quantillon Protocol (on-chain), Quantillon Labs (dev), Quantillon Foundation (Swiss non-profit, regulatory interface)
+- Three-entity structure: Quantillon Protocol (on-chain), Quantillon Labs (dev — French SAS,
+  Mérignac, SIREN 988 682 613), Quantillon Foundation (planned future entity, jurisdiction TBD,
+  intended regulatory interface)
 - Active engagement with French ACPR
 
-**Development phase** (as of 2026-07-03): live on Base mainnet since June 2026 — core protocol
+**Development phase** (as of 2026-07-04): live on Base mainnet since June 2026 — core protocol
 deployed and operating (mint/redeem, staking with external-vault yield distribution, autonomous
 hedging with an independent watchdog); QTI governance activation pending.

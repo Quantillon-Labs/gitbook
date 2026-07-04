@@ -226,13 +226,13 @@ The rate limiting system protects the protocol against large-scale manipulation 
 
 ```
 // Rate Limiting (live values)
-Mint rate limit: 10,000,000 QEURO per 300-second window
+Mint rate limit: 10,000,000 QEURO per 300-block window (~10 minutes on Base)
 ```
 
 **Mechanism**
 
 1. **Per-address tracking**: Each address has its own mint/burn limit
-2. **Sliding window**: The limit resets at the end of each 300-second window
+2. **Sliding window**: The limit resets after each 300-block window (~10 minutes on Base)
 3. **Accumulation**: Operations accumulate within the current window
 4. **Blocking**: If cumulative total exceeds the limit, operation fails
 
@@ -494,7 +494,7 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 ```solidity
 MAX_SUPPLY = 100_000_000e18   // 100 million QEURO (governance-adjustable cap)
 // Mint/redeem fees: currently 0, governance-settable, capped at 5%
-// Mint rate limit: 10,000,000 QEURO per 300-second window
+// Mint rate limit: 10,000,000 QEURO per 300-block window (~10 minutes on Base)
 ```
 
 **Events**
