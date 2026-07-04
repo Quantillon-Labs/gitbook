@@ -1,0 +1,17 @@
+root: ./
+
+structure:
+  readme: README.md
+  summary: SUMMARY.md
+
+redirects:
+  # Pages removed in the July 2026 documentation reconciliation
+  mvp-technical-documentation: protocol/quantillon-protocol-design-and-architecture.md
+  roadmap-and-launch-plan: roadmap-and-adoption-strategy.md
+  strategic-context/market-and-competitive-analysis: strategic-context/market-landscape-and-competitive-analysis.md
+  strategic-context/macro-and-regulatory-context: strategic-context/macro-regulatory-and-legal.md
+  # Pages renamed to match the live protocol architecture
+  protocol/aave-vault: protocol/external-staking-vaults.md
+  protocol/liquidation-system: protocol/liquidation-mode.md
+  protocol/appendices-techniques: protocol/smart-contract-components.md
+  strategic-context/regulatory-and-legal: strategic-context/macro-regulatory-and-legal.md

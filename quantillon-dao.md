@@ -82,4 +82,4 @@ The guiding principle: **decentralize authority no faster than the community's d
 
 * The Timelock is the standard OpenZeppelin `TimelockController`; the Safe is a standard Gnosis Safe — both are extensively audited, battle-tested building blocks.
 * The QTI vote-escrow and proposal contracts are part of the audited protocol codebase and follow the same UUPS upgrade discipline as the rest of the system.
-* Emergency controls (pause, killswitch, circuit breakers) are documented in the [Technical Appendices](protocol/appendices-techniques.md).
+* Emergency controls (pause, killswitch, circuit breakers) are documented in the [Smart Contract Components](protocol/smart-contract-components.md).

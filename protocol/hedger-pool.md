@@ -265,7 +265,7 @@ function recordLiquidationRedeem(uint256 qeuroAmount, uint256 usdcAmount)
     external onlyVault;
 ```
 
-Called when the vault is in liquidation mode (protocol collateralization ratio ≤ 101%). In that mode the hedger's effective margin is treated as 0 and redemptions draw pro-rata on remaining collateral — there is no per-position keeper liquidation. See [Liquidation System](liquidation-system.md).
+Called when the vault is in liquidation mode (protocol collateralization ratio ≤ 101%). In that mode the hedger's effective margin is treated as 0 and redemptions draw pro-rata on remaining collateral — there is no per-position keeper liquidation. See [Liquidation Mode](liquidation-mode.md).
 
 ***
 

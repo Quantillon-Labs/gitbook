@@ -17,18 +17,18 @@
   * [QEURO Token](protocol/quantillon-protocols-tokens/qeuro-token.md)
   * [stQEURO Token](protocol/quantillon-protocols-tokens/stqeuro-token.md)
   * [QTI Token](protocol/quantillon-protocols-tokens/qti-token.md)
-* [Smart Contract Components](protocol/appendices-techniques.md)
+* [Smart Contract Components](protocol/smart-contract-components.md)
   * [UserPool](protocol/user-pool.md)
   * [HedgerPool](protocol/hedger-pool.md)
   * [YieldShift](protocol/yield-shift.md)
-  * [External Staking Vaults](protocol/aave-vault.md)
+  * [External Staking Vaults](protocol/external-staking-vaults.md)
   * [Oracle Architecture](protocol/oracle-architecture.md)
   * [ChainlinkOracle](protocol/chainlink-oracle.md)
-  * [Liquidation Mode](protocol/liquidation-system.md)
+  * [Liquidation Mode](protocol/liquidation-mode.md)
 
 ## 🌎 Strategic Context
 
-* [Macro, Regulatory & Legal Context](strategic-context/regulatory-and-legal.md)
+* [Macro, Regulatory & Legal Context](strategic-context/macro-regulatory-and-legal.md)
 * [Market Landscape & Competitive Analysis](strategic-context/market-landscape-and-competitive-analysis.md)
 * [Business Model & Economic Sustainability](strategic-context/business-model-and-economic-sustainability.md)
 

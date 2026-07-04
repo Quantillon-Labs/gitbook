@@ -1,4 +1,4 @@
-# Technical Appendices
+# Smart Contract Components
 
 ## Technical Reference Documentation
 
@@ -105,7 +105,7 @@ This section provides a comprehensive technical reference for the Quantillon pro
 
 ### External Staking Vault Adapters
 
-There is no standalone `AaveVault` contract. External yield exposure (currently a MetaMorpho USDC vault) goes through staking vault adapters registered on `QuantillonVault`; deployment, harvest, and emergency withdrawal are gated by the vault's `GOVERNANCE_ROLE`/`EMERGENCY_ROLE`. See [External Staking Vaults](aave-vault.md).
+There is no standalone `AaveVault` contract. External yield exposure (currently a MetaMorpho USDC vault) goes through staking vault adapters registered on `QuantillonVault`; deployment, harvest, and emergency withdrawal are gated by the vault's `GOVERNANCE_ROLE`/`EMERGENCY_ROLE`. See [External Staking Vaults](external-staking-vaults.md).
 
 ### ChainlinkOracle
 

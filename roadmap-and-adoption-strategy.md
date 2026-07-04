@@ -89,7 +89,7 @@ Financial literacy campaigns focused on DeFi yields, euro-denominated finance, a
 
 **👥 Community-Driven Development** — early and continuous community engagement to build a sustainable ecosystem.
 
-**🏛️ Regulatory Compliance** — proactive approach to European regulatory requirements, particularly MiCA (see [Macro, Regulatory & Legal](strategic-context/regulatory-and-legal.md)).
+**🏛️ Regulatory Compliance** — proactive approach to European regulatory requirements, particularly MiCA (see [Macro, Regulatory & Legal](strategic-context/macro-regulatory-and-legal.md)).
 
 **🔗 Strategic Partnerships** — building key relationships with DeFi protocols, institutions, and service providers.
 

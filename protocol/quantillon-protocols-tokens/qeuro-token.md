@@ -95,7 +95,7 @@ QEURO Burn → Oracle Verification → Collateral Release → USDC Transfer
 
 **💰 Collateral Deployment**
 
-USDC collateral can be deployed to external staking vaults — currently a MetaMorpho (Morpho) USDC vault via a dedicated adapter — to generate yield. Deployment is managed by governance, and emergency withdrawal is available for crisis situations. See [External Staking Vaults](../aave-vault.md) for details.
+USDC collateral can be deployed to external staking vaults — currently a MetaMorpho (Morpho) USDC vault via a dedicated adapter — to generate yield. Deployment is managed by governance, and emergency withdrawal is available for crisis situations. See [External Staking Vaults](../external-staking-vaults.md) for details.
 
 **Revenue Distribution Model (Harvest + YieldShift)**
 

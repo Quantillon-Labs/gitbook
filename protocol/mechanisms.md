@@ -34,7 +34,7 @@ The QEURO minting mechanism is designed for simplicity and capital efficiency:
 2. **Oracle Price Check**: the protocol's EUR/USD oracle provides the real-time exchange rate (the Hyperliquid market mid by default, with Chainlink as fallback — see [Oracle Architecture](oracle-architecture.md))
 3. **Collateral Verification**: Protocol verifies that the collateralization ratio stays at or above the 105% minting floor
 4. **QEURO Issuance**: Users receive QEURO at the current oracle price; the minting fee is currently 0 (governance-settable, capped at 5%)
-5. **Yield Deployment**: USDC collateral can be deployed to external staking vaults (currently Morpho/MetaMorpho — see [External Staking Vaults](aave-vault.md)) for yield generation
+5. **Yield Deployment**: USDC collateral can be deployed to external staking vaults (currently Morpho/MetaMorpho — see [External Staking Vaults](external-staking-vaults.md)) for yield generation
 
 > **Note**: The MVP only accepts USDC as collateral. Multi-collateral support (ETH, WBTC) is planned for future phases.
 
