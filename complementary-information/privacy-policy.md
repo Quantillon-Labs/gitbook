@@ -11,7 +11,7 @@ Quantillon, Quantillon Protocol (hereinafter referred to as "Quantillon Labs", t
 
 This privacy policy (hereinafter referred to as "Privacy Policy") together with our legal notice, disclaimers, documentation, and general terms and conditions explain how Quantillon Labs operates and how it may - from time to time only - use your personal information (hereinafter referred to as "Personal Information" or "Personal Data") when Users access the websites : [https://quantillon.money/](https://quantillon.money/) and [https://app.quantillon.money/](https://app.quantillon.money/) (hereinafter together referred to as the "Site").
 
-For more information about the Company, the User is invited to consult the legal notice. <!-- TODO: legal to supply the correct link -->
+For more information about the Company, the User is invited to consult the [legal notice](legal-notice.md).
 
 Quantillon Labs has developed a tool under the name "Quantillon" that offers, among other things, an FX-hedged DeFi protocol whose first deployment combines deep USD-based liquidity, automated FX hedging, and modular yield vaults to provide secure, capital-efficient, and scalable euro exposure on-chain through QEURO. (hereinafter referred to as the “Quantillon Protocol”).
 
