@@ -4,7 +4,7 @@
 
 Quantillon's first deployment serves EUR users via USD-collateralized instruments, which requires active hedging of EUR/USD exposure. Volatility in this currency pair, especially under divergent monetary policies between the ECB and the Fed, presents a persistent risk to QEURO peg maintenance.
 
-**🛡️ Mitigation:** The protocol's architecture is explicitly delta-neutral. Hedgers take the offsetting side of the protocol's EUR/USD exposure in exchange for predictable compensation, aligning their incentives with peg stability. Liquidation thresholds and real-time FX oracles (the Hyperliquid EUR/USD market mid, with Chainlink as fallback) enforce discipline. Additionally, the Yield Shift mechanism acts as a buffer: as FX volatility rises, incentives for hedgers increase dynamically.
+**🛡️ Mitigation:** The protocol's architecture is explicitly delta-neutral. Hedgers take the offsetting side of the protocol's EUR/USD exposure in exchange for predictable compensation, aligning their incentives with peg stability. Liquidation thresholds and real-time FX oracles (the active hedge venue's EUR/USD market mid — currently Hyperliquid — with Chainlink as fallback) enforce discipline. Additionally, the Yield Shift mechanism acts as a buffer: as FX volatility rises, incentives for hedgers increase dynamically. Hedge-venue concentration risk is mitigated by dual-venue support: both Hyperliquid and Lighter EUR/USD mids are published on-chain independently every tick, and Lighter is maintained as a certified alternative execution venue — with a coupled venue switch (the execution venue and the oracle venue always move together) preventing split-venue basis risk.
 
 ### Liquidity Risk: Capital Flight and Redemption Pressure
 

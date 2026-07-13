@@ -31,7 +31,7 @@ coverY: 0
 **Directly by the 2-of-3 Safe (no timelock):**
 
 * Operational parameters: fee settings (mint/redeem, stQEURO yield fee, hedger fees), collateralization thresholds, hedging parameters, interest rates
-* Oracle operations: switching the active EUR/USD source in the OracleRouter (Hyperliquid ↔ Chainlink fallback), price bounds, circuit-breaker management
+* Oracle operations: switching the active EUR/USD source in the OracleRouter (market venue ↔ Chainlink fallback), swapping the market venue oracle itself (Hyperliquid ↔ Lighter, always coupled with the hedge-execution venue), price bounds, circuit-breaker management
 * Emergency actions: pause/unpause, minting killswitch, emergency position closure
 * Role management and treasury operations
 

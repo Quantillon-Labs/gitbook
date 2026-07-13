@@ -6,7 +6,7 @@
 
 The ChainlinkOracle is the contract that manages integration with Chainlink price feeds to obtain real-time EUR/USD and USDC/USD prices. It includes robust security mechanisms like circuit breakers, data freshness validation, and timestamp manipulation protection.
 
-> **Role in the current architecture:** the ChainlinkOracle is now the **fallback** EUR/USD source (slot 0) behind the [OracleRouter](oracle-architecture.md). QEURO mint/redeem is priced by default off the **Hyperliquid** EUR/USD market mid (the hedge venue) via the `HyperliquidEurUsdOracle`. The ChainlinkOracle still provides **USDC/USD validation** for the protocol and acts as a **one-transaction fallback** (`switchOracle(0)`). The page below documents the ChainlinkOracle contract itself; see **[Oracle Architecture](oracle-architecture.md)** for how the two sources fit together.
+> **Role in the current architecture:** the ChainlinkOracle is now the **fallback** EUR/USD source (slot 0) behind the [OracleRouter](oracle-architecture.md). QEURO mint/redeem is priced by default off the EUR/USD market mid of the active hedge venue via slot 1, the **market** slot — currently hosting the `HyperliquidEurUsdOracle`, with a sibling `LighterEurUsdOracle` available as a switchable alternative. The ChainlinkOracle still provides **USDC/USD validation** for the protocol and acts as a **one-transaction fallback** (`switchOracle(0)`). The page below documents the ChainlinkOracle contract itself; see **[Oracle Architecture](oracle-architecture.md)** for how the two sources fit together.
 
 ***
 
@@ -444,7 +444,7 @@ Chainlink USDC/USD: 0.95
 
 ### 🔗 Protocol Integration
 
-> The EUR/USD path below applies **when the ChainlinkOracle is the selected source in the OracleRouter** (fallback slot 0). In the live configuration, EUR/USD is served by the `HyperliquidEurUsdOracle` (slot 1) and the ChainlinkOracle serves USDC/USD validation — see [Oracle Architecture](oracle-architecture.md).
+> The EUR/USD path below applies **when the ChainlinkOracle is the selected source in the OracleRouter** (fallback slot 0). In the live configuration, EUR/USD is served by the market-slot oracle (slot 1, currently `HyperliquidEurUsdOracle`) and the ChainlinkOracle serves USDC/USD validation — see [Oracle Architecture](oracle-architecture.md).
 
 ```
 ┌─────────────────────────────────────────────────────────────┐

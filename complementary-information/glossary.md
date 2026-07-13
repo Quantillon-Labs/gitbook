@@ -52,7 +52,7 @@ A hybrid approach combining centralized and decentralized systems, often integra
 
 ### Chainlink
 
-A decentralized oracle network used by Quantillon as the **fallback** EUR/USD source and for USDC/USD collateral validation. The active EUR/USD source is the Hyperliquid market mid — see the Oracle Architecture page.
+A decentralized oracle network used by Quantillon as the **fallback** EUR/USD source and for USDC/USD collateral validation. The active EUR/USD source is the market mid of the active hedge venue (currently Hyperliquid) — see the Oracle Architecture page.
 
 ***
 
@@ -106,10 +106,22 @@ Participants who provide USDC to hedge against EUR/USD volatility, in exchange f
 
 ***
 
+### Hyperliquid
+
+A decentralized perpetual-futures exchange. Currently the protocol's **active venue** for EUR/USD hedge execution, whose market mid is the active on-chain EUR/USD pricing source — see the Oracle Architecture page.
+
+***
+
 ### KPI (Key Performance Indicator)
 
 Metrics used to assess the protocol’s growth and performance.\
 Examples: **TVL**, **swap volume**, **user base**.
+
+***
+
+### Lighter
+
+A perpetual-futures DEX built on **zkLighter**, an Ethereum-anchored ZK-rollup with validity proofs for matching and liquidations. Supported by Quantillon as an **alternative hedge and oracle venue** (not yet active); the hedge-execution venue and the oracle venue always switch together.
 
 ***
 

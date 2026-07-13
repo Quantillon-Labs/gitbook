@@ -4,7 +4,7 @@
 
 ### 📋 Overview
 
-QEURO mint and redeem are priced off the **EUR/USD market price used to execute the protocol's hedge** — the Hyperliquid `EUR` perpetual mid — rather than a generic spot-FX feed. This keeps the on-chain valuation of QEURO aligned with the venue where the EUR/USD exposure is actually neutralized, eliminating the basis between the QEURO liability and its hedge.
+QEURO mint and redeem are priced off the **EUR/USD market price used to execute the protocol's hedge** — the EUR/USD perpetual mid of the active hedge venue (currently the Hyperliquid `EUR` perp) — rather than a generic spot-FX feed. This keeps the on-chain valuation of QEURO aligned with the venue where the EUR/USD exposure is actually neutralized, eliminating the basis between the QEURO liability and its hedge.
 
 Pricing is served through an **`OracleRouter`** that can switch between two sources:
 
@@ -14,6 +14,8 @@ Pricing is served through an **`OracleRouter`** that can switch between two sour
 | 0 | **ChainlinkOracle** | Fallback | Chainlink EUR/USD spot + USDC/USD validation |
 
 The router exposes a single, oracle-agnostic `IOracle` interface to the rest of the protocol, so `QuantillonVault` and other consumers are unaware of which source is active. A one-transaction governance call (`switchOracle`) flips between them.
+
+Slot 1 is the **market** slot: it hosts the oracle of the active hedge venue — currently Hyperliquid, with a sibling `LighterEurUsdOracle` implemented as a switchable alternative (deployment pending the staged rollout) (see the *Venue-Switchable Market Oracle* section below).
 
 ***
 
@@ -48,7 +50,7 @@ The router exposes a single, oracle-agnostic `IOracle` interface to the rest of 
 
 ### 🔁 Why Hedge-Aligned Pricing
 
-The protocol neutralizes the EUR/USD leg by holding a hedge on Hyperliquid. If QEURO were minted/redeemed at a *spot* EUR/USD price while the hedge fills at the *venue* price, the small-but-persistent gap (the basis) would leak value and desynchronize the liability from its hedge. Reading the venue mid on-chain removes that gap by construction. Chainlink spot is kept as a safety reference and fallback, not as the primary valuation source.
+The protocol neutralizes the EUR/USD leg by holding a hedge on a perpetual venue — currently Hyperliquid. If QEURO were minted/redeemed at a *spot* EUR/USD price while the hedge fills at the *venue* price, the small-but-persistent gap (the basis) would leak value and desynchronize the liability from its hedge. Reading the venue mid on-chain removes that gap by construction. Chainlink spot is kept as a safety reference and fallback, not as the primary valuation source.
 
 ***
 
@@ -64,14 +66,14 @@ function updateOracleAddresses(address chainlink, address slot1) external;
 ```
 
 - Reads delegate to the active oracle via the generic `IOracle` interface.
-- The Hyperliquid oracle occupies slot 1; switching is a single governance transaction.
+- Slot 1 (the market slot) hosts the active venue's oracle — currently the Hyperliquid oracle; switching is a single governance transaction.
 - `activeOracle()` and `getOracleAddresses()` expose the current configuration on-chain.
 
 ***
 
 ### 💧 The Price Publisher (off-chain → on-chain)
 
-A dedicated off-chain service reads the Hyperliquid `EUR` market mid and publishes it on-chain into `SlippageStorage`, signed by a dedicated publisher wallet that holds **only** a write role (no protocol funds).
+A dedicated off-chain service reads the EUR/USD mids of the supported perp venues and publishes them on-chain into `SlippageStorage`, signed by a dedicated publisher wallet that holds **only** a write role (no protocol funds). Every tick it publishes **both** the Hyperliquid and the Lighter mid, each keyed by source (`SOURCE_LIGHTER = 0`, `SOURCE_HYPERLIQUID = 1`) and guarded by a price-integrity check cross-referenced against the other venue's mid.
 
 It publishes when **any** of these fire:
 - **Cadence** — at least every N seconds.
@@ -103,6 +105,25 @@ function getEurUsdPrice() external returns (uint256 price, bool isValid);
 ```
 
 A `false` validity flag is treated by the vault as a **hard stop** (mint/redeem revert) — the protocol never values QEURO at a stale or out-of-band price.
+
+***
+
+### 🔀 Venue-Switchable Market Oracle
+
+The market side of the router is **venue-switchable**. The protocol's EUR/USD hedging and market-mid pricing support two perp venues:
+
+| Venue | Status | Oracle contract |
+|-------|--------|-----------------|
+| **Hyperliquid** | **Active** | `HyperliquidEurUsdOracle` (in slot 1 today) |
+| **Lighter** ([zkLighter](https://docs.lighter.xyz)) | Supported, not active | `LighterEurUsdOracle` (implemented, not yet deployed) |
+
+- **Both mids are already on-chain.** The publisher writes **both venues'** EUR/USD mids to `SlippageStorage` on every tick, keyed by source (`SOURCE_LIGHTER = 0`, `SOURCE_HYPERLIQUID = 1`), and each tick is guarded by a price-integrity check cross-referenced against the other venue's mid.
+- **Sibling oracle, same validation.** `LighterEurUsdOracle` applies the same audited validation logic as the Hyperliquid oracle — 15-minute staleness window, 0.80–1.40 price bounds, 5% deviation circuit breaker, USDC/USD delegated to the ChainlinkOracle — reading the Lighter mid instead.
+- **One-transaction switch.** Changing venue is a single governance (2-of-3 Safe) transaction swapping the router's market-oracle address in slot 1. Chainlink remains the manual fallback in slot 0, unchanged.
+- **Coupled by design.** The venue where the hedge executes and the venue whose mid prices mint/redeem always move together. The hedging engine refuses to run — and the protocol watchdog freezes mint+redeem — if the execution venue ever differs from the oracle venue (fatal `venue_oracle_mismatch` guard). This eliminates silent cross-venue basis risk.
+- **Staged rollout.** Any venue switch follows an operational runbook: testnet certification, live shadow observation, on-chain oracle A/B, then a coupled cutover in a maintenance window with a pre-staged rollback transaction.
+
+Hyperliquid remains the active venue today; Lighter is fully supported alternative infrastructure, not yet active.
 
 ***
 
@@ -182,4 +203,4 @@ Recovery: investigate; resume or switchOracle(0)
 
 ***
 
-> **Summary**: QEURO is priced off the Hyperliquid EUR/USD venue mid via a dual-source `OracleRouter`, with Chainlink retained as a one-transaction fallback. An off-chain publisher streams the mid on-chain; the on-chain oracle enforces freshness, bounds, and a circuit breaker; and an independent watchdog freezes mint/redeem on staleness, circuit-break, or a basis dislocation versus Chainlink. Every failure mode is fail-safe — the protocol freezes or falls back, never values QEURO at a wrong price.
+> **Summary**: QEURO is priced off the active hedge venue's EUR/USD mid (currently Hyperliquid; Lighter is a supported alternative behind a coupled venue switch) via a dual-source `OracleRouter`, with Chainlink retained as a one-transaction fallback. An off-chain publisher streams the mid on-chain; the on-chain oracle enforces freshness, bounds, and a circuit breaker; and an independent watchdog freezes mint/redeem on staleness, circuit-break, or a basis dislocation versus Chainlink. Every failure mode is fail-safe — the protocol freezes or falls back, never values QEURO at a wrong price.

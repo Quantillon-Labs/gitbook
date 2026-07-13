@@ -31,7 +31,7 @@ QEURO has **no fixed tokenomic supply cap** — supply is bounded by the protoco
 
 **Implemented Features**
 
-* **Oracle Integration**: Hyperliquid EUR/USD market mid (active source) with Chainlink as fallback and USDC/USD validation, all behind circuit breakers — see [Oracle Architecture](../oracle-architecture.md)
+* **Oracle Integration**: the active market venue's EUR/USD mid (currently Hyperliquid; the venue is switchable by governance, with Lighter supported as an alternative) with Chainlink as fallback and USDC/USD validation, all behind circuit breakers — see [Oracle Architecture](../oracle-architecture.md)
 * **Slippage-Free Operations**: Mint/redeem at oracle rates; fees are currently 0 (governance-settable, capped at 5%)
 * **Emergency Controls**: Pausable with time-locked upgrades via UUPS pattern
 * **Compliance System**: Blacklist/whitelist functionality for regulatory compliance

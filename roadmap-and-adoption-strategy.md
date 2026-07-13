@@ -15,6 +15,7 @@ The original multi-phase plan (foundation → architecture → MVP → testnet �
 | 📡 Oracle go-live — Hyperliquid EUR/USD via on-chain publisher (2026-06-25) | ✅ Completed |
 | 🏦 Multi-vault staking — MetaMorpho external vault live (`vaultId` 2, `stQEUROMORPHO1`) | ✅ Completed |
 | ⚖️ Autonomous hedging engine + independent watchdog | ✅ Operating |
+| 🔀 Dual-venue hedging infrastructure (Lighter) — implemented 2026-07 | ⏳ Activation pending staged rollout |
 | 🗳️ QTI governance activation (token is deployed but dormant — supply 0) | ⏳ Pending |
 | 🏛️ Quantillon Foundation establishment | ⏳ Planned |
 

@@ -31,7 +31,7 @@ The QEURO minting mechanism is designed for simplicity and capital efficiency:
 **📥 Step-by-Step Minting**
 
 1. **USDC Deposit**: Users deposit USDC to the QuantillonVault
-2. **Oracle Price Check**: the protocol's EUR/USD oracle provides the real-time exchange rate (the Hyperliquid market mid by default, with Chainlink as fallback — see [Oracle Architecture](oracle-architecture.md))
+2. **Oracle Price Check**: the protocol's EUR/USD oracle provides the real-time exchange rate (the active hedge venue's market mid — currently Hyperliquid — with Chainlink as fallback — see [Oracle Architecture](oracle-architecture.md))
 3. **Collateral Verification**: Protocol verifies that the collateralization ratio stays at or above the 105% minting floor
 4. **QEURO Issuance**: Users receive QEURO at the current oracle price; the minting fee is currently 0 (governance-settable, capped at 5%)
 5. **Yield Deployment**: USDC collateral can be deployed to external staking vaults (currently Morpho/MetaMorpho — see [External Staking Vaults](external-staking-vaults.md)) for yield generation
@@ -295,9 +295,9 @@ This prevents:
 
 Accurate, tamper-resistant pricing is critical for all protocol mechanisms. Pricing is served through an **`OracleRouter`** with two interchangeable EUR/USD sources — see **[Oracle Architecture](oracle-architecture.md)** for the full design.
 
-#### Active source: Hyperliquid EUR/USD market mid
+#### Active source: the hedge venue's EUR/USD market mid (currently Hyperliquid)
 
-QEURO mint/redeem is priced off the **Hyperliquid `EUR` perpetual mid** — the venue where the protocol's EUR/USD hedge is executed — published on-chain and read through the `HyperliquidEurUsdOracle`, so the on-chain valuation stays aligned with the hedge.
+QEURO mint/redeem is priced off the **EUR/USD perpetual mid of the active hedge venue (currently Hyperliquid)** — the venue where the protocol's EUR/USD hedge is executed — published on-chain and read through the `HyperliquidEurUsdOracle`, so the on-chain valuation stays aligned with the hedge. Lighter (zkLighter) is a supported alternative venue behind the same coupled switch: the execution venue and the oracle venue always change together (see [Oracle Architecture](oracle-architecture.md)).
 
 #### Fallback source: ChainlinkOracle
 

@@ -34,6 +34,8 @@ This section provides a comprehensive technical reference for the Quantillon pro
    └─────────────────┘
 ```
 
+> The OracleRouter's market slot currently hosts `HyperliquidEurUsdOracle`; a sibling `LighterEurUsdOracle` is implemented as a switchable alternative venue oracle (deployment pending the staged rollout) (see [Oracle Architecture](oracle-architecture.md)).
+
 ### Shared Libraries
 
 | Library | Function |
@@ -351,7 +353,8 @@ function _authorizeUpgrade(address newImplementation)
 
 | Source | Usage |
 |--------|-------|
-| Hyperliquid EUR/USD market mid (via `SlippageStorage` → `HyperliquidEurUsdOracle`) | Active EUR/USD source (OracleRouter slot 1) |
+| Hyperliquid EUR/USD market mid (via `SlippageStorage` → `HyperliquidEurUsdOracle`, source `SOURCE_HYPERLIQUID = 1`) | Active EUR/USD source (OracleRouter slot 1) |
+| Lighter EUR/USD market mid (via `SlippageStorage` → `LighterEurUsdOracle`, source `SOURCE_LIGHTER = 0`) | Sibling market oracle (same validation surface) — switchable alternative, implemented but not yet deployed |
 | Chainlink EUR/USD feed (8 decimals) | Fallback EUR/USD source (OracleRouter slot 0) |
 | Chainlink USDC/USD feed (8 decimals) | USDC stability validation |
 
