@@ -29,7 +29,7 @@ is the source of truth for on-chain behavior):
 
 **Three-token ecosystem:**
 - **QEURO** — Euro-pegged stablecoin, USDC-collateralized. **No fixed tokenomic supply cap** —
-  supply is bounded by hedging capacity: minting requires ≥105% protocol collateralization;
+  supply is bounded by hedging capacity: minting requires the protocol CR to stay above the governance-set minting floor (105% at launch, 102.5% under the September 2026 margin policy);
   liquidation/critical mode engages at 101% (pro-rata redemption inside QuantillonVault).
   Token-level safety guardrails (not supply policy): administrative supply ceiling currently
   100M (governance-raisable) and a mint/burn rate limit of 10M QEURO per 300-block window
@@ -57,7 +57,7 @@ is the source of truth for on-chain behavior):
 - veQTI locks: 7 days min, 365 days max, up to 4× voting power
 - Older "60–85% decision thresholds / 4-year lock" figures were aspirational design, not code
 
-**Key live parameters (verified 2026-07-04):** HedgerPool max leverage 20× (5% min margin,
+**Key live parameters (verified 2026-07-04):** HedgerPool max leverage 20× (min margin governance-set: 5% at launch, 2.5% floor per the September 2026 margin policy,
 100 USDC min, fees 0, eur/usd interest 350/450 bps, rewardFeeSplit 20%, single-hedger model);
 UserPool stakingAPY 8% / depositAPY 4%, 100 QEURO min stake, 7-day cooldown; stQEURO yieldFee 0
 (max 20%); FeeCollector split 60/25/15 treasury/dev/community; YieldShift base 50% / max 90%,

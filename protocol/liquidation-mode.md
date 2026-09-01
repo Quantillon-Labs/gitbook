@@ -13,14 +13,14 @@ Quantillon protects protocol solvency with a **protocol-level liquidation mode**
 ### 🎯 Collateralization Thresholds
 
 ```solidity
-uint256 public constant MIN_COLLATERALIZATION_RATIO_FOR_MINTING = 105e18; // 105%
+uint256 public constant MIN_COLLATERALIZATION_RATIO_FOR_MINTING = 105e18; // initializer default; the live value is governance-set (hard floor 101%)
 uint256 public constant CRITICAL_COLLATERALIZATION_RATIO_BPS   = 10100;   // 101%
 ```
 
 | Protocol State | Collateralization Ratio | Effect |
 |----------------|------------------------|--------|
-| **Healthy** | > 105% | Normal minting and redemption |
-| **Restricted** | 101% – 105% | Minting blocked (CR below the 105% minting floor); redemption normal |
+| **Healthy** | > minting floor | Normal minting and redemption |
+| **Restricted** | 101% – minting floor | Minting blocked (CR below the governance-set minting floor: 105% at launch, 102.5% under the September 2026 margin policy); redemption normal |
 | **Liquidation mode** | ≤ 101% | Pro-rata liquidation redemption activated |
 
 Both thresholds are governance-configurable within hard floors: the minting ratio can never be set below 101%, and the critical ratio never below 100%.
@@ -48,7 +48,7 @@ In liquidation mode, hedger positions' **effective margin is treated as zero** �
 
 ```solidity
 vault.getProtocolCollateralizationRatio(); // current global CR (non-view: refreshes oracle cache)
-vault.canMint();                           // false when CR < 105%
+vault.canMint();                           // false when CR < minCollateralizationRatioForMinting
 vault.shouldTriggerLiquidationLive();      // true when CR <= criticalCollateralizationRatio
 ```
 
@@ -56,7 +56,7 @@ vault.shouldTriggerLiquidationLive();      // true when CR <= criticalCollateral
 
 ### 🔄 Recovery
 
-Liquidation mode is not terminal. The protocol exits it automatically as soon as the collateralization ratio rises back above the critical threshold — through EUR/USD price movement, hedger margin top-ups, or new collateral. Minting resumes once CR is back above the 105% minting floor.
+Liquidation mode is not terminal. The protocol exits it automatically as soon as the collateralization ratio rises back above the critical threshold — through EUR/USD price movement, hedger margin top-ups, or new collateral. Minting resumes once CR is back above the governance-set minting floor.
 
 ***
 
@@ -64,7 +64,7 @@ Liquidation mode is not terminal. The protocol exits it automatically as soon as
 
 1. **Fairness** — pro-rata sharing removes the race-to-exit dynamic of first-come-first-served redemptions under stress.
 2. **Simplicity** — no keeper infrastructure, auction mechanics, or liquidation bonuses; the vault itself enforces the payout math.
-3. **Solvency-first** — the 105% minting floor keeps new issuance from diluting collateral quality, while the 101% critical band gives hedgers room to recapitalize before holders are impacted.
+3. **Solvency-first** — the minting floor (governance-set: 105% at launch, 102.5% under the September 2026 margin policy; hard minimum 101%) keeps new issuance from diluting collateral quality, while the 101% critical band gives hedgers room to recapitalize before holders are impacted.
 4. **Continuous operation** — users can always redeem, in any protocol state; only the payout formula changes.
 
 ***

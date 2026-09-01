@@ -315,7 +315,7 @@ struct CoreParams {
 
 | Parameter | Live Value | Description |
 |-----------|------------|-------------|
-| `minMarginRatio` | 500 (5%) | Minimum margin/position ratio |
+| `minMarginRatio` | governance-set: 500 bps (5%) at launch, hard floor 250 bps (2.5%) — the September 2026 margin policy runs at the floor | Minimum margin/position ratio |
 | `maxLeverage` | 20 | Max 20x leverage |
 | `entryFee` | 0 | Currently 0 (governance-settable) |
 | `exitFee` | 0 | Currently 0 (governance-settable) |

@@ -59,7 +59,7 @@ A decentralized oracle network used by Quantillon as the **fallback** EUR/USD so
 ### Overcollateralization
 
 A system where the value of pledged collateral exceeds the value of the issued loan or stablecoin.\
-**Minting QEURO requires a protocol collateralization ratio of at least 105%; 101% is the critical threshold that triggers liquidation mode.**
+**Minting QEURO requires the protocol collateralization ratio to stay above the governance-set minting floor (105% at launch, 102.5% under the September 2026 margin policy); 101% is the critical threshold that triggers liquidation mode.**
 
 ***
 
