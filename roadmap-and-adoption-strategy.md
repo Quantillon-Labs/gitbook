@@ -68,7 +68,7 @@ Adoption is not only technical but also social and economic. Quantillon's adopti
 
 **🌍 Community Growth**
 
-Incentivized programs for ambassadors, contributors, and early adopters.
+Incentivized programs for ambassadors, contributors, and early adopters. The first is Quantillon Rewards, a points program for QEURO depositors and stakers (see the [Rewards Program Terms](complementary-information/rewards-program-terms.md)).
 
 **🏢 B2B Pipelines**
 

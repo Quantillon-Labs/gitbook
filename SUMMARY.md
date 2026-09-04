@@ -55,3 +55,4 @@
 * [Legal Notice](complementary-information/legal-notice.md)
 * [Privacy Policy](complementary-information/privacy-policy.md)
 * [Terms of Service](complementary-information/terms-of-services.md)
+* [Rewards Program Terms](complementary-information/rewards-program-terms.md)
