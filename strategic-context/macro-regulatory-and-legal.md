@@ -87,20 +87,22 @@ Decentralization in the context of MiCA refers to the extent to which a crypto-a
 
 #### Quantillon's Decentralization Architecture
 
-**✅ Qualifying Characteristics**
+**🎯 Target State vs Current State**
 
-| Requirement                  | Quantillon Implementation                          |
-| ---------------------------- | -------------------------------------------------- |
-| **🏛️ Governance**           | Fully decentralized via $QTI token holders         |
-| **💻 Smart Contracts**       | Immutable, trustless execution                     |
-| **🔐 No Central Control**    | No single entity can modify core functions         |
-| **🌐 Permissionless Access** | Anyone can mint/redeem QEURO                       |
-| **📖 Open Source**           | All code publicly auditable                        |
-| **🤖 Autonomous Operation**  | Algorithmic mechanisms without manual intervention |
+Quantillon is on a progressive-decentralization path. The table distinguishes the target state the protocol is designed to reach — the basis of its Recital 22 analysis — from the current state on Base mainnet, so that no reader mistakes one for the other.
+
+| Characteristic                | Target state (design)                                   | Current state (Base mainnet, September 2026)                                                      |
+| ----------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **🏛️ Governance**            | Decentralized via $QTI token holders (veQTI)            | 2-of-3 Gnosis Safe operated by Quantillon Labs, core-contract upgrades behind a 12-hour timelock; QTI is deployed but dormant |
+| **💻 Smart Contracts**        | Narrowed administrative powers, on-chain execution      | Upgradeable (UUPS) contracts; upgrades of the core contracts require the timelock window          |
+| **🔐 Central Control**        | No single entity able to modify core functions          | Quantillon Labs holds the governance and emergency roles through the Safe                         |
+| **🌐 Permissionless Access**  | Anyone can mint/redeem QEURO                            | Anyone can mint/redeem QEURO (blacklist/whitelist compliance controls exist, whitelist mode off)  |
+| **📖 Open Source**            | All code publicly auditable                             | All contracts published and verified on Basescan; public repository                              |
+| **🤖 Autonomous Operation**   | Algorithmic mechanisms without manual intervention      | Mint/redeem, collateral accounting and liquidation mode are algorithmic; the EUR/USD hedge is run by a single designated hedger (Quantillon Labs' engine) and an independent watchdog can pause the vault |
 
 **Legal Entity Separation**
 
-* **⚖️ Protocol Layer**: Fully decentralized smart contracts (Recital 22 exempt)
+* **⚖️ Protocol Layer**: on-chain smart contracts — target: Recital 22 exemption once decentralized
 * **🔬 Development Layer**: Quantillon Labs (French SAS)
 * **🏛️ Foundation Layer**: Quantillon Foundation (planned regulatory interface — not yet established)
 
@@ -124,10 +126,10 @@ Quantillon operates through a carefully designed multi-entity structure that bal
 
 **🔗 Quantillon Protocol (Decentralized Layer)**
 
-* **Legal Status**: Fully decentralized autonomous organization (DAO)
-* **Governance**: $QTI token holders
+* **Intended Status**: decentralized protocol governed by $QTI token holders
+* **Current Governance**: 2-of-3 Gnosis Safe operated by Quantillon Labs, with a 12-hour upgrade timelock (QTI dormant; see [Quantillon DAO](../quantillon-dao.md))
 * **Functions**: Core protocol operations, mint/redeem, yield distribution
-* **Regulatory Position**: Recital 22 exempt under MiCA
+* **Regulatory Position**: targeting the Recital 22 exemption under MiCA
 * **Jurisdiction**: Code-based, no legal domicile
 
 **🔬 Quantillon Labs (Development Entity)**
@@ -139,7 +141,7 @@ Quantillon operates through a carefully designed multi-entity structure that bal
 
 **🏛️ Quantillon Foundation (Compliance Interface — planned)**
 
-* **Legal Status**: Planned future non-profit entity — **not yet established; jurisdiction to be determined**
+* **Legal Status**: Planned future entity — **not yet established; legal form and jurisdiction to be determined**
 * **Functions (once established)**: Regulatory dialogue, voluntary disclosures, multisig management
 * **Regulatory Position**: Interface with authorities when required
 * **Purpose**: Bridge between decentralized protocol and institutional needs
@@ -159,7 +161,7 @@ Quantillon operates through a carefully designed multi-entity structure that bal
 * **Governance**: Shared between the Foundation (once established) and $QTI holders
 * **Decentralization**: Majority control transferred to community
 
-**Phase 3: Full DAO (2026+)**
+**Phase 3: Full DAO**
 
 * **Development**: Fully community-driven
 * **Governance**: Complete $QTI holder control
@@ -179,7 +181,7 @@ The **Autorité de Contrôle Prudentiel et de Résolution (ACPR)** serves as Fra
 
 **Dialogue Outcomes**
 
-* **✅ Recital 22 Confirmation**: ACPR acknowledges decentralized protocol exemption
+* **🔄 Recital 22 Analysis**: ongoing dialogue with the ACPR on the Recital 22 analysis
 * **📋 Voluntary Transparency**: Framework for optional disclosures
 * **🔄 Ongoing Communication**: Regular updates on protocol evolution
 * **📚 Educational Contribution**: Helping authorities understand DeFi innovation
@@ -189,7 +191,7 @@ The **Autorité de Contrôle Prudentiel et de Résolution (ACPR)** serves as Fra
 **Strategic Importance**
 
 * **🇪🇺 EU Leadership**: French interpretation influences European regulatory development
-* **🏛️ Institutional Credibility**: ACPR dialogue validates regulatory approach
+* **🏛️ Institutional Credibility**: ACPR dialogue informs the regulatory approach
 * **📈 Market Access**: Clear French position enables broader EU operations
 * **🔮 Future Preparation**: Proactive positioning for regulatory evolution
 
@@ -303,16 +305,16 @@ While focused on European compliance, Quantillon considers global regulatory dev
 
 ### 🔮 Regulatory Outlook & Strategy
 
-#### Short-Term Priorities (2025)
+#### Short-Term Priorities
 
 **MiCA Compliance Certainty**
 
-* **✅ Recital 22 Confirmation**: Formal regulatory confirmation of exemption status
+* **🔄 Recital 22 Analysis**: ongoing dialogue with the ACPR on the Recital 22 analysis
 * **📋 Documentation**: Comprehensive legal memoranda on compliance position
 * **🔍 Authority Engagement**: Continued dialogue with ACPR and other NCAs
 * **📊 Transparency Enhancement**: Voluntary reporting and disclosure frameworks
 
-#### Medium-Term Evolution (2026-2027)
+#### Medium-Term Evolution
 
 **Regulatory Leadership**
 
@@ -321,7 +323,7 @@ While focused on European compliance, Quantillon considers global regulatory dev
 * **🤝 Industry Standards**: Helping establish decentralized protocol compliance standards
 * **🌍 International Expansion**: Regulatory frameworks for global operations
 
-#### Long-Term Vision (2028+)
+#### Long-Term Vision
 
 **Regulatory Maturity**
 
@@ -375,7 +377,7 @@ While focused on European compliance, Quantillon considers global regulatory dev
 **Decentralization Benefits**
 
 * **🔓 Permissionless Access**: No geographic or identity restrictions at protocol level
-* **🏛️ Governance Rights**: Direct voting on protocol changes via $QTI
+* **🏛️ Governance Rights**: Direct voting on protocol changes via $QTI (once QTI governance is activated)
 * **🔍 Transparency**: Full visibility into protocol operations and treasury
 * **⚡ Self-Custody**: Non-custodial design preserves user asset control
 
@@ -417,12 +419,12 @@ While focused on European compliance, Quantillon considers global regulatory dev
 
 #### Limitation of Liability
 
-> **🛡️ Protocol Autonomy**: As a decentralized protocol, Quantillon operates independently of any controlling entity. No individual or organization can guarantee regulatory outcomes or protocol modifications.
+> **🛡️ Protocol Autonomy**: Quantillon is designed to operate as a decentralized protocol; in the current phase its governance Safe is operated by Quantillon Labs (see [Quantillon DAO](../quantillon-dao.md)). No individual or organization can guarantee regulatory outcomes or protocol modifications.
 
 > **📋 Information Accuracy**: While this documentation reflects our best understanding of current regulations, regulatory interpretation may vary and evolve over time.
 
 ***
 
-_This regulatory analysis is current as of August 2025 and will be updated as the regulatory landscape evolves. For the most current regulatory information, visit_ [_quantillon.money/legal_](https://quantillon.money/legal) _or consult Quantillon Labs' regulatory updates._
+_This regulatory analysis is current as of September 2026 and will be updated as the regulatory landscape evolves. For the most current regulatory information, visit_ [_quantillon.money/legal_](https://quantillon.money/legal) _or consult Quantillon Labs' regulatory updates._
 
 > **🎯 Ready to engage with compliant, decentralized local-currency DeFi?** Visit our [dApp](https://app.quantillon.money/) to explore QEURO as Quantillon's first deployment, built for regulatory clarity and sustainable operation.
