@@ -19,7 +19,7 @@ The original multi-phase plan (foundation → architecture → MVP → testnet �
 | 🔀 Alternative hedge-venue evaluation (Lighter, July 2026) | ✅ Closed — Hyperliquid confirmed as the sole venue (September 2026) |
 | 🧮 QuantillonVault 1.1.11 — loss-aware external-vault collateral accounting (17 August 2026) | ✅ Live |
 | 📦 Eight-contract maintenance bundle (after 26 August 2026) | ✅ Live |
-| ⚖️ HedgerPool 1.0.8 — 2.5% margin policy and 102.5% minting floor (2 September 2026) | ✅ Live |
+| ⚖️ HedgerPool 1.0.8 — margin policy targeting 2.5% and 102.5% minting floor (2 September 2026) | ✅ Live |
 | 🎁 Quantillon Rewards — terms published (4 September 2026) | ⏳ Program not yet open |
 | 🗳️ QTI governance activation (token is deployed but dormant — supply 0) | ⏳ Pending |
 | 🏛️ Quantillon Foundation establishment | ⏳ Planned |
@@ -30,7 +30,7 @@ The original multi-phase plan (foundation → architecture → MVP → testnet �
 
 * 📈 **Liquidity & TVL growth** — scaling QEURO supply and stQEURO staking on the live deployment
 * 🧱 **Operational hardening** — monitoring, watchdog coverage, oracle resilience, keeper automation
-* ⚖️ **Hedge capital efficiency** — the 2.5% margin policy live since September 2026 (see [HedgerPool](protocol/hedger-pool.md#operational-margin-policy-september-2026))
+* ⚖️ **Hedge capital efficiency** — the margin policy targeting 2.5%, live since September 2026 (see [HedgerPool](protocol/hedger-pool.md#operational-margin-policy-september-2026))
 * 🎁 **Quantillon Rewards** — the off-chain points program is deployed and gated; it will open in the application at a later date (no date committed)
 * 🏦 **Additional external vaults** — onboarding further yield venues through the staking-vault adapter pattern
 * 🗳️ **QTI activation preparation** — the activation upgrade that mints the supply cap and enables lock/vote/propose

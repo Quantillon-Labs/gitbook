@@ -319,7 +319,7 @@ See [Liquidation Mode](liquidation-mode.md).
 
 #### Hedger Risk Management
 
-The hedger's margin is bounded by `minMarginRatio` (250 bps) and `maxLeverage` (20×). Since September 2026 the hedge runs on a 2.5% margin policy: the on-chain HedgerPool minimum margin ratio is 2.5% and the minting floor is 102.5%. Quantillon Labs' hedging engine keeps the collateral of the two legs of the hedge — the HedgerPool position on Base and the Hyperliquid perpetual — near a 2.5% equity-to-notional target through bounded, monitored transfers. Details: [HedgerPool — Operational margin policy](hedger-pool.md#operational-margin-policy-september-2026).
+The hedger's margin is bounded by `minMarginRatio` (250 bps) and `maxLeverage` (20×). Since September 2026 the hedge runs on a margin policy targeting 2.5%: the on-chain HedgerPool minimum margin ratio is 2.5% and the minting floor is 102.5%. Quantillon Labs' hedging engine keeps the collateral of the two legs of the hedge — the HedgerPool position on Base and the Hyperliquid perpetual — near a 2.5% equity-to-notional target through bounded, monitored transfers. Details: [HedgerPool — Operational margin policy](hedger-pool.md#operational-margin-policy-september-2026).
 
 **Emergency Close**
 
