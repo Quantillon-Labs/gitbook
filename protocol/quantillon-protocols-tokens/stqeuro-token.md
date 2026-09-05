@@ -32,8 +32,6 @@ Our yield-bearing architecture incorporates cutting-edge mechanisms including au
 * **Oracle Integration**: Real-time yield calculation from underlying sources
 * **Emergency Controls**: Pausable with emergency withdrawal capability
 
-> **🚧 Roadmap Features**: Cross-chain staking (Arbitrum, Optimism) is planned for future phases.
-
 ***
 
 ### Yield-Bearing Mechanics
@@ -125,9 +123,9 @@ Gross yield realized from the strategy (variable APY)
 
 | Role | Permission | Typical Holder |
 |------|------------|----------------|
-| **GOVERNANCE_ROLE** | Update parameters, manage settings | Governance/Timelock |
-| **YIELD_DISTRIBUTOR_ROLE** (on QuantillonVault) | Harvest + distribute yield, credit QEURO into stQEURO | Keeper / Governance Safe |
-| **EMERGENCY_ROLE** | Pause/unpause, emergency withdraw | Emergency multisig |
+| **GOVERNANCE_ROLE** | Update parameters, manage settings | Governance Safe |
+| **YIELD_DISTRIBUTOR_ROLE** (on QuantillonVault) | Harvest + distribute yield, credit QEURO into stQEURO | Keeper wallet designated by governance |
+| **EMERGENCY_ROLE** | Pause/unpause, emergency withdraw | Governance Safe |
 
 ***
 
@@ -292,11 +290,11 @@ interface IstQEURO {
 
 **🥊 Market Comparison**
 
-| Protocol | Token | APY Range | Auto-Compound | Euro Focus | Lock Period |
+| Protocol | Token | APY Range (indicative) | Auto-Compound | Euro Focus | Lock Period |
 | -------- | ----- | --------- | ------------- | ---------- | ----------- |
 | **Sky** | sUSDS | 4-8% | ✅ | ❌ | None |
 | **Lido** | stETH | 3-6% | ✅ | ❌ | None |
-| **stQEURO** | stQEURO | 4-10% | ✅ | ✅ | None |
+| **stQEURO** | stQEURO | 4-10% (target, not a realized yield) | ✅ | ✅ | None |
 
 **🎯 Unique Value Propositions**
 
