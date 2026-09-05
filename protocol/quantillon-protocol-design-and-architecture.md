@@ -43,7 +43,7 @@ That means Quantillon can support a family of deployments that share one archite
 
 ## Governance Above the Deployment Layer
 
-QTI governs the protocol above any one market. It exists to coordinate:
+QTI is intended to govern the protocol above any one market (the token is deployed but dormant; today the 2-of-3 governance Safe with a 12-hour upgrade timelock fills that role). It exists to coordinate:
 
 * deployment policy
 * incentives

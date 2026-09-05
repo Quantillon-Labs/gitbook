@@ -9,8 +9,16 @@
 - **Quantillon** = the protocol layer for FX-hedged local-currency DeFi
 - **QEURO** = the first deployment of that protocol for EUR exposure
 - **stQEURO** = the first deployment's yield-bearing wrapper
-- **QTI** = protocol governance coordinating risk, incentives, and future expansion
+- **QTI** = the (currently dormant) governance token; until activation the protocol is governed by a 2-of-3 Safe with a 12-hour upgrade timelock
 - **The core model** = source USD liquidity, hedge the FX leg, deliver local-currency exposure
+
+---
+
+## Where It Stands (September 2026)
+
+- **Live on Base mainnet** (chain 8453) since June 2026 — mint/redeem, stQEURO staking with external-vault yield, autonomous hedging with an independent watchdog
+- **USDC collateral**, EUR/USD hedged on Hyperliquid and priced off that venue's market mid, with Chainlink as fallback
+- **Governed by a 2-of-3 Safe** with a 12-hour upgrade timelock; QTI governance is coded but dormant
 
 ---
 
@@ -39,7 +47,7 @@ QEURO is the first production market built on Quantillon.
 
 - **QEURO** gives EUR exposure through the Quantillon stack
 - **stQEURO** wraps that first deployment into a yield-bearing format
-- **QTI** governs the broader protocol, including future deployments
+- **QTI** is designed to govern the broader protocol, including future deployments, once activated
 
 The important distinction is:
 
@@ -90,7 +98,7 @@ The euro market is first because it is a strong demonstration market, while the 
 
 ### 4. It keeps governance at the protocol layer
 
-QTI governs risk, incentives, parameters, and expansion decisions across the architecture.
+QTI is designed to govern risk, incentives, parameters, and expansion decisions across the architecture once activated; today those decisions sit with the 2-of-3 governance Safe (see [Quantillon DAO](../quantillon-dao.md)).
 
 ---
 
