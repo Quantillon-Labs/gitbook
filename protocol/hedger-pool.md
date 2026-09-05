@@ -6,7 +6,7 @@
 
 The HedgerPool is the contract responsible for managing EUR/USD hedging positions in the Quantillon protocol. It allows the designated hedger to provide delta-neutral coverage, maintaining QEURO peg stability while generating revenue.
 
-> **MVP Implementation**: The MVP uses a **single hedger model** to simplify operations. Multi-hedger support is planned for future phases.
+> **Single hedger model**: the protocol runs a **single designated hedger** — the `singleHedger` address set by governance. In the current phase that hedger is Quantillon Labs' hedging engine, which neutralizes the EUR/USD exposure on Hyperliquid (see [Oracle Architecture](oracle-architecture.md) for why mint/redeem pricing follows the hedge venue). Hedger USDC is pooled in `QuantillonVault` for unified liquidity.
 
 ***
 
@@ -23,15 +23,19 @@ contract HedgerPool is
     SecureUpgradeable
 ```
 
+`SecureUpgradeable` routes upgrades through the 12-hour OZ TimelockController (see [Quantillon DAO](../quantillon-dao.md)). Live version: **1.0.8** (since 2 September 2026).
+
 **External Dependencies**
 
 | Contract | Role |
 |----------|------|
 | `IERC20 usdc` | Collateral token |
-| `IChainlinkOracle oracle` | Real-time EUR/USD price |
-| `IYieldShift yieldShift` | Yield distribution |
-| `IQuantillonVault vault` | Mint/redeem synchronization |
-| `ITimeProvider TIME_PROVIDER` | Time management (testability) |
+| `IOracle oracle` | EUR/USD price — the `OracleRouter` (Hyperliquid market mid, Chainlink fallback) |
+| `IYieldShift yieldShift` | Hedger-side yield ledger |
+| `IQuantillonVault vault` | Mint/redeem synchronization and pooled hedger USDC |
+| `address feeCollector` | Receives position fees (currently 0) |
+| `address treasury` | Receives recovered tokens |
+| `TimeProvider TIME_PROVIDER` | Time management (testability) |
 
 ***
 
@@ -39,23 +43,23 @@ contract HedgerPool is
 
 | Role | Responsibilities |
 |------|-----------------|
-| `DEFAULT_ADMIN_ROLE` | General administration, role assignment |
-| `GOVERNANCE_ROLE` | Pool parameter modification |
-| `EMERGENCY_ROLE` | Emergency position closure |
-| `HEDGER_ROLE` | Hedging operations (assigned to single hedger) |
+| `DEFAULT_ADMIN_ROLE` | General administration, role assignment, token recovery, `feeCollector` change |
+| `GOVERNANCE_ROLE` | `configureRiskAndFees`, `configureDependencies`, `setSingleHedger` |
+| `EMERGENCY_ROLE` | `emergencyClosePosition`, `pause` / `unpause` |
+| `UPGRADER_ROLE` | Upgrade execution (timelock-gated) |
+
+There is **no hedger role**: hedger-only functions check `msg.sender == singleHedger` and revert with `NotAuthorized` otherwise.
 
 **`onlyVault` Modifier**
 
 ```solidity
 modifier onlyVault() {
-    if (msg.sender != address(vault)) {
-        revert CommonErrorLibrary.OnlyVault();
-    }
+    if (msg.sender != address(vault)) revert HedgerPoolErrorLibrary.OnlyVault();
     _;
 }
 ```
 
-Certain functions can only be called by the Vault during mint/redeem operations.
+The mint/redeem synchronization hooks can only be called by the Vault.
 
 ***
 
@@ -66,16 +70,16 @@ Certain functions can only be called by the Vault during mint/redeem operations.
 ```solidity
 address public singleHedger;  // Designated hedger address
 
-function setSingleHedger(address _hedger) external onlyRole(GOVERNANCE_ROLE);
+function setSingleHedger(address hedger) external;  // GOVERNANCE_ROLE
 ```
 
 **Assignment Flow**
 
 ```
 1. Governance calls setSingleHedger(hedgerAddress)
-2. Old hedger loses HEDGER_ROLE
-3. New hedger receives HEDGER_ROLE
-4. Existing position must be closed before change
+2. Reverts with HedgerHasActivePosition while the current position is open
+3. The singleHedger address is rotated (SingleHedgerRotationApplied)
+4. Only the new address can open positions and claim rewards
 ```
 
 ***
@@ -91,13 +95,14 @@ struct HedgePosition {
     uint96 filledVolume;      // Volume filled by user mints
     uint96 margin;            // USDC margin deposited
     uint96 entryPrice;        // Average entry price (EUR/USD)
-    uint64 entryTime;         // Opening timestamp
-    uint64 lastUpdateTime;    // Last update
+    uint32 entryTime;         // Opening timestamp
+    uint32 lastUpdateTime;    // Last update
     int128 unrealizedPnL;     // Unrealized P&L
-    int128 realizedPnL;       // Realized P&L
-    uint8 leverage;           // Leverage used
+    int128 realizedPnL;       // Cumulative realized P&L from closed portions
+    uint16 leverage;          // Leverage used
     bool isActive;            // Position active
-    uint128 qeuroBacked;      // QEURO backed by this position
+    uint128 qeuroBacked;      // Exact QEURO amount backed by this position (18 decimals)
+    uint64 openBlock;         // Block number when opened (min hold period)
 }
 ```
 
@@ -117,48 +122,46 @@ struct HedgerRewardState {
 #### Open a Position
 
 ```solidity
-function enterHedgePosition(
-    uint96 positionSize,
-    uint96 margin,
-    uint8 leverage
-) external onlyRole(HEDGER_ROLE) whenNotPaused nonReentrant
-    returns (uint256 positionId);
+function enterHedgePosition(uint256 usdcAmount, uint256 leverage)
+    external whenNotPaused nonReentrant returns (uint256 positionId);
+// caller must be singleHedger
 ```
 
 **Validations**
 
-1. Hedger doesn't already have an active position
-2. `positionSize > 0` and `margin > 0`
-3. `leverage <= maxLeverage`
-4. Sufficient margin ratio: `margin × leverage >= positionSize × minMarginRatio`
+1. Caller is `singleHedger`
+2. `usdcAmount >= minMarginAmount` (currently 0)
+3. `leverage <= coreParams.maxLeverage` (currently 20)
+4. The hedger has no active position
 
 **Flow**
 
 ```
-1. Hedger deposits USDC (margin)
-2. Position created with entryPrice = current oracle price
-3. Position marked active
-4. USDC transferred to Vault for unified liquidity
+1. Hedger deposits USDC (margin); the entry fee (currently 0) is deducted
+2. positionSize = net margin × leverage; entryPrice = current oracle price
+3. Position marked active (openBlock recorded)
+4. USDC transferred to the Vault for unified liquidity (addHedgerDeposit)
 ```
 
 #### Close a Position
 
 ```solidity
-function exitHedgePosition() 
-    external onlyRole(HEDGER_ROLE) whenNotPaused nonReentrant;
+function exitHedgePosition(uint256 positionId)
+    external whenNotPaused nonReentrant returns (int256 pnl);
+// caller must be singleHedger
 ```
 
 **Validations**
 
-1. Active position exists
-2. `filledVolume == 0` (no more backed QEURO)
-3. Position "safe to close" (no debt to users)
+1. Active position owned by the caller
+2. `minPositionHoldBlocks` elapsed since `openBlock` (currently 0 blocks) — otherwise `MinHoldPeriodNotElapsed`
+3. Closure must not leave the protocol under-collateralized — otherwise `PositionClosureRestricted`
 
 **Flow**
 
 ```
 1. Final P&L calculation
-2. Return margin ± P&L to hedger
+2. Return margin ± P&L to hedger (exit fee currently 0)
 3. Position marked inactive
 4. Residual rewards claimable
 ```
@@ -166,20 +169,20 @@ function exitHedgePosition()
 #### Add Margin
 
 ```solidity
-function addMargin(uint96 amount) 
-    external onlyRole(HEDGER_ROLE) whenNotPaused nonReentrant;
+function addMargin(uint256 positionId, uint256 amount)
+    external whenNotPaused nonReentrant;
 ```
 
-Allows the hedger to improve margin ratio without closing the position.
+Allows the hedger to improve the margin ratio without closing the position (margin fee currently 0).
 
 #### Remove Margin
 
 ```solidity
-function removeMargin(uint96 amount) 
-    external onlyRole(HEDGER_ROLE) whenNotPaused nonReentrant;
+function removeMargin(uint256 positionId, uint256 amount)
+    external whenNotPaused nonReentrant;
 ```
 
-**Condition**: Margin ratio must remain above `minMarginRatio` after withdrawal.
+**Condition**: `removeMargin` reverts with `InsufficientMargin` if the effective margin ratio (margin ± unrealized P&L over the filled notional, at a fresh oracle price) would fall below `minMarginRatio`. This health gate is the only per-position margin enforcement: there is no keeper liquidation of hedger positions.
 
 ***
 
@@ -202,8 +205,8 @@ unrealizedPnL = filledVolume × (currentPrice - entryPrice) / entryPrice
 P&L is realized during QEURO redemptions:
 
 ```solidity
-function recordUserRedeem(uint256 qeuroAmount, uint256 usdcAmount) 
-    external onlyVault;
+function recordUserRedeem(uint256 usdcAmount, uint256 redeemPrice, uint256 qeuroAmount)
+    external onlyVault whenNotPaused;
 ```
 
 **Redemption Flow**
@@ -235,34 +238,34 @@ The HedgerPool is synchronized with Vault mint/redeem operations.
 #### During a Mint
 
 ```solidity
-function recordUserMint(uint256 qeuroAmount, uint256 usdcAmount, uint256 price) 
-    external onlyVault;
+function recordUserMint(uint256 usdcAmount, uint256 fillPrice, uint256 qeuroAmount)
+    external onlyVault whenNotPaused;
 ```
 
 **Actions**
 
-1. Increases `filledVolume` of active position
+1. Increases `filledVolume` of the active position
 2. Updates `entryPrice` (weighted average)
 3. Increases `qeuroBacked`
 
 #### During a Redeem
 
 ```solidity
-function recordUserRedeem(uint256 qeuroAmount, uint256 usdcAmount) 
-    external onlyVault;
+function recordUserRedeem(uint256 usdcAmount, uint256 redeemPrice, uint256 qeuroAmount)
+    external onlyVault whenNotPaused;
 ```
 
 **Actions**
 
 1. Decreases `filledVolume` proportionally
-2. Realizes P&L on closed portion
+2. Realizes P&L on the closed portion
 3. Decreases `qeuroBacked`
 
 #### During a Liquidation
 
 ```solidity
-function recordLiquidationRedeem(uint256 qeuroAmount, uint256 usdcAmount) 
-    external onlyVault;
+function recordLiquidationRedeem(uint256 qeuroAmount, uint256 totalQeuroSupply)
+    external onlyVault whenNotPaused;
 ```
 
 Called when the vault is in liquidation mode (protocol collateralization ratio ≤ 101%). In that mode the hedger's effective margin is treated as 0 and redemptions draw pro-rata on remaining collateral — there is no per-position keeper liquidation. See [Liquidation Mode](liquidation-mode.md).
@@ -273,17 +276,22 @@ Called when the vault is in liquidation mode (protocol collateralization ratio �
 
 #### Hedger Revenue Sources
 
-1. **Hedger Funding**: paid first out of each external-vault yield harvest (governance-set annual rate, capped at 50% of the harvest), accounted through YieldShift's hedger ledger
+1. **Hedger Funding**: a carve-out taken first out of each external-vault yield harvest (governance-set annual rate, capped at 50% of the harvest), accounted through YieldShift's hedger ledger — **currently 0 bps with no recipient configured**: Quantillon Labs, the sole hedger, receives no funding carve-out today
 2. **EUR/USD Rate Differential**: compensation for FX risk (currently 3.50% EUR / 4.50% USD, governance-set)
 3. **Position Fees**: entry/exit/margin fees are currently 0 (governance-settable)
 
-> **Reward fee split**: a 20% fee (`rewardFeeSplit`) is taken on hedger rewards when they are claimed.
+> **Reward fee split**: `rewardFeeSplit` (currently 20%, i.e. `2e17` of `1e18`) is the share of protocol fees routed to the local reward reserve. Anyone can top the reserve up with `fundRewardReserve(amount)` (`RewardReserveFunded`).
 
 #### Claim Rewards
 
 ```solidity
-function claimHedgingRewards() 
-    external onlyRole(HEDGER_ROLE) whenNotPaused nonReentrant;
+function claimHedgingRewards()
+    external whenNotPaused nonReentrant
+    returns (uint256 interestDifferential, uint256 yieldShiftRewards, uint256 totalRewards);
+// caller must be singleHedger
+
+// Fallback if the direct USDC transfer failed (e.g. recipient blacklisted by USDC)
+function withdrawPendingRewards(address recipient) external nonReentrant;
 ```
 
 **Constraints**
@@ -301,44 +309,68 @@ uint256 public constant MAX_REWARD_PERIOD = 365 days;
 
 ```solidity
 struct CoreParams {
-    uint16 minMarginRatio;     // Minimum margin ratio (BPS)
-    uint8 maxLeverage;         // Maximum allowed leverage
+    uint64 minMarginRatio;     // Minimum margin ratio (BPS)
+    uint16 maxLeverage;        // Maximum allowed leverage
     uint16 entryFee;           // Entry fee (BPS)
     uint16 exitFee;            // Exit fee (BPS)
     uint16 marginFee;          // Margin fee (BPS)
     uint16 eurInterestRate;    // EUR interest rate (BPS)
     uint16 usdInterestRate;    // USD interest rate (BPS)
+    uint8 reserved;
 }
 ```
 
-**Live Values**
+**Live Values** (verified on-chain, 4 September 2026)
 
 | Parameter | Live Value | Description |
 |-----------|------------|-------------|
-| `minMarginRatio` | governance-set: 500 bps (5%) at launch, hard floor 250 bps (2.5%) — the September 2026 margin policy runs at the floor | Minimum margin/position ratio |
-| `maxLeverage` | 20 | Max 20x leverage |
+| `minMarginRatio` | **250 bps (2.5%)** — live since 2 September 2026 (HedgerPool v1.0.8); was 500 bps at launch. Governance-set, cannot go below the 250 bps contract floor (`DEFAULT_MIN_MARGIN_RATIO_BPS`) | Minimum margin/position ratio |
+| `maxLeverage` | 20 | Max 20× leverage (the setter caps it at 20) |
 | `entryFee` | 0 | Currently 0 (governance-settable) |
 | `exitFee` | 0 | Currently 0 (governance-settable) |
 | `marginFee` | 0 | Currently 0 (governance-settable) |
-| `eurInterestRate` | 350 (3.50%) | EUR leg interest rate |
-| `usdInterestRate` | 450 (4.50%) | USD leg interest rate |
-| `minMarginAmount` | 100 USDC | Minimum margin per position |
+| `eurInterestRate` | 350 (3.50%) | EUR leg interest rate (max 2000) |
+| `usdInterestRate` | 450 (4.50%) | USD leg interest rate (max 2000) |
+| `minMarginAmount` | 0 | Minimum margin per position (governance-set; initializer default 100 USDC) |
+| `minPositionHoldBlocks` | 0 | Minimum blocks before a position can be closed (governance-set; initializer default 5) |
+| `rewardFeeSplit` | 20% (`2e17`) | Share of protocol fees routed to the reward reserve (max `1e18`) |
 
 #### Configuration Functions
 
 ```solidity
-// General parameters
-function updateHedgingParameters(uint16 minMargin, uint8 maxLev) 
-    external onlyRole(GOVERNANCE_ROLE);
+struct HedgerRiskConfig {
+    uint256 minMarginRatio;        // >= DEFAULT_MIN_MARGIN_RATIO_BPS (250)
+    uint256 maxLeverage;           // <= 20
+    uint256 minPositionHoldBlocks;
+    uint256 minMarginAmount;
+    uint256 eurInterestRate;       // <= 2000 bps
+    uint256 usdInterestRate;       // <= 2000 bps
+    uint256 entryFee;
+    uint256 exitFee;
+    uint256 marginFee;
+    uint256 rewardFeeSplit;        // <= MAX_REWARD_FEE_SPLIT (1e18)
+}
 
-// Interest rates
-function updateInterestRates(uint16 eurRate, uint16 usdRate) 
-    external onlyRole(GOVERNANCE_ROLE);
+struct HedgerDependencyConfig {
+    address treasury;
+    address vault;
+    address oracle;
+    address yieldShift;
+    address feeCollector;          // changing it requires DEFAULT_ADMIN_ROLE
+}
 
-// Fees
-function setHedgingFees(uint16 entry, uint16 exit, uint16 margin) 
-    external onlyRole(GOVERNANCE_ROLE);
+// Risk parameters, fees and interest rates — GOVERNANCE_ROLE
+function configureRiskAndFees(HedgerRiskConfig calldata cfg) external;
+
+// Contract dependencies — GOVERNANCE_ROLE
+function configureDependencies(HedgerDependencyConfig calldata cfg) external;
 ```
+
+***
+
+### ⚖️ Operational margin policy (September 2026)
+
+Since September 2026 the hedge runs on a **2.5% margin policy**: the on-chain HedgerPool minimum margin ratio is 2.5% (250 bps, v1.0.8) and the QuantillonVault minting floor is 102.5%. Quantillon Labs' hedging engine keeps the collateral of the two legs of the hedge — the HedgerPool position on Base (short EUR) and the Hyperliquid perpetual (long EUR) — near a 2.5% equity-to-notional target, moving USDC from the HedgerPool to Hyperliquid in bounded steps (25 bps of notional) when EUR/USD falls, and topping the HedgerPool up with fresh USDC when EUR/USD rises. Transfers are bounded in size, executed one at a time, and are blocked whenever they would push the protocol collateralization ratio too close to the minting floor. The 250 bps on-chain minimum is a hard floor that the engine operates above; the independent watchdog freezes mint/redeem if the hedge becomes unhealthy (see [Oracle Architecture](oracle-architecture.md#independent-watchdog-defence-in-depth)).
 
 ***
 
@@ -351,38 +383,37 @@ function setHedgingFees(uint16 entry, uint16 exit, uint16 margin)
 function _isPositionHealthyForFill(HedgePosition memory pos) 
     internal view returns (bool);
 
-// Checks if closure is safe
-function _validatePositionClosureSafety(HedgePosition storage pos) 
-    internal view;
+// Margin removal is rejected if the position would become unhealthy
+function _validatePositionHealthAfterMarginRemoval(HedgePosition storage pos, uint256 newMargin)
+    private;
 ```
 
 #### Emergency Close
 
 ```solidity
-function emergencyClosePosition(address hedger) 
-    external onlyRole(EMERGENCY_ROLE);
+function emergencyClosePosition(address hedger, uint256 positionId)
+    external nonReentrant;  // EMERGENCY_ROLE
+// emits EmergencyPositionClosed(hedger, positionId, marginWithdrawn, outstandingQeuro)
 ```
 
-Allows the emergency team to close a position if:
-- Hedger is non-responsive
-- Position becomes dangerous for the protocol
-- A vulnerability is detected
+Allows the emergency role to close a position if the hedger is non-responsive, the position becomes dangerous for the protocol, or a vulnerability is detected.
+
+> ⚠️ An emergency close while QEURO is still backed by the position (`outstandingQeuro > 0`) removes that backing and reduces the protocol collateralization ratio. It is a last resort, not a routine operation.
 
 #### Pause
 
 ```solidity
-function pause() external onlyRole(EMERGENCY_ROLE);
-function unpause() external onlyRole(EMERGENCY_ROLE);
+function pause() external;    // EMERGENCY_ROLE
+function unpause() external;  // EMERGENCY_ROLE
 ```
 
 #### Recovery
 
 ```solidity
-function recover(address token, uint256 amount) 
-    external onlyRole(DEFAULT_ADMIN_ROLE);
+function recover(address token, uint256 amount) external;  // DEFAULT_ADMIN_ROLE
 ```
 
-Recovers tokens sent by mistake (cannot recover active USDC).
+Recovers tokens sent by mistake to the treasury (cannot recover active USDC).
 
 ***
 
@@ -390,19 +421,26 @@ Recovers tokens sent by mistake (cannot recover active USDC).
 
 ```solidity
 // Position limits
-uint96 public constant MAX_POSITION_SIZE = type(uint96).max;
-uint96 public constant MAX_MARGIN = type(uint96).max;
-uint96 public constant MAX_ENTRY_PRICE = type(uint96).max;
-uint8 public constant MAX_LEVERAGE = 20;
-uint16 public constant MAX_MARGIN_RATIO = 5000;  // 50%
+uint256 public constant MAX_POSITION_SIZE = type(uint96).max;
+uint256 public constant MAX_MARGIN = type(uint96).max;
+uint256 public constant MAX_ENTRY_PRICE = type(uint96).max;
+uint256 public constant MAX_LEVERAGE = type(uint16).max;   // storage bound; governance can configure at most 20x
+uint256 public constant MAX_MARGIN_RATIO = 5000;           // 50% maximum margin ratio
+uint256 public constant DEFAULT_MIN_MARGIN_RATIO_BPS = 250; // 2.5% governance floor
 
 // Global limits
-uint128 public constant MAX_TOTAL_MARGIN = type(uint128).max;
-uint128 public constant MAX_TOTAL_EXPOSURE = type(uint128).max;
+uint256 public constant MAX_TOTAL_MARGIN = type(uint128).max;
+uint256 public constant MAX_TOTAL_EXPOSURE = type(uint128).max;
 
-// Time limits
+// Rewards
 uint256 public constant MAX_REWARD_PERIOD = 365 days;
+uint256 public constant MAX_REWARD_FEE_SPLIT = 1e18;
+
+// Dust
+uint256 public constant QEURO_DUST_THRESHOLD = 1e12;
 ```
+
+Maximum leverage governance can configure: **20×** (`configureRiskAndFees` reverts above it); live `coreParams.maxLeverage` = 20.
 
 ***
 
@@ -411,23 +449,35 @@ uint256 public constant MAX_REWARD_PERIOD = 365 days;
 #### Collateral Metrics
 
 ```solidity
-// Total effective hedger collateral (margin + P&L)
-function getTotalEffectiveHedgerCollateral() 
-    external view returns (uint256);
+// Total effective hedger collateral (margin ± P&L) at a given EUR/USD price
+function getTotalEffectiveHedgerCollateral(uint256 price) external view returns (uint256);
 
 // Is there an active hedger?
 function hasActiveHedger() external view returns (bool);
+
+// Aggregates
+function totalMargin() external view returns (uint256);
+function totalExposure() external view returns (uint256);
+function totalFilledExposure() external view returns (uint256);
 ```
 
-#### Position Data
+#### Position Data & Configuration
 
 ```solidity
 // Get a position by ID
 mapping(uint256 => HedgePosition) public positions;
 
-// Hedger's active position ID
-mapping(address => uint256) public hedgerActivePositionId;
+// Configuration getters
+function singleHedger() external view returns (address);
+function coreParams() external view returns (CoreParams memory);
+function minMarginAmount() external view returns (uint256);
+function minPositionHoldBlocks() external view returns (uint256);
+function rewardFeeSplit() external view returns (uint256);
+function pendingRewardWithdrawals(address hedger) external view returns (uint256);
+function version() external pure returns (string memory);  // "1.0.8"
 ```
+
+The hedger → active-position mapping (`hedgerActivePositionId`) is private; read the position with `positions(1)` while the single-hedger model holds.
 
 ***
 
@@ -444,8 +494,8 @@ IYieldShift public yieldShift;
 ```
 External staking vault (Morpho) generates yield
     ↓
-QuantillonVault harvests; hedger funding is carved out first
-(governance-set annual rate, capped at 50% of each harvest)
+QuantillonVault harvests; a hedger funding carve-out is taken first
+(governance-set annual rate, capped at 50% of each harvest — currently 0 bps)
     ↓
 YieldShift tracks the hedger's claimable share
     ↓
@@ -457,28 +507,50 @@ Hedger claims via claimHedgingRewards()
 ### 📋 Events
 
 ```solidity
-event PositionOpened(address indexed hedger, uint256 positionId, uint96 size, uint96 margin);
-event PositionClosed(address indexed hedger, uint256 positionId, int128 finalPnL);
-event MarginAdded(address indexed hedger, uint256 positionId, uint96 amount);
-event MarginRemoved(address indexed hedger, uint256 positionId, uint96 amount);
-event RewardsClaimed(address indexed hedger, uint256 amount);
-event SingleHedgerSet(address indexed oldHedger, address indexed newHedger);
+event HedgePositionOpened(address indexed hedger, uint256 indexed positionId, bytes32 packedData);
+event HedgePositionClosed(address indexed hedger, uint256 indexed positionId, bytes32 packedData);
+event MarginUpdated(address indexed hedger, uint256 indexed positionId, bytes32 packedData);
+event SingleHedgerRotationApplied(address indexed previousHedger, address indexed newHedger);
+event EmergencyPositionClosed(address indexed hedger, uint256 indexed positionId, uint256 marginWithdrawn, uint256 outstandingQeuro);
+event RewardReserveFunded(address indexed funder, uint256 amount);
+event ETHRecovered(address indexed to, uint256 indexed amount);
 ```
+
+`packedData` packs the position size, margin, price and P&L fields of the event into one word (decoded by the indexer). Upgrade-related events (`SecureUpgradeAuthorized`, `SecureUpgradesToggled`, `TimelockSet`, `EmergencyDisableProposed/Approved`) come from `SecureUpgradeable`.
 
 ***
 
-### ⚠️ Custom Errors
+### ⚠️ Custom Errors (`HedgerPoolErrorLibrary`)
 
 ```solidity
-error PositionAlreadyExists();
-error NoActivePosition();
+error InvalidPosition();
+error InvalidHedger();
+error OnlyVault();
 error InsufficientMargin();
+error MarginRatioTooLow();
+error MarginRatioTooHigh();
 error LeverageTooHigh();
-error PositionNotSafeToClose();
-error FilledVolumeNotZero();
-error InvalidAmount();
+error InvalidLeverage();
+error HedgerHasActivePosition();
+error NoActiveHedgerLiquidity();
+error MinHoldPeriodNotElapsed();
+error PositionClosureRestricted();
+error PositionOwnerMismatch();
+error InsufficientHedgerCapacity();
+error MarginExceedsMaximum();
+error NewMarginExceedsMaximum();
+error PositionSizeExceedsMaximum();
+error EntryPriceExceedsMaximum();
+error LeverageExceedsMaximum();
+error TotalMarginExceedsMaximum();
+error TotalExposureExceedsMaximum();
+error RewardOverflow();
+error TimestampOverflow();
+error FlashLoanAttackDetected();
 ```
+
+Generic reverts (`NotAuthorized`, `InvalidAmount`, `ConfigValueTooHigh/TooLow`, `InvalidOraclePrice`, …) come from `CommonErrorLibrary`.
 
 ***
 
-> **Summary**: The HedgerPool is the core of Quantillon's hedging mechanics. In the MVP, a single hedger provides EUR/USD coverage, earning revenue via YieldShift and rate differentials. The real-time P&L system and security controls ensure protocol stability.
+> **Summary**: The HedgerPool is the core of Quantillon's hedging mechanics. A single designated hedger — Quantillon Labs' hedging engine in the current phase — provides EUR/USD coverage, earning revenue via the rate differential and YieldShift. The margin health gate, the September 2026 margin policy and the emergency controls keep the hedge and the protocol collateralization aligned.
