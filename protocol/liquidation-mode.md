@@ -6,21 +6,28 @@
 
 Quantillon protects protocol solvency with a **protocol-level liquidation mode** built directly into `QuantillonVault`. Unlike traditional DeFi liquidations — where keepers liquidate individual positions for a bonus — Quantillon uses a **pro-rata redemption model** that fairly distributes any collateral shortfall among all QEURO holders who choose to exit.
 
-> **There is no standalone `LiquidationSystem` contract and no liquidator role.** Liquidation mode is a state of the protocol as a whole, evaluated inside `QuantillonVault` from the global collateralization ratio.
+> **There is no standalone `LiquidationSystem` contract and no liquidator role** (the name is historical). Liquidation mode is a state of the protocol as a whole, evaluated inside `QuantillonVault` from the global collateralization ratio.
 
 ***
 
 ### 🎯 Collateralization Thresholds
 
 ```solidity
-uint256 public constant MIN_COLLATERALIZATION_RATIO_FOR_MINTING = 105e18; // initializer default; the live value is governance-set (hard floor 101%)
-uint256 public constant CRITICAL_COLLATERALIZATION_RATIO_BPS   = 10100;   // 101%
+// private constants used as initializer defaults / hard floors
+uint256 private constant MIN_COLLATERALIZATION_RATIO_FOR_MINTING = 105e18; // initializer default; live value governance-set — currently 102.5%
+uint256 private constant CRITICAL_COLLATERALIZATION_RATIO_BPS   = 10100;   // 101%
+uint256 private constant MIN_ALLOWED_COLLATERALIZATION_RATIO    = 101e18;  // hard floor for the minting ratio
+uint256 private constant MIN_ALLOWED_CRITICAL_RATIO             = 100e18;  // hard floor for the critical ratio
+
+// live storage (governance-set via updateCollateralizationThresholds)
+uint256 public minCollateralizationRatioForMinting;  // 1.025e20 = 102.5%
+uint256 public criticalCollateralizationRatio;        // 1.01e20  = 101%
 ```
 
 | Protocol State | Collateralization Ratio | Effect |
 |----------------|------------------------|--------|
 | **Healthy** | > minting floor | Normal minting and redemption |
-| **Restricted** | 101% – minting floor | Minting blocked (CR below the governance-set minting floor: 105% at launch, 102.5% under the September 2026 margin policy); redemption normal |
+| **Restricted** | 101% – minting floor | Minting blocked (CR below the governance-set minting floor — currently 102.5%, since 2 September 2026; 105% at launch); redemption normal |
 | **Liquidation mode** | ≤ 101% | Pro-rata liquidation redemption activated |
 
 Both thresholds are governance-configurable within hard floors: the minting ratio can never be set below 101%, and the critical ratio never below 100%.
@@ -47,9 +54,10 @@ In liquidation mode, hedger positions' **effective margin is treated as zero** �
 #### Live state checks
 
 ```solidity
-vault.getProtocolCollateralizationRatio(); // current global CR (non-view: refreshes oracle cache)
+vault.getProtocolCollateralizationRatio(); // current global CR (view, from the cached oracle price)
 vault.canMint();                           // false when CR < minCollateralizationRatioForMinting
-vault.shouldTriggerLiquidationLive();      // true when CR <= criticalCollateralizationRatio
+vault.shouldTriggerLiquidation();          // view: true when CR <= criticalCollateralizationRatio
+vault.shouldTriggerLiquidationLive();      // non-view: refreshes the oracle cache, returns (bool shouldLiquidate, uint256 collateralizationRatio)
 ```
 
 ***
@@ -64,7 +72,7 @@ Liquidation mode is not terminal. The protocol exits it automatically as soon as
 
 1. **Fairness** — pro-rata sharing removes the race-to-exit dynamic of first-come-first-served redemptions under stress.
 2. **Simplicity** — no keeper infrastructure, auction mechanics, or liquidation bonuses; the vault itself enforces the payout math.
-3. **Solvency-first** — the minting floor (governance-set: 105% at launch, 102.5% under the September 2026 margin policy; hard minimum 101%) keeps new issuance from diluting collateral quality, while the 101% critical band gives hedgers room to recapitalize before holders are impacted.
+3. **Solvency-first** — the minting floor (governance-set: currently 102.5% since 2 September 2026, 105% at launch; hard minimum 101%) keeps new issuance from diluting collateral quality, while the 101% critical band gives hedgers room to recapitalize before holders are impacted.
 4. **Continuous operation** — users can always redeem, in any protocol state; only the payout formula changes.
 
 ***
