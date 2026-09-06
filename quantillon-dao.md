@@ -18,20 +18,23 @@ coverY: 0
 
 | Contract | Address (Base) | Role |
 | -------- | -------------- | ---- |
-| **Governance Safe** (2-of-3 Gnosis Safe) | `0x1d7fF432a93d0085Fb69474c7E567f859829e6cd` | Holds all privileged roles across the protocol |
+| **Governance Safe** (2-of-3 Gnosis Safe) | `0x1d7fF432a93d0085Fb69474c7E567f859829e6cd` | Holds the admin, governance, upgrade and emergency roles across the protocol |
 | **Timelock** (OZ TimelockController, 12h delay) | `0x7Ade8f3Bf1FdaF0785efE9Ea5C6339D1aD6B8342` | Gates upgrades of the core contracts |
 | **QuantillonVault** | `0x833E5Ba510a241b21F1C60c987D1c49eB52E4a07` | Core mint/redeem and yield-distribution contract under this governance |
+
+Narrow operational roles are delegated to dedicated wallets, each revocable by the Safe at any time: an **independent hedging watchdog** holds `EMERGENCY_ROLE` on QuantillonVault (pause/unpause only), **keeper wallets** designated by governance hold `VAULT_OPERATOR_ROLE` (deploy USDC to the external vault) and `YIELD_DISTRIBUTOR_ROLE` (harvest and distribute yield), and the **oracle publisher** holds `WRITER_ROLE` on `SlippageStorage`. The single hedger of the HedgerPool is Quantillon Labs' hedging engine (a designated address, not a role). The full role inventory is on [Smart Contract Components](protocol/smart-contract-components.md#2-roles-and-permissions).
 
 ### What each layer gates
 
 **Through the 12-hour timelock:**
 
-* Upgrades of the core UUPS proxy contracts (QuantillonVault, token contracts, pools). Any new implementation must be queued in the Timelock and can only be executed after the 12-hour delay — giving all stakeholders a transparent window to review the change and, if they disagree with it, exit the protocol before it takes effect.
+* Upgrades of the core UUPS proxy contracts — **QuantillonVault, QEUROToken, QTIToken, UserPool, HedgerPool, YieldShift, stQEUROFactory and the stQEURO series**. Any new implementation must be queued in the Timelock and can only be executed after the 12-hour delay — giving all stakeholders a transparent window to review the change and, if they disagree with it, exit the protocol before it takes effect.
 
 **Directly by the 2-of-3 Safe (no timelock):**
 
-* Operational parameters: fee settings (mint/redeem, stQEURO yield fee, hedger fees), collateralization thresholds, hedging parameters, interest rates
-* Oracle operations: switching the active EUR/USD source in the OracleRouter (market venue ↔ Chainlink fallback), swapping the market venue oracle itself (Hyperliquid ↔ Lighter, always coupled with the hedge-execution venue), price bounds, circuit-breaker management
+* Upgrades of the peripheral contracts — **FeeCollector, OracleRouter, ChainlinkOracle, HyperliquidEurUsdOracle and SlippageStorage** — which are plain UUPS proxies upgraded directly by the Safe
+* Operational parameters: fee settings (mint/redeem, stQEURO yield fee, hedger fees), collateralization thresholds (minting floor, currently 102.5%), hedging parameters, interest rates
+* Oracle operations: switching the active EUR/USD source in the OracleRouter (Hyperliquid market oracle ↔ Chainlink fallback), price bounds and staleness, circuit-breaker management
 * Emergency actions: pause/unpause, minting killswitch, emergency position closure
 * Role management and treasury operations
 
@@ -61,7 +64,7 @@ The deployed contracts already contain a complete on-chain governance system bui
 | **Voting period** | 3 days minimum, 14 days maximum |
 | **Execution delay** | 2 days after a successful vote |
 
-A proposer holding at least the threshold submits an on-chain proposal; veQTI holders vote during the voting period; if quorum and majority are reached, the proposal becomes executable after the 2-day delay. Failed or malicious proposals can be cancelled by the emergency role.
+A proposer holding at least the threshold submits an on-chain proposal; veQTI holders vote during the voting period; if quorum and majority are reached, the proposal becomes executable after the 2-day delay. A proposal can be cancelled by its proposer or by the governance role.
 
 ### What activation requires
 
@@ -74,7 +77,7 @@ Quantillon follows a deliberate, staged handover of control:
 
 1. **Bootstrap (now)** — a small, accountable signer set (2-of-3 Safe) operates the protocol with a 12h upgrade timelock as the public safety window. This favors fast incident response while the protocol earns operational track record on mainnet.
 2. **Activation** — QTI is minted and distributed, veQTI locking goes live, and on-chain proposals begin governing an expanding set of parameters.
-3. **Community control** — privileged roles migrate from the Safe to the governance execution path; the Safe's remit narrows toward emergency response (pause, proposal cancellation) before being phased down as the system proves itself.
+3. **Community control** — privileged roles migrate from the Safe to the governance execution path; the Safe's remit narrows toward emergency response (pause) before being phased down as the system proves itself.
 
 The guiding principle: **decentralize authority no faster than the community's demonstrated capacity to exercise it safely** — and never present dormant machinery as live governance.
 
@@ -83,3 +86,7 @@ The guiding principle: **decentralize authority no faster than the community's d
 * The Timelock is the standard OpenZeppelin `TimelockController`; the Safe is a standard Gnosis Safe — both are extensively audited, battle-tested building blocks.
 * The QTI vote-escrow and proposal contracts are part of the audited protocol codebase and follow the same UUPS upgrade discipline as the rest of the system.
 * Emergency controls (pause, killswitch, circuit breakers) are documented in the [Smart Contract Components](protocol/smart-contract-components.md).
+
+## 🤖 Automated safety actors <a href="#automated-safety-actors" id="automated-safety-actors"></a>
+
+Since July 2026 an **independent, separately hosted watchdog** can pause QuantillonVault (freezing mint and redeem) on its own when the hedging engine or the EUR/USD oracle is unhealthy — a stale or circuit-broken price, a basis dislocation versus Chainlink, or a hedge that stops responding. It holds a pause-only `EMERGENCY_ROLE` on the vault, lifts only pauses it set itself once the verdict is healthy again, and can be revoked by the Safe at any time. Keeper wallets likewise execute routine operations (deploying USDC to the external vault, harvesting yield) under narrow roles. None of these actors can change parameters, move funds outside the protocol or upgrade contracts. See [Quantillon Guardians](quantillon-guardians.md) and [Oracle Architecture](protocol/oracle-architecture.md#independent-watchdog-defence-in-depth).

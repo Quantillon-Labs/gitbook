@@ -27,18 +27,16 @@ Our stablecoin architecture incorporates advanced mechanisms including overcolla
 
 **Supply Model**
 
-QEURO has **no fixed tokenomic supply cap** — supply is bounded by the protocol's hedging capacity: minting reverts whenever protocol collateralization would drop below 105%. The token contract carries two adjustable safety guardrails on top of that economic limit: an **administrative supply ceiling** (currently 100,000,000 QEURO, raisable by governance at any time) and a **mint/burn rate limiter** (10M QEURO per 300-block window, ~10 minutes on Base) that contains blast radius if the mint path were ever compromised.
+QEURO has **no fixed tokenomic supply cap** — supply is bounded by the protocol's hedging capacity: minting reverts whenever protocol collateralization would drop below the governance-set minting floor — currently **102.5%** (lowered from 105% on 2 September 2026; hard minimum 101%); 101% is the critical threshold that triggers liquidation mode. The token contract carries two adjustable safety guardrails on top of that economic limit: an **administrative supply ceiling** (currently 100,000,000 QEURO, raisable by governance at any time) and a **mint/burn rate limiter** (10M QEURO per 300-block window, ~10 minutes on Base) that contains blast radius if the mint path were ever compromised.
 
 **Implemented Features**
 
-* **Oracle Integration**: the active market venue's EUR/USD mid (currently Hyperliquid; the venue is switchable by governance, with Lighter supported as an alternative) with Chainlink as fallback and USDC/USD validation, all behind circuit breakers — see [Oracle Architecture](../oracle-architecture.md)
+* **Oracle Integration**: the hedge venue's EUR/USD market mid (Hyperliquid) with Chainlink as fallback and USDC/USD validation, all behind circuit breakers — see [Oracle Architecture](../oracle-architecture.md)
 * **Slippage-Free Operations**: Mint/redeem at oracle rates; fees are currently 0 (governance-settable, capped at 5%)
 * **Emergency Controls**: Pausable with time-locked upgrades via UUPS pattern
 * **Compliance System**: Blacklist/whitelist functionality for regulatory compliance
 * **Rate Limiting**: Protection against large-scale manipulation attacks
 * **Minting Killswitch**: Emergency minting halt capability
-
-> **🚧 Roadmap Features**: Cross-chain bridging (Base, Arbitrum, Optimism) and multi-collateral support (ETH, WBTC) are planned for future phases.
 
 ***
 
@@ -46,13 +44,11 @@ QEURO has **no fixed tokenomic supply cap** — supply is bounded by the protoco
 
 **Overcollateralization Model**
 
-**📊 Collateral Framework (MVP)**
+**📊 Collateral Framework**
 
 | Collateral Type | Status | Minimum Ratio | Accepted Assets |
 | --------------- | ------ | ------------- | --------------- |
-| **Primary**     | ✅ Live | 105%+ (minting floor; 101% is the critical/liquidation threshold) | USDC |
-
-> **Note**: Multi-collateral support (ETH, WBTC, governance-approved assets) is planned for future protocol upgrades.
+| **Primary**     | ✅ Live | Governance-set minting floor — currently 102.5% (105% at launch); 101% is the critical/liquidation threshold | USDC (sole collateral) |
 
 **🔒 Security Mechanisms**
 
@@ -64,7 +60,7 @@ QEURO has **no fixed tokenomic supply cap** — supply is bounded by the protoco
 
 **Minting & Redemption Process**
 
-**📥 Minting Workflow (MVP)**
+**📥 Minting Workflow**
 
 ```
 User USDC → QuantillonVault → Oracle Price Check → QEURO Mint → External Vault Deployment
@@ -72,7 +68,7 @@ User USDC → QuantillonVault → Oracle Price Check → QEURO Mint → External
 
 1. **USDC Deposit**: Users deposit USDC to the QuantillonVault
 2. **Oracle Price Check**: Real-time EUR/USD rate verification via the oracle router (Hyperliquid mid, Chainlink fallback)
-3. **Collateral Lock**: Protocol enforces the 105% minimum collateralization ratio for minting
+3. **Collateral Lock**: Protocol enforces the minting floor (currently 102.5%) on the protocol collateralization ratio
 4. **QEURO Issuance**: Vault mints QEURO at the oracle rate; the minting fee is currently 0 (governance-settable, max 5%)
 5. **Yield Deployment**: Collateral can be deployed to external staking vaults (currently Morpho/MetaMorpho)
 
@@ -95,14 +91,14 @@ QEURO Burn → Oracle Verification → Collateral Release → USDC Transfer
 
 **💰 Collateral Deployment**
 
-USDC collateral can be deployed to external staking vaults — currently a MetaMorpho (Morpho) USDC vault via a dedicated adapter — to generate yield. Deployment is managed by governance, and emergency withdrawal is available for crisis situations. See [External Staking Vaults](../external-staking-vaults.md) for details.
+USDC collateral can be deployed to external staking vaults — currently a MetaMorpho (Morpho) USDC vault via a dedicated adapter — to generate yield. Deployment is executed by the vault-operator role, USDC is withdrawn automatically to serve redemptions, and governance can deactivate a vault or pause the protocol. See [External Staking Vaults](../external-staking-vaults.md) for details.
 
 **Revenue Distribution Model (Harvest + YieldShift)**
 
 ```
 External Vault Yield (Variable APY), harvested by QuantillonVault
-├── 1. Hedger funding paid first
-│      (governance-set annual rate, capped at 50% of each harvest)
+├── 1. Hedger funding carve-out first
+│      (governance-set annual rate, capped at 50% of each harvest — currently 0 bps)
 └── 2. Residual split between stQEURO stakers and the treasury
        according to the staked share
 ```
@@ -119,20 +115,20 @@ External Vault Yield (Variable APY), harvested by QuantillonVault
 
 * **QEURO Minting**: Deposit USDC via Vault to mint QEURO
 * **Yield Earning**: Stake QEURO to stQEURO to receive auto-compounding yields
-* **Governance Participation**: Vote on protocol parameters via QTI
+* **Governance Participation**: Vote on protocol parameters via QTI once governance is activated (QTI is dormant; the 2-of-3 Safe sets parameters today)
 * **Unstaking Cooldown**: Configurable cooldown period for unstaking
 
 **Participation Requirements**:
 
 * **Minimum Stake**: Configurable via governance (minStakeAmount)
-* **Collateral Ratio**: Minting requires 105%+ protocol collateralization (101% is the critical threshold)
+* **Collateral Ratio**: Minting requires the protocol collateralization ratio to stay above the minting floor — currently 102.5% (101% is the critical threshold)
 * **Holding Period**: 7-day minimum for yield claims (anti-manipulation)
 
 **🛡️ Hedger Pool Mechanics**
 
 **Current Implementation: Single Hedger Model**
 
-> **Important**: The MVP implements a single designated hedger model for simplified operations. Multi-hedger support is planned for future phases.
+> **Important**: The protocol runs a single designated hedger — Quantillon Labs' hedging engine, executing on Hyperliquid — in the current phase. See [HedgerPool](../hedger-pool.md).
 
 **Hedger Functions**:
 
@@ -151,10 +147,10 @@ Base Compensation: EUR/USD Interest Rate Differential
 
 **Risk Management**:
 
-* **Margin Requirements**: Configurable minimum margin ratio (minMarginRatio)
-* **Leverage Limits**: Maximum leverage configurable by governance (maxLeverage)
-* **Auto-Liquidation**: Triggered when position becomes unhealthy
-* **Entry/Exit Fees**: Configurable fees for position management
+* **Margin Requirements**: Governance-set minimum margin ratio (`minMarginRatio`, currently 250 bps = 2.5%)
+* **Leverage Limits**: Maximum leverage configurable by governance (`maxLeverage`, currently 20×)
+* **Health Gate**: Margin cannot be withdrawn below the minimum ratio; there is no per-position auto-liquidation — the protocol-level liquidation mode at CR ≤ 101% is the only liquidation mechanism
+* **Entry/Exit Fees**: Configurable fees for position management (currently 0)
 
 ***
 
@@ -187,7 +183,7 @@ The Yield Shift represents QEURO's most innovative feature—automatically rebal
 
 * **Automatic Adjustments**: Based on 24-hour TWAP calculations
 * **Gradual Changes**: Adjustment speed limits sudden shifts
-* **Governance Control**: Parameters adjustable via QTI governance
+* **Governance Control**: Parameters adjustable by governance (the 2-of-3 Safe today; QTI governance once activated)
 
 ***
 
@@ -235,7 +231,7 @@ Mint rate limit: 10,000,000 QEURO per 300-block window (~10 minutes on Base)
 
 **Mechanism**
 
-1. **Per-address tracking**: Each address has its own mint/burn limit
+1. **Global tracking**: one mint counter and one burn counter per 300-block window, shared by all minters and burners
 2. **Window reset**: The limit resets after each 300-block window (~10 minutes on Base)
 3. **Accumulation**: Operations accumulate within the current window
 4. **Blocking**: If cumulative total exceeds the limit, operation fails
@@ -244,8 +240,9 @@ Mint rate limit: 10,000,000 QEURO per 300-block window (~10 minutes on Base)
 
 | Parameter | Live Value | Governable |
 |-----------|------------|------------|
-| Mint rate limit | 10,000,000 QEURO per window | ✅ Yes |
-| Rate limit window | 300 blocks (~10 minutes on Base) | ❌ Constant |
+| Mint rate limit | 10,000,000 QEURO per window | ✅ Yes (`updateRateLimits`, admin) |
+| Burn rate limit | 10,000,000 QEURO per window | ✅ Yes (`updateRateLimits`, admin) |
+| Rate limit window | 300 blocks (~10 minutes on Base) | ❌ Constant (`RATE_LIMIT_RESET_PERIOD`) |
 
 **Use Cases**
 
@@ -256,11 +253,16 @@ Mint rate limit: 10,000,000 QEURO per 300-block window (~10 minutes on Base)
 **Associated Functions**
 
 ```solidity
-// Check and update mint rate limit
-function _checkAndUpdateMintRateLimit(address account, uint256 amount) internal;
+// Check and update the global mint rate limit
+function _checkAndUpdateMintRateLimit(uint256 amount) internal;
 
-// Check and update burn rate limit
-function _checkAndUpdateBurnRateLimit(address account, uint256 amount) internal;
+// Check and update the global burn rate limit
+function _checkAndUpdateBurnRateLimit(uint256 amount) internal;
+
+// Public getters
+function mintRateLimit() external view returns (uint256 limit);
+function burnRateLimit() external view returns (uint256 limit);
+function rateLimitInfo() external view returns (uint96 currentHourMinted, uint96 currentHourBurned, uint64 lastRateLimitReset);
 ```
 
 ***
@@ -275,8 +277,9 @@ The Minting Killswitch is an emergency mechanism that instantly halts all mintin
 // Killswitch state
 bool public mintingKillswitch;
 
-// Enable/disable (admin only)
-function setMintingKillswitch(bool enabled) external onlyRole(DEFAULT_ADMIN_ROLE);
+// Enable/disable (PAUSER_ROLE)
+function setMintingKillswitch(bool enabled) external onlyRole(PAUSER_ROLE);
+// emits MintingKillswitchToggled(enabled, caller)
 ```
 
 **When to Use?**
@@ -338,18 +341,18 @@ bool public whitelistEnabled;                     // Whitelist mode active
 
 | Function | Required Role | Description |
 |----------|---------------|-------------|
-| `blacklistAddress(address)` | COMPLIANCE_ROLE | Block an address |
-| `unblacklistAddress(address)` | COMPLIANCE_ROLE | Unblock an address |
-| `whitelistAddress(address)` | COMPLIANCE_ROLE | Authorize an address |
-| `unwhitelistAddress(address)` | COMPLIANCE_ROLE | Remove authorization |
-| `toggleWhitelistMode()` | COMPLIANCE_ROLE | Enable/disable whitelist mode |
+| `blacklistAddress(address account, string reason)` | COMPLIANCE_ROLE | Block an address |
+| `unblacklistAddress(address account)` | COMPLIANCE_ROLE | Unblock an address |
+| `whitelistAddress(address account)` | COMPLIANCE_ROLE | Authorize an address |
+| `unwhitelistAddress(address account)` | COMPLIANCE_ROLE | Remove authorization |
+| `toggleWhitelistMode(bool enabled)` | COMPLIANCE_ROLE | Enable/disable whitelist mode |
 
 **Batch Operations**
 
 For gas efficiency, batch operations are available:
 
 ```solidity
-function batchBlacklistAddresses(address[] calldata accounts) external;
+function batchBlacklistAddresses(address[] calldata accounts, string[] calldata reasons) external;
 function batchUnblacklistAddresses(address[] calldata accounts) external;
 function batchWhitelistAddresses(address[] calldata accounts) external;
 function batchUnwhitelistAddresses(address[] calldata accounts) external;
@@ -379,8 +382,10 @@ On each transfer, the `_update` function verifies:
 **Emitted Events**
 
 ```solidity
-event BlacklistUpdated(address indexed account, bool status);
-event WhitelistUpdated(address indexed account, bool status);
+event AddressBlacklisted(address indexed account, string indexed reason);
+event AddressUnblacklisted(address indexed account);
+event AddressWhitelisted(address indexed account);
+event AddressUnwhitelisted(address indexed account);
 event WhitelistModeToggled(bool enabled);
 ```
 
@@ -393,7 +398,7 @@ event WhitelistModeToggled(bool enabled);
 | Control | Severity | Required Role | Reversible |
 |---------|----------|---------------|------------|
 | **Rate Limit** | 🟡 Medium | Automatic | ✅ Auto-reset |
-| **Killswitch** | 🟠 High | ADMIN | ✅ Yes |
+| **Killswitch** | 🟠 High | PAUSER | ✅ Yes |
 | **Pause** | 🔴 Critical | PAUSER | ✅ Yes |
 | **Blacklist** | 🟡 Targeted | COMPLIANCE | ✅ Yes |
 
@@ -402,11 +407,11 @@ event WhitelistModeToggled(bool enabled);
 ```
 Level 1: Rate Limiting (automatic)
     ↓ If insufficient
-Level 2: Minting Killswitch (admin)
+Level 2: Minting Killswitch (pauser)
     ↓ If insufficient  
 Level 3: Targeted Blacklist (compliance)
     ↓ If insufficient
-Level 4: Full Pause (pauser/admin)
+Level 4: Full Pause (pauser)
 ```
 
 **Token Recovery**
@@ -435,16 +440,14 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 2. **Yield Management**: stQEURO yield fee (currently 0, max 20%) and the treasury share of harvested external-vault yield
 3. **Position Fees**: hedger entry/exit/margin fees (currently 0, governance-settable) plus a 20% reward fee split on hedger rewards
 
-> **Note**: Cross-chain bridge fees and additional vault fees are planned for future implementations.
-
 **🎯 Key Performance Indicators**
 
 **Health Metrics**
 
 * **Peg Stability**: Target <2% deviation from EUR
-* **Collateral Ratio**: Maintain ≥105% (minting floor) across all conditions; 101% is the critical threshold
+* **Collateral Ratio**: Stay above the minting floor (currently 102.5%) across all conditions; 101% is the critical threshold
 * **Yield Consistency**: Dynamic based on external staking vault (Morpho) market conditions
-* **Governance Activity**: QTI holder participation
+* **Governance Activity**: QTI holder participation (once governance is activated)
 
 ***
 
@@ -456,9 +459,9 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 
 | Risk Factor | Probability | Impact | Mitigation Strategy |
 | ----------- | ----------- | ------ | ------------------- |
-| **Smart Contract Bug** | Medium | Critical | Multiple audits, formal verification |
+| **Smart Contract Bug** | Medium | Critical | Independent audit + on-chain remediation (July 2026), continuous monitoring |
 | **Oracle Manipulation** | Low | High | Chainlink + circuit breakers, 5% deviation limit |
-| **External Vault (Morpho) Risk** | Low | Medium | Emergency withdrawal, governance-controlled deployment |
+| **External Vault (Morpho) Risk** | Low | Medium | Governance can deactivate the vault and pause the protocol; USDC is withdrawn on redemption; loss-aware collateral accounting |
 | **Liquidation Cascade** | Low | High | Circuit breakers, emergency pause |
 
 **Market Risks**
@@ -496,18 +499,21 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 **Key Constants**
 
 ```solidity
-MAX_SUPPLY = 100_000_000e18   // 100 million QEURO (governance-adjustable cap)
+DEFAULT_MAX_SUPPLY = 100_000_000e18   // initial value of the governance-raisable maxSupply ceiling (updateMaxSupply, admin)
 // Mint/redeem fees: currently 0, governance-settable, capped at 5%
 // Mint rate limit: 10,000,000 QEURO per 300-block window (~10 minutes on Base)
 ```
 
 **Events**
 
-* `Transfer(from, to, amount)` - Standard ERC20 transfer
-* `Mint(to, amount)` - QEURO minted
-* `Burn(from, amount)` - QEURO burned
-* `BlacklistUpdated(account, status)` - Compliance update
-* `MintingKillswitchSet(enabled)` - Emergency control activated
+* `Transfer(from, to, value)` - Standard ERC20 transfer
+* `TokensMinted(to, amount, minter)` - QEURO minted
+* `TokensBurned(from, amount, burner)` - QEURO burned
+* `AddressBlacklisted(account, reason)` / `AddressUnblacklisted(account)` - Compliance update
+* `MintingKillswitchToggled(enabled, caller)` - Emergency control toggled
+* `SupplyCapUpdated(oldCap, newCap)` / `RateLimitsUpdated(limitType, mintLimit, burnLimit)` - Guardrail changes
+
+The full event list is on [Smart Contract Components](../smart-contract-components.md#qeurotoken-1).
 
 ***
 
@@ -515,7 +521,7 @@ MAX_SUPPLY = 100_000_000e18   // 100 million QEURO (governance-adjustable cap)
 
 QEURO represents more than just another stablecoin: it is the first production deployment of Quantillon's FX-hedged local-currency architecture. Through innovative dual-pool mechanics, dynamic yield redistribution via YieldShift, and robust security controls, QEURO creates a sustainable foundation for EUR-denominated decentralized finance.
 
-The live deployment focuses on core functionality with USDC collateral and external staking vault yield generation (currently Morpho/MetaMorpho). Future phases will expand to multi-collateral support, additional vault strategies, and cross-chain deployment.
+The live deployment focuses on core functionality with USDC collateral and external staking vault yield generation (currently Morpho/MetaMorpho); additional external vaults can be registered by governance through the adapter and factory pattern.
 
 The first deployment prioritizes user experience, regulatory compliance, and sustainable yield generation while preserving the broader protocol's flexibility. The result is an EUR asset that bridges local-currency balance-sheet needs with the innovation and accessibility of decentralized protocols.
 

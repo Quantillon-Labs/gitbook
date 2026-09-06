@@ -1,10 +1,12 @@
 # UserPool
 
-## UserPool: QEURO Deposits and Staking Management
+## UserPool: Batch Deposits and QEURO Staking
 
 ### 📋 Overview
 
-The UserPool is the central contract that manages USDC user deposits, QEURO staking operations, and reward distribution. It's the main entry point for Quantillon protocol users.
+The UserPool is an **optional batch deposit/stake contract**: it lets an address mint QEURO from USDC in batches, stake QEURO under a governance-set APY with an unstaking cooldown, and keeps per-user deposit/withdrawal histories. The dApp's primary flows use `QuantillonVault` directly (`mintQEURO`, `mintAndStakeQEURO`, `redeemQEURO`) and the stQEURO ERC-4626 series for yield — see [Core Mechanisms](mechanisms.md) and [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md).
+
+Live version: **1.0.3** · address `0x712bCc77e7aa53C79870A40d044D440Ad2901bF2` (Base mainnet).
 
 ***
 
@@ -21,17 +23,19 @@ contract UserPool is
     SecureUpgradeable
 ```
 
+`SecureUpgradeable` routes upgrades through the 12-hour OZ TimelockController.
+
 **External Dependencies**
 
 | Contract | Variable | Role |
 |----------|----------|------|
-| `IQEUROToken` | `qeuro` | QEURO token for mint/burn |
+| `IQEUROToken` | `qeuro` | QEURO token |
 | `IERC20` | `usdc` | USDC token for deposits |
-| `IQuantillonVault` | `vault` | Main vault for QEURO operations |
-| `IOracle` | `oracle` | Real-time EUR/USD price |
-| `IYieldShift` | `yieldShift` | Yield distribution |
+| `IQuantillonVault` | `vault` | Mint/redeem of QEURO |
+| `IOracle` | `oracle` | EUR/USD price (the `OracleRouter`) |
+| `IYieldShift` | `yieldShift` | Yield allocation layer |
 | `TimeProvider` | `TIME_PROVIDER` | Centralized time management |
-| `address` | `treasury` | ETH recovery address |
+| `address` | `treasury` | Recovery address |
 
 ***
 
@@ -39,9 +43,10 @@ contract UserPool is
 
 | Role | Responsibilities |
 |------|-----------------|
-| `DEFAULT_ADMIN_ROLE` | General administration |
-| `GOVERNANCE_ROLE` | Parameter modification (APY, fees, cooldown) |
-| `EMERGENCY_ROLE` | Pause, emergency unstake, recovery |
+| `DEFAULT_ADMIN_ROLE` | Role management, token/ETH recovery |
+| `GOVERNANCE_ROLE` | Staking parameters, performance fee, YieldShift wiring |
+| `EMERGENCY_ROLE` | Pause/unpause, `emergencyUnstake` |
+| `UPGRADER_ROLE` | Upgrade execution (timelock-gated) |
 
 ***
 
@@ -52,7 +57,7 @@ contract UserPool is
 | Parameter | Type | Description | Live Value |
 |-----------|------|-------------|------------|
 | `stakingAPY` | `uint256` | Staking APY in basis points | 800 = 8% |
-| `depositAPY` | `uint256` | Base APY on deposits in basis points | 400 = 4% |
+| `depositAPY` | `uint256` | Base APY on deposits in basis points (no setter) | 400 = 4% |
 | `minStakeAmount` | `uint256` | Minimum amount to stake (in QEURO) | 100e18 = 100 QEURO |
 | `unstakingCooldown` | `uint256` | Cooldown period before unstake (in seconds) | 604800 = 7 days |
 
@@ -60,11 +65,11 @@ contract UserPool is
 
 ```solidity
 function updateStakingParameters(
-    uint256 _stakingAPY,
-    uint256 _depositAPY,
-    uint256 _minStakeAmount,
-    uint256 _unstakingCooldown
+    uint256 newStakingAPY,
+    uint256 newMinStakeAmount,
+    uint256 newUnstakingCooldown
 ) external onlyRole(GOVERNANCE_ROLE);
+// emits PoolParameterUpdated(parameter, oldValue, newValue) per changed field
 ```
 
 #### Performance Fee
@@ -128,37 +133,54 @@ struct UserWithdrawalInfo {
 
 ### 💰 User Operations
 
+All user entry points take **batches** (arrays of equal length, at most `MAX_BATCH_SIZE = 100` items; `ArrayLengthMismatch`, `BatchSizeTooLarge`, `EmptyArray` otherwise). Each item carries its own slippage guard.
+
 #### Deposit (USDC → QEURO)
 
 ```solidity
-function deposit(uint256 usdcAmount) 
-    external whenNotPaused nonReentrant;
+function deposit(uint256[] calldata usdcAmounts, uint256[] calldata minQeuroOuts)
+    external whenNotPaused nonReentrant
+    returns (uint256[] memory qeuroMintedAmounts);
 ```
+
+`minQeuroOuts[i]` is the minimum QEURO accepted for `usdcAmounts[i]`; the call reverts with `ExcessiveSlippage` if the oracle-priced output is lower.
 
 **Flow**
 
 ```
 1. User approves USDC for UserPool
-2. Calls deposit(amount)
-3. USDC transferred to Vault
-4. Vault mints QEURO to user via oracle price
-5. History updated
+2. Calls deposit([amounts], [minQeuroOuts])
+3. USDC transferred to the Vault, which mints QEURO at the oracle price
+4. QEURO forwarded to the user; UserDeposit / UserDepositTracked emitted
+5. Deposit history updated
 ```
 
 #### Withdrawal (QEURO → USDC)
 
 ```solidity
-function withdraw(uint256 qeuroAmount) 
-    external whenNotPaused nonReentrant;
+function withdraw(uint256[] calldata qeuroAmounts, uint256[] calldata minUsdcOuts)
+    external whenNotPaused nonReentrant
+    returns (uint256[] memory usdcReceivedAmounts);
 ```
 
 **Flow**
 
 ```
-1. User calls withdraw(amount)
-2. Vault burns QEURO
-3. Vault returns USDC to user
-4. History updated
+1. User calls withdraw([amounts], [minUsdcOuts])
+2. Vault burns QEURO and returns USDC (minUsdcOuts[i] enforced per item)
+3. USDC credited to the user's pending balance and settled in the same transaction
+4. UserWithdrawal / UserWithdrawalTracked emitted; history updated
+```
+
+#### Pending Withdrawals
+
+The USDC of a withdrawal is first credited to `pendingUsdcWithdrawals[user]` and then settled immediately. If the immediate transfer cannot be settled in the same transaction, the amount stays claimable and `WithdrawalPending(user, amount)` is emitted; the user collects it later:
+
+```solidity
+mapping(address => uint256) public pendingUsdcWithdrawals;
+
+function claimPendingWithdrawal() external whenNotPaused nonReentrant;
+// transfers the full pending balance; emits PendingWithdrawalClaimed(user, amount)
 ```
 
 ***
@@ -179,25 +201,25 @@ Rewards = (stakedAmount × stakingAPY × timeElapsed) / (10000 × 365 days)
 |----------|-------------|
 | `stakedAmount` | QEURO amount staked |
 | `stakingAPY` | Annual rate in BPS (live: 800 = 8%) |
-| `timeElapsed` | Time since last calculation |
+| `timeElapsed` | Time since last calculation (capped at `MAX_REWARD_PERIOD` = 365 days) |
 
-**Reward Update**
+**Reward Settlement**
 
 ```solidity
-function _updatePendingRewards(address user) internal;
+function _updatePendingRewards(address user, uint256 currentTime) internal;
 ```
 
-This function is called automatically on each interaction (stake, unstake, claim).
+Pending rewards are settled automatically on every stake and unstake interaction and are visible through `getUserInfo(user).pendingRewards`. There is no separate claim function.
 
 #### Stake
 
 ```solidity
-function stake(uint256 amount) external whenNotPaused nonReentrant;
+function stake(uint256[] calldata qeuroAmounts) external whenNotPaused nonReentrant;
 ```
 
 **Validations**
 
-1. `amount >= minStakeAmount` (minimum amount)
+1. Each `qeuroAmounts[i] >= minStakeAmount`
 2. User has sufficient QEURO balance
 3. Contract not paused
 
@@ -206,7 +228,7 @@ function stake(uint256 amount) external whenNotPaused nonReentrant;
 1. Updates pending rewards
 2. Transfers QEURO from user to contract
 3. Increases `stakedAmount` and `totalStakes`
-4. Records `lastStakeTime`
+4. Records `lastStakeTime`; emits `QEUROStaked`
 
 #### ⏱️ Cooldown Mechanism (Unstaking)
 
@@ -218,19 +240,19 @@ The cooldown system prevents rapid stake/unstake cycles and protects against man
 ┌─────────────────────────────────────────────────────────┐
 │                    UNSTAKING FLOW                        │
 ├─────────────────────────────────────────────────────────┤
-│  Step 1: requestUnstake(amount)                         │
+│  Step 1: requestUnstake(qeuroAmount)                    │
+│  ├── Settle pending rewards                             │
 │  ├── Set unstakeAmount                                  │
-│  ├── Set unstakeRequestTime = now                       │
-│  └── Emit UnstakeRequested event                        │
+│  └── Set unstakeRequestTime = now                       │
 ├─────────────────────────────────────────────────────────┤
 │  Step 2: Wait for cooldown period                       │
-│  └── unstakingCooldown (e.g., 7 days)                   │
+│  └── unstakingCooldown (live: 7 days)                   │
 ├─────────────────────────────────────────────────────────┤
 │  Step 3: unstake()                                      │
 │  ├── Verify: now >= unstakeRequestTime + cooldown       │
 │  ├── Transfer QEURO back to user                        │
 │  ├── Clear unstakeAmount and unstakeRequestTime         │
-│  └── Emit Unstaked event                                │
+│  └── Emit QEUROUnstaked                                 │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -238,19 +260,19 @@ The cooldown system prevents rapid stake/unstake cycles and protects against man
 
 ```solidity
 // Step 1: Request unstake
-function requestUnstake(uint256 amount) external whenNotPaused nonReentrant;
+function requestUnstake(uint256 qeuroAmount) external nonReentrant;
 
 // Step 2: Finalize unstake (after cooldown)
 function unstake() external whenNotPaused nonReentrant;
 ```
 
-**Possible Errors**
+**Possible Reverts**
 
-| Error | Cause |
+| Condition | Revert |
 |-------|-------|
-| `CooldownNotComplete` | Cooldown not yet finished |
-| `NoUnstakeRequest` | No unstake request in progress |
-| `InsufficientStakedAmount` | Requested amount > staked |
+| Requested amount > staked amount | `InsufficientBalance` |
+| `unstake()` with no request in progress | `InvalidAmount` |
+| Cooldown not yet elapsed | `InvalidCondition` |
 
 **Cooldown Configuration**
 
@@ -258,58 +280,15 @@ function unstake() external whenNotPaused nonReentrant;
 // Configurable value via governance
 uint256 public unstakingCooldown;  // In seconds
 
-// Example: 7 days = 604800 seconds
+// Live: 7 days = 604800 seconds
 // Can be set to 0 to disable cooldown
 ```
-
-#### Reward Claims
-
-```solidity
-function claimStakingRewards() external whenNotPaused nonReentrant;
-```
-
-Allows the user to claim their `pendingRewards` in QEURO.
-
-***
-
-### 📦 Batch Operations
-
-To optimize gas on multiple operations:
-
-#### Batch Reward Claim
-
-```solidity
-function batchRewardClaim(address[] calldata users) 
-    external onlyRole(GOVERNANCE_ROLE) whenNotPaused nonReentrant;
-```
-
-**Characteristics**
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `MAX_REWARD_BATCH_SIZE` | 50 | Maximum users per batch |
-
-**Use Cases**
-
-- Automated reward distribution
-- Governance maintenance operations
-- Gas optimization for multiple claims
 
 ***
 
 ### 💸 Performance Fee
 
-The `performanceFee` is deducted from yield distributed to users.
-
-**Distribution Flow**
-
-```
-Gross Yield (from YieldShift)
-    │
-    ├── Performance Fee (currently 0, governance-settable) → Treasury
-    │
-    └── Net Yield → Users (via accumulatedYieldPerShare)
-```
+The `performanceFee` (currently 0) is deducted from yield distributed to users.
 
 **Tracking Variables**
 
@@ -327,13 +306,13 @@ uint256 public totalYieldDistributed;      // Total yield distributed
 
 ```solidity
 function getUserInfo(address user) external view returns (
-    uint128 qeuroBalance,
-    uint128 stakedAmount,
-    uint128 pendingRewards,
-    uint128 unstakeAmount,
-    uint96 depositHistory,
-    uint64 lastStakeTime,
-    uint64 unstakeRequestTime
+    uint256 qeuroBalance,
+    uint256 stakedAmount,
+    uint256 pendingRewards,
+    uint256 depositHistory,
+    uint256 lastStakeTime,
+    uint256 unstakeAmount,
+    uint256 unstakeRequestTime
 );
 ```
 
@@ -341,18 +320,25 @@ function getUserInfo(address user) external view returns (
 
 ```solidity
 function getPoolTotals() external view returns (
+    uint256 totalDeposits,
+    uint256 totalWithdrawals,
     uint256 totalStakes,
     uint256 totalUsers
 );
 
 function getPoolMetrics() external view returns (
+    uint256 totalUsers,
+    uint256 averageDeposit,
+    uint256 stakingRatio,
+    uint256 poolTVL
+);
+
+function getPoolConfiguration() external view returns (
     uint256 stakingAPY,
     uint256 depositAPY,
     uint256 minStakeAmount,
     uint256 unstakingCooldown,
-    uint256 performanceFee,
-    uint256 totalStakes,
-    uint256 totalYieldDistributed
+    uint256 performanceFee
 );
 ```
 
@@ -369,9 +355,15 @@ function getUserWithdrawals(address user) external view
 #### Analytics
 
 ```solidity
-function getPoolAnalytics() external view returns (...);
-function getPoolConfiguration() external view returns (...);
-function calculateProjectedRewards(address user, uint256 duration) 
+// Not a view: refreshes the oracle price before computing the USDC equivalent
+function getPoolAnalytics() external returns (
+    uint256 currentQeuroSupply,
+    uint256 usdcEquivalentAtCurrentRate,
+    uint256 totalUsers,
+    uint256 totalStakes
+);
+
+function calculateProjectedRewards(uint256 qeuroAmount, uint256 duration) 
     external view returns (uint256);
 ```
 
@@ -382,10 +374,10 @@ function calculateProjectedRewards(address user, uint256 duration)
 #### Emergency Unstake
 
 ```solidity
-function emergencyUnstake() external onlyRole(EMERGENCY_ROLE);
+function emergencyUnstake(address user, address recipient) external onlyRole(EMERGENCY_ROLE);
 ```
 
-Forces unstake for all users in case of emergency.
+Forces the unstake of **one user's** staked QEURO to a recipient, bypassing the cooldown. It is a per-user operation, not a global one.
 
 #### Pause
 
@@ -414,9 +406,8 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 ### 📏 Constants
 
 ```solidity
-uint256 public constant MAX_BATCH_SIZE = 100;        // Max batch deposits
-uint256 public constant MAX_REWARD_BATCH_SIZE = 50;  // Max batch claims
-uint256 public constant BLOCKS_PER_DAY = 7200;       // ~12 sec blocks
+uint256 public constant MAX_BATCH_SIZE = 100;        // Max items per deposit / withdraw / stake batch
+uint256 public constant MAX_REWARD_BATCH_SIZE = 50;  // Reserved; no public batch-claim function uses it
 uint256 public constant MAX_REWARD_PERIOD = 365 days;
 ```
 
@@ -425,17 +416,18 @@ uint256 public constant MAX_REWARD_PERIOD = 365 days;
 ### 📋 Events
 
 ```solidity
-event Deposited(address indexed user, uint256 usdcAmount, uint256 qeuroReceived);
-event Withdrawn(address indexed user, uint256 qeuroAmount, uint256 usdcReceived);
-event Staked(address indexed user, uint256 amount);
-event UnstakeRequested(address indexed user, uint256 amount, uint256 timestamp);
-event Unstaked(address indexed user, uint256 amount);
-event RewardsClaimed(address indexed user, uint256 amount);
-event YieldDistributed(uint256 amount, uint256 newAccumulatedYieldPerShare);
-event ParametersUpdated(uint256 stakingAPY, uint256 depositAPY, uint256 minStakeAmount, uint256 cooldown);
-event PerformanceFeeUpdated(uint256 oldFee, uint256 newFee);
+event UserDeposit(address indexed user, uint256 usdcAmount, uint256 qeuroMinted, uint256 timestamp);
+event UserWithdrawal(address indexed user, uint256 qeuroBurned, uint256 usdcReceived, uint256 timestamp);
+event UserDepositTracked(address indexed user, uint256 usdcAmount, uint256 qeuroReceived, uint256 oracleRatio, uint256 timestamp, uint256 blockNumber);
+event UserWithdrawalTracked(address indexed user, uint256 qeuroAmount, uint256 usdcReceived, uint256 oracleRatio, uint256 timestamp, uint256 blockNumber);
+event WithdrawalPending(address indexed user, uint256 amount);
+event PendingWithdrawalClaimed(address indexed user, uint256 amount);
+event QEUROStaked(address indexed user, uint256 qeuroAmount, uint256 timestamp);
+event QEUROUnstaked(address indexed user, uint256 qeuroAmount, uint256 timestamp);
+event PoolParameterUpdated(string indexed parameter, uint256 oldValue, uint256 newValue);
+event ETHRecovered(address indexed to, uint256 indexed amount);
 ```
 
 ***
 
-> **Summary**: The UserPool is the main user interaction contract, managing USDC deposits, QEURO staking with configurable APY, and reward distribution. The cooldown mechanism protects against manipulation, while batch operations optimize gas costs.
+> **Summary**: The UserPool is an optional batch interface over the vault — batched USDC→QEURO deposits and withdrawals with per-item slippage guards, QEURO staking with a governance-set APY and a 7-day unstaking cooldown, and per-user histories. The dApp's main flows go through `QuantillonVault` and the stQEURO series directly.

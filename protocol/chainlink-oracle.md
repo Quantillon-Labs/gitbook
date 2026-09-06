@@ -1,12 +1,14 @@
 # ChainlinkOracle
 
-## ChainlinkOracle: EUR/USD Price Infrastructure
+## ChainlinkOracle: Contract Reference
 
 ### 📋 Overview
 
-The ChainlinkOracle is the contract that manages integration with Chainlink price feeds to obtain real-time EUR/USD and USDC/USD prices. It includes robust security mechanisms like circuit breakers, data freshness validation, and timestamp manipulation protection.
+The ChainlinkOracle is the contract that integrates the Chainlink EUR/USD and USDC/USD price feeds on Base, with staleness validation, price bounds, a deviation circuit breaker, an L2 sequencer-uptime check and timestamp-manipulation protection.
 
-> **Role in the current architecture:** the ChainlinkOracle is now the **fallback** EUR/USD source (slot 0) behind the [OracleRouter](oracle-architecture.md). QEURO mint/redeem is priced by default off the EUR/USD market mid of the active hedge venue via slot 1, the **market** slot — currently hosting the `HyperliquidEurUsdOracle`, with a sibling `LighterEurUsdOracle` available as a switchable alternative. The ChainlinkOracle still provides **USDC/USD validation** for the protocol and acts as a **one-transaction fallback** (`switchOracle(0)`). The page below documents the ChainlinkOracle contract itself; see **[Oracle Architecture](oracle-architecture.md)** for how the two sources fit together.
+> **Role in the current architecture:** the ChainlinkOracle is the **fallback** EUR/USD source (OracleRouter slot 0) and the protocol's **USDC/USD** source. The active EUR/USD source is the market slot (slot 1, `HyperliquidEurUsdOracle`), and governance can revert to this contract in one transaction (`switchOracle(0)`). This page documents the contract itself; see **[Oracle Architecture](oracle-architecture.md)** for how the sources fit together.
+
+Live version: **1.0.4** · address `0xaEE3c9c298051ef7242882AbCaE2Fd12d29443E7` (Base mainnet).
 
 ***
 
@@ -23,12 +25,15 @@ contract ChainlinkOracle is
     UUPSUpgradeable
 ```
 
-**Chainlink Price Feeds**
+Plain UUPS proxy: upgrades are executed directly by the governance Safe (`UPGRADER_ROLE`), without the timelock used for the core protocol contracts.
 
-| Feed | Variable | Description |
-|------|----------|-------------|
-| EUR/USD | `eurUsdPriceFeed` | Euro price in dollars |
-| USDC/USD | `usdcUsdPriceFeed` | USDC price (validation) |
+**Chainlink Price Feeds (Base mainnet)**
+
+| Feed | Variable | Address | Description |
+|------|----------|---------|-------------|
+| EUR/USD | `eurUsdPriceFeed` | `0xc91D87E81faB8f93699ECf7Ee9B44D11e1D53F0F` | Euro price in dollars |
+| USDC/USD | `usdcUsdPriceFeed` | `0x7e860098F58bBFC8648a4311b374B1D669a2bc6B` | USDC price (validation) |
+| L2 sequencer uptime | `sequencerUptimeFeed` | `0xBCF85224fc0756B9Fa45aA7892530B47e10b6433` | Base sequencer status |
 
 ***
 
@@ -36,10 +41,12 @@ contract ChainlinkOracle is
 
 | Role | Responsibilities |
 |------|-----------------|
-| `DEFAULT_ADMIN_ROLE` | General administration |
-| `ORACLE_MANAGER_ROLE` | Feed configuration, bounds, tolerances |
-| `EMERGENCY_ROLE` | Circuit breaker, pause |
-| `UPGRADER_ROLE` | Contract upgrades |
+| `DEFAULT_ADMIN_ROLE` | Role management, treasury, recovery, dev-mode proposal/apply |
+| `ORACLE_MANAGER_ROLE` | Feed configuration, price bounds, USDC tolerance, sequencer feed |
+| `EMERGENCY_ROLE` | Circuit breaker trigger/reset, pause/unpause |
+| `UPGRADER_ROLE` | Contract upgrades (Safe-direct) |
+
+All four roles are held by the 2-of-3 governance Safe.
 
 ***
 
@@ -59,8 +66,8 @@ uint256 public constant BASIS_POINTS = 10000;
 // Timestamp protection
 uint256 public constant MAX_TIMESTAMP_DRIFT = 900;     // 15 minutes max drift
 
-// Blocks per hour (for block-based checks)
-uint256 public constant BLOCKS_PER_HOUR = 300;         // ~12 sec blocks
+// Dev mode two-step delay
+uint256 public constant DEV_MODE_DELAY = 48 hours;
 ```
 
 ***
@@ -69,11 +76,12 @@ uint256 public constant BLOCKS_PER_HOUR = 300;         // ~12 sec blocks
 
 #### Price Bounds
 
-| Variable | Type | Description | Default Value |
-|----------|------|-------------|---------------|
+| Variable | Type | Description | Live Value |
+|----------|------|-------------|------------|
 | `minEurUsdPrice` | `uint256` | Min EUR/USD price (18 dec) | 0.80e18 |
 | `maxEurUsdPrice` | `uint256` | Max EUR/USD price (18 dec) | 1.40e18 |
 | `usdcToleranceBps` | `uint256` | USDC tolerance (BPS) | 200 (2%) |
+| `sequencerGracePeriod` | `uint256` | Seconds after a sequencer restart before prices are trusted | 3600 (1 hour) |
 
 #### State Variables
 
@@ -82,18 +90,21 @@ uint256 public constant BLOCKS_PER_HOUR = 300;         // ~12 sec blocks
 | `lastValidEurUsdPrice` | `uint256` | Last valid EUR/USD price |
 | `lastPriceUpdateTime` | `uint256` | Last update timestamp |
 | `lastPriceUpdateBlock` | `uint256` | Last update block |
-| `circuitBreakerTriggered` | `bool` | Circuit breaker state |
-| `devModeEnabled` | `bool` | Development mode active |
+| `circuitBreakerTriggered` | `bool` | Circuit breaker state (live: `false`) |
+| `devModeEnabled` | `bool` | Development mode active (live: `false`) |
+| `pendingDevMode` / `devModePendingAt` | `bool` / `uint256` | Two-step dev-mode proposal state |
 
 ***
 
 ### 🔄 Price Retrieval
 
-#### getEurUsdPrice Function
+#### getEurUsdPrice
 
 ```solidity
-function getEurUsdPrice() external view returns (uint256 price);
+function getEurUsdPrice() external returns (uint256 price, bool isValid);
 ```
+
+Not a `view`: a valid read advances `lastValidEurUsdPrice` / `lastPriceUpdateTime` / `lastPriceUpdateBlock` and emits `PriceUpdated`. On any failed check the function returns `(lastValidEurUsdPrice, false)` — it never reverts. **Consumers treat `isValid = false` as a hard stop**: `QuantillonVault` reverts mint and redeem on an invalid price.
 
 **Validation Flow**
 
@@ -101,93 +112,78 @@ function getEurUsdPrice() external view returns (uint256 price);
 ┌─────────────────────────────────────────────────────────────┐
 │                    PRICE VALIDATION FLOW                     │
 ├─────────────────────────────────────────────────────────────┤
-│  1. Fetch EUR/USD from Chainlink                            │
-│     └── latestRoundData()                                   │
+│  0. Circuit breaker active or contract paused?              │
+│     └── yes → (lastValidEurUsdPrice, false)                 │
 │                                                              │
-│  2. Validate Timestamp                                       │
-│     ├── updatedAt + MAX_STALENESS > block.timestamp         │
-│     └── updatedAt <= block.timestamp + MAX_TIMESTAMP_DRIFT  │
+│  1. L2 sequencer uptime check (Base)                         │
+│     ├── sequencer down, or restarted < sequencerGracePeriod │
+│     │   ago, or malformed round → (lastValid, false)        │
 │                                                              │
-│  3. Validate Price Bounds                                    │
+│  2. Fetch EUR/USD from Chainlink (latestRoundData)          │
+│     └── roundId == answeredInRound, startedAt <= updatedAt  │
+│                                                              │
+│  3. Validate Timestamp                                       │
+│     ├── updatedAt + MAX_PRICE_STALENESS > now                │
+│     └── updatedAt <= now + MAX_TIMESTAMP_DRIFT               │
+│                                                              │
+│  4. Validate Price Bounds                                    │
 │     └── minEurUsdPrice <= price <= maxEurUsdPrice           │
 │                                                              │
-│  4. Validate Price Deviation (if !devModeEnabled)           │
+│  5. Validate Price Deviation (if !devModeEnabled)           │
 │     └── |price - lastValidPrice| <= 5% of lastValidPrice    │
 │                                                              │
-│  5. Update State                                             │
-│     ├── lastValidEurUsdPrice = price                        │
-│     ├── lastPriceUpdateTime = block.timestamp               │
-│     └── lastPriceUpdateBlock = block.number                 │
-│                                                              │
-│  6. Return price (18 decimals)                               │
+│  6. Commit: update lastValid* state, emit PriceUpdated       │
+│  7. Return (price, true) — 18 decimals                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-#### Circuit Breaker
-
-If validation fails:
+#### getUsdcUsdPrice
 
 ```solidity
-// Circuit breaker triggered
-circuitBreakerTriggered = true;
-
-// Return last valid price as fallback
-return lastValidEurUsdPrice;
+function getUsdcUsdPrice() external view returns (uint256 price, bool isValid);
 ```
+
+Returns the Chainlink USDC/USD price scaled to 18 decimals. If the feed is stale (older than 25 hours), malformed, or the price is outside `1.00 ± usdcToleranceBps` (0.98–1.02), the function returns `(1e18, false)`: the price defaults to $1.00 and the invalid flag is passed to consumers. A USDC depeg does **not** trip the EUR/USD circuit breaker.
 
 ***
 
 ### ⏱️ Timestamp Validation
 
-#### Manipulation Protection
-
-Miners can slightly manipulate `block.timestamp`. The contract implements two protections:
-
-**1. Timestamp Drift Check**
+Sequencers can slightly manipulate `block.timestamp`. The contract rejects any feed timestamp in the future beyond `MAX_TIMESTAMP_DRIFT` and any round older than the staleness window:
 
 ```solidity
-// Oracle timestamp must not be in the future
-if (updatedAt > block.timestamp + MAX_TIMESTAMP_DRIFT) {
-    revert InvalidTimestamp();
-}
+// Oracle timestamp must not be in the future or stale
+updatedAt <= now + MAX_TIMESTAMP_DRIFT  &&  updatedAt + MAX_PRICE_STALENESS > now
 ```
 
-**2. Block-Based Staleness**
+***
+
+### 🛰️ Sequencer Uptime Check
+
+Base is an L2: if the sequencer is down, Chainlink rounds stop updating while their timestamps may still look fresh. The oracle therefore reads the Chainlink **L2 sequencer uptime feed** on every EUR/USD read and refuses to trust prices while the sequencer is reported down and for `sequencerGracePeriod` (1 hour) after it comes back.
 
 ```solidity
-// Variable tracking last update block
-uint256 public lastPriceUpdateBlock;
+AggregatorV3Interface public sequencerUptimeFeed;  // address(0) disables the check (L1)
+uint256 public sequencerGracePeriod;                // seconds; live 3600
 
-// Additional block-based check
-function _isBlockBasedStale() internal view returns (bool) {
-    return block.number > lastPriceUpdateBlock + BLOCKS_PER_HOUR;
-}
+function setSequencerUptimeFeed(address feed, uint256 gracePeriod)
+    external onlyRole(ORACLE_MANAGER_ROLE);
+// emits SequencerFeedUpdated(feed, gracePeriod)
 ```
-
-**Why Both?**
-
-| Method | Advantage | Limitation |
-|--------|-----------|------------|
-| **Timestamp** | Temporal precision | Manipulable by miners |
-| **Block number** | Not manipulable | Varies by chain |
-
-Combining both provides robust protection.
 
 ***
 
 ### 🧪 Dev Mode
 
-#### What is Dev Mode?
-
-`devModeEnabled` disables certain validations to facilitate testing and development.
+`devModeEnabled` disables the 5% deviation check (staleness and bounds stay active) to facilitate testing on local chains and testnets. Enabling or disabling it is a **two-step, delayed** operation:
 
 ```solidity
-bool public devModeEnabled;
+function proposeDevMode(bool enabled) external onlyRole(DEFAULT_ADMIN_ROLE);
+// records pendingDevMode and devModePendingAt = now + DEV_MODE_DELAY (48 hours)
+// emits DevModeProposed(pending, activatesAt)
 
-function setDevMode(bool enabled) external onlyRole(ORACLE_MANAGER_ROLE) {
-    devModeEnabled = enabled;
-    emit DevModeToggled(enabled, msg.sender);
-}
+function applyDevMode() external onlyRole(DEFAULT_ADMIN_ROLE);
+// reverts before devModePendingAt; emits DevModeToggled(enabled, caller)
 ```
 
 **Dev Mode Impact**
@@ -198,140 +194,81 @@ function setDevMode(bool enabled) external onlyRole(ORACLE_MANAGER_ROLE) {
 | Price bounds | ✅ Active | ✅ Active |
 | Price deviation (5%) | ✅ Active | ❌ Disabled |
 
-**When to Use?**
-
-- Local tests (Anvil/Hardhat)
-- Testnets with simulated prices
-- Edge case debugging
-
-> ⚠️ **WARNING**: Dev Mode should NEVER be enabled in production on mainnet.
+> Live state on Base mainnet: **disabled** (`devModeEnabled = false`). The 48-hour delay makes any change visible on-chain before it takes effect.
 
 ***
 
 ### 🚨 Circuit Breaker
 
-#### Triggers
+`circuitBreakerTriggered` latches the oracle into last-valid-price mode: every read returns `(lastValidEurUsdPrice, false)` until the breaker is reset.
 
-The circuit breaker is automatically triggered when:
+**How it is set**
 
-1. **Price out of bounds**: `price < minEurUsdPrice` or `price > maxEurUsdPrice`
-2. **Excessive deviation**: `|price - lastPrice| > 5%` (if devMode off)
-3. **Stale data**: EUR/USD not updated for 2 hours (USDC/USD: 25 hours)
-4. **Invalid timestamp**: Data in the future
+1. **Manually**, by the emergency role: `triggerCircuitBreaker()`.
+2. **Automatically** when the contract refreshes its baseline (initialization and `resetCircuitBreaker()`): if the freshly fetched EUR/USD price fails validation (stale, out of bounds, invalid timestamp, deviation > 5%), the breaker is set again and `CircuitBreakerTriggered` is emitted.
 
-#### Manual Trigger
+A failed validation on an ordinary `getEurUsdPrice()` read does not latch the breaker: it simply returns `(lastValidEurUsdPrice, false)`, which already stops mint/redeem.
 
 ```solidity
 function triggerCircuitBreaker() external onlyRole(EMERGENCY_ROLE);
-```
-
-#### Reset
-
-```solidity
 function resetCircuitBreaker() external onlyRole(EMERGENCY_ROLE);
 ```
 
-**Reset Conditions**:
-- Oracle must provide fresh data
-- Price must be within bounds
-- Must be called manually after investigation
-
-***
-
-### 📊 USDC Validation
-
-The contract also validates that USDC stays close to $1.00:
-
-```solidity
-// Tolerance: 2% (200 basis points)
-uint256 public usdcToleranceBps = 200;
-
-// USDC must be between $0.98 and $1.02
-function _validateUsdcPrice() internal view {
-    uint256 usdcPrice = _fetchUsdcPrice();
-    uint256 deviation = |usdcPrice - 1e18| * BASIS_POINTS / 1e18;
-    
-    if (deviation > usdcToleranceBps) {
-        // USDC is depegged → circuit breaker
-        _triggerCircuitBreaker("USDC_DEPEG");
-    }
-}
-```
-
-**Why This Matters?**
-
-- USDC is the protocol's collateral
-- A USDC depeg directly affects collateral value
-- The protocol must react immediately in case of depeg
+**Reset conditions**: the reset re-fetches the price; it only clears the breaker if Chainlink provides fresh data within bounds. It must be called manually after investigation.
 
 ***
 
 ### 📊 View Functions
 
-#### Oracle Status
-
 ```solidity
-function getOracleStatus() external view returns (
-    uint256 currentPrice,
-    uint256 lastUpdateTime,
-    uint256 lastUpdateBlock,
-    bool circuitBreakerActive,
-    bool devModeActive
-);
-```
+// Health summary
+function getOracleHealth() external view
+    returns (bool isHealthy, bool eurUsdFresh, bool usdcUsdFresh);
 
-#### Health Check
+// EUR/USD detail
+function getEurUsdDetails() external view
+    returns (uint256 currentPrice, uint256 lastValidPrice, uint256 lastUpdate, bool isStale, bool withinBounds);
 
-```solidity
-function getOracleHealth() external view returns (
-    bool isHealthy,
-    bool isPriceStale,
-    bool isCircuitBreakerActive
-);
-```
+// Configuration snapshot
+function getOracleConfig() external view
+    returns (uint256 minPrice, uint256 maxPrice, uint256 maxStaleness, uint256 usdcTolerance, bool circuitBreakerActive);
 
-#### Price Info
+// USDC/USD
+function getUsdcUsdPrice() external view returns (uint256 price, bool isValid);
 
-```solidity
-function getPriceInfo() external view returns (
-    uint256 eurUsdPrice,
-    uint256 usdcUsdPrice,
-    uint256 timestamp,
-    bool isStale
-);
+// Feed wiring
+function getPriceFeedAddresses() external view
+    returns (address eurUsdFeedAddress, address usdcUsdFeedAddress, uint8 eurUsdDecimals, uint8 usdcUsdDecimals);
+function checkPriceFeedConnectivity() external view
+    returns (bool eurUsdConnected, bool usdcUsdConnected, uint80 eurUsdLatestRound, uint80 usdcUsdLatestRound);
 ```
 
 ***
 
 ### ⚙️ Configuration
 
-#### Update Price Bounds
-
 ```solidity
-function updatePriceBounds(uint256 _minPrice, uint256 _maxPrice) 
+// Price bounds (18 decimals) — reverts if _minPrice == 0 or _maxPrice <= _minPrice
+function updatePriceBounds(uint256 _minPrice, uint256 _maxPrice)
     external onlyRole(ORACLE_MANAGER_ROLE);
+
+// USDC tolerance in basis points
+function updateUsdcTolerance(uint256 newToleranceBps)
+    external onlyRole(ORACLE_MANAGER_ROLE);
+
+// Chainlink feed addresses
+function updatePriceFeeds(address _eurUsdFeed, address _usdcUsdFeed)
+    external onlyRole(ORACLE_MANAGER_ROLE);
+
+// L2 sequencer uptime feed and grace period
+function setSequencerUptimeFeed(address feed, uint256 gracePeriod)
+    external onlyRole(ORACLE_MANAGER_ROLE);
+
+// Treasury for recovered funds
+function updateTreasury(address _treasury) external onlyRole(DEFAULT_ADMIN_ROLE);
 ```
 
-**Validations**:
-- `_minPrice > 0`
-- `_maxPrice > _minPrice`
-- No radical changes (guardrails)
-
-#### Update USDC Tolerance
-
-```solidity
-function updateUsdcTolerance(uint256 _toleranceBps) 
-    external onlyRole(ORACLE_MANAGER_ROLE);
-```
-
-#### Update Price Feeds
-
-```solidity
-function updatePriceFeeds(address _eurUsdFeed, address _usdcUsdFeed) 
-    external onlyRole(ORACLE_MANAGER_ROLE);
-```
-
-> ⚠️ Changing price feeds is a critical operation that should go through a timelock.
+> Changing price feeds is a critical operation. It is executed by the governance Safe (2-of-3); the oracle contracts are not behind the upgrade timelock.
 
 ***
 
@@ -342,22 +279,23 @@ function updatePriceFeeds(address _eurUsdFeed, address _usdcUsdFeed)
 | Protection | Description |
 |------------|-------------|
 | **Staleness Check** | EUR/USD price > 2h = stale (USDC/USD: > 25h) |
-| **Timestamp Drift** | No future prices |
-| **Block Staleness** | Double-check based on blocks |
+| **Timestamp Drift** | No future prices (15-minute drift allowance) |
+| **Round Integrity** | `roundId == answeredInRound`, `startedAt <= updatedAt`, price > 0 |
+| **Sequencer Uptime** | No prices while the Base sequencer is down or within 1 hour of a restart |
 | **Price Bounds** | EUR/USD between 0.80 and 1.40 |
-| **Deviation Limit** | Max 5% between updates |
-| **USDC Validation** | USDC must stay ~$1.00 |
-| **Circuit Breaker** | Automatic fallback |
-| **Role-Based Access** | Permission separation |
+| **Deviation Limit** | Max 5% between consecutive valid prices |
+| **USDC Validation** | USDC must stay within ±2% of $1.00, else `isValid = false` |
+| **Circuit Breaker** | Last-valid-price mode with `isValid = false` |
+| **Role-Based Access** | Permission separation, all roles on the governance Safe |
 
 #### Recovery Functions
 
 ```solidity
-// Recover tokens sent by mistake
+// Recover tokens sent by mistake (to treasury)
 function recoverToken(address token, uint256 amount) 
     external onlyRole(DEFAULT_ADMIN_ROLE);
 
-// Recover ETH sent by mistake
+// Recover ETH sent by mistake (to treasury)
 function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 ```
 
@@ -366,35 +304,15 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 ### 📋 Events
 
 ```solidity
-event PriceUpdated(
-    uint256 eurUsdPrice, 
-    uint256 usdcUsdPrice, 
-    uint256 indexed timestamp
-);
-
-event CircuitBreakerTriggered(
-    uint256 attemptedPrice, 
-    uint256 lastValidPrice, 
-    string indexed reason
-);
-
+event PriceUpdated(uint256 eurUsdPrice, uint256 usdcUsdPrice, uint256 indexed timestamp);
+event CircuitBreakerTriggered(uint256 attemptedPrice, uint256 lastValidPrice, string indexed reason);
 event CircuitBreakerReset(address indexed admin);
-
-event PriceBoundsUpdated(
-    string indexed boundType, 
-    uint256 newMinPrice, 
-    uint256 newMaxPrice
-);
-
-event PriceFeedsUpdated(
-    address newEurUsdFeed, 
-    address newUsdcUsdFeed
-);
-
+event PriceBoundsUpdated(string indexed boundType, uint256 newMinPrice, uint256 newMaxPrice);
+event PriceFeedsUpdated(address newEurUsdFeed, address newUsdcUsdFeed);
+event SequencerFeedUpdated(address indexed feed, uint256 gracePeriod);
+event DevModeProposed(bool pending, uint256 activatesAt);
 event DevModeToggled(bool enabled, address indexed caller);
-
 event TreasuryUpdated(address indexed newTreasury);
-
 event ETHRecovered(address indexed to, uint256 amount);
 ```
 
@@ -406,11 +324,12 @@ event ETHRecovered(address indexed to, uint256 amount);
 
 ```
 Chainlink EUR/USD: 1.08000000 (8 decimals)
+→ Sequencer up ✅
 → Converted to 18 decimals: 1.080000000000000000
 → Bounds: 0.80 ≤ 1.08 ≤ 1.40 ✅
 → Staleness: 5 minutes < 2 hours ✅
 → Deviation: 0.5% < 5% ✅
-→ Return: 1.08e18
+→ Return: (1.08e18, true)
 ```
 
 #### Scenario 2: Stale Price
@@ -418,8 +337,7 @@ Chainlink EUR/USD: 1.08000000 (8 decimals)
 ```
 Chainlink EUR/USD: 1.08 (3 hours ago)
 → Staleness: 3 hours > 2 hours ❌
-→ Circuit breaker triggered
-→ Return: lastValidEurUsdPrice (fallback)
+→ Return: (lastValidEurUsdPrice, false) → vault reverts mint/redeem
 ```
 
 #### Scenario 3: Flash Crash
@@ -427,8 +345,7 @@ Chainlink EUR/USD: 1.08 (3 hours ago)
 ```
 Chainlink EUR/USD: 0.70 (sudden crash)
 → Bounds: 0.70 < 0.80 ❌
-→ Circuit breaker triggered
-→ Return: lastValidEurUsdPrice (1.08e18 fallback)
+→ Return: (lastValidEurUsdPrice, false) → vault reverts mint/redeem
 ```
 
 #### Scenario 4: USDC Depeg
@@ -436,39 +353,18 @@ Chainlink EUR/USD: 0.70 (sudden crash)
 ```
 Chainlink USDC/USD: 0.95
 → Deviation: |0.95 - 1.00| = 5% > 2% ❌
-→ Circuit breaker triggered
-→ Alert: collateral potentially depreciated
+→ getUsdcUsdPrice() returns (1.00e18, false)
+→ Consumers treat the invalid flag as a stop; the EUR/USD breaker is untouched
+```
+
+#### Scenario 5: Sequencer Restart
+
+```
+Base sequencer back online 20 minutes ago
+→ 20 minutes < sequencerGracePeriod (1 hour) ❌
+→ Return: (lastValidEurUsdPrice, false) until the grace period has elapsed
 ```
 
 ***
 
-### 🔗 Protocol Integration
-
-> The EUR/USD path below applies **when the ChainlinkOracle is the selected source in the OracleRouter** (fallback slot 0). In the live configuration, EUR/USD is served by the market-slot oracle (slot 1, currently `HyperliquidEurUsdOracle`) and the ChainlinkOracle serves USDC/USD validation — see [Oracle Architecture](oracle-architecture.md).
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                 ORACLE INTEGRATION                           │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  Chainlink Data Feeds                                        │
-│       │                                                      │
-│       ▼                                                      │
-│  ChainlinkOracle                                            │
-│       │                                                      │
-│       ├── EUR/USD price (validated)                          │
-│       │       │                                              │
-│       │       ├─► QuantillonVault (mint/redeem pricing)     │
-│       │       ├─► HedgerPool (P&L calculations)             │
-│       │       └─► UserPool (analytics)                       │
-│       │                                                      │
-│       └── USDC/USD price (validation only)                   │
-│               │                                              │
-│               └─► Collateral health monitoring              │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-```
-
-***
-
-> **Summary**: The ChainlinkOracle is the protocol's **fallback** EUR/USD source (OracleRouter slot 0) and its USDC/USD validation source, with robust validations. Security mechanisms (staleness — 2h EUR/USD, 25h USDC/USD — bounds, deviation, circuit breaker) protect against manipulation and corrupted data. Dev Mode enables testing but should never be enabled in production.
+> **Summary**: The ChainlinkOracle is the protocol's **fallback** EUR/USD source (OracleRouter slot 0) and its USDC/USD source. Every read is validated for sequencer uptime, freshness, bounds and deviation; on any failure it returns the last valid price flagged invalid, which stops mint/redeem rather than ever pricing QEURO wrongly. Dev mode (deviation check off) is a 48-hour two-step change and is disabled on mainnet.

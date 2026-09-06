@@ -59,7 +59,7 @@ A decentralized oracle network used by Quantillon as the **fallback** EUR/USD so
 ### Overcollateralization
 
 A system where the value of pledged collateral exceeds the value of the issued loan or stablecoin.\
-**Minting QEURO requires the protocol collateralization ratio to stay above the governance-set minting floor (105% at launch, 102.5% under the September 2026 margin policy); 101% is the critical threshold that triggers liquidation mode.**
+**Minting QEURO requires the protocol collateralization ratio to stay above the governance-set minting floor — currently 102.5% (since 2 September 2026; 105% at launch); 101% is the critical threshold that triggers liquidation mode.**
 
 ***
 
@@ -102,7 +102,7 @@ The global market for currency trading. Quantillon leverages its depth and liqui
 
 ### Hedgers
 
-Participants who provide USDC to hedge against EUR/USD volatility, in exchange for compensation via the Yield Shift mechanism.
+Participants who provide USDC to hedge against EUR/USD volatility, in exchange for compensation via the Yield Shift mechanism. In the current phase a single designated hedger (Quantillon Labs' hedging engine, executing on Hyperliquid) fills this role — see the HedgerPool page.
 
 ***
 
@@ -119,15 +119,15 @@ Examples: **TVL**, **swap volume**, **user base**.
 
 ***
 
-### Lighter
-
-A perpetual-futures DEX built on **zkLighter**, an Ethereum-anchored ZK-rollup with validity proofs for matching and liquidations. Supported by Quantillon as an **alternative hedge and oracle venue** (not yet active); the hedge-execution venue and the oracle venue always switch together.
-
-***
-
 ### Liquidity by Design
 
 Quantillon's strategy of leveraging **existing liquidity** (USDC and Forex) instead of building new liquidity from scratch—reducing costs and slippage.
+
+***
+
+### Margin Rebalancing
+
+The operational policy, in force since September 2026, under which Quantillon Labs' hedging engine keeps the collateral of the two legs of the EUR/USD hedge — the HedgerPool position on Base and the Hyperliquid perpetual — near a 2.5% equity-to-notional target through bounded, monitored USDC transfers. The on-chain HedgerPool minimum margin ratio is 250 bps (2.5%) and the minting floor is 102.5% — see the HedgerPool page.
 
 ***
 
@@ -157,17 +157,19 @@ Quantillon’s euro-pegged stablecoin, overcollateralized and backed primarily b
 
 ### $QTI Token
 
-Quantillon’s native governance token. Used for:
+Quantillon’s native governance token. **Dormant** (deployed with a 100M supply cap, live supply 0, no mint path). Intended for protocol governance once activated; until then the protocol is governed by a 2-of-3 Safe with a 12-hour upgrade timelock.
 
-* Protocol governance
-* Reward distribution
-* Incentivizing participation
+***
+
+### Quantillon Rewards (QP)
+
+An off-chain loyalty program operated by Quantillon Labs that records points ("QP") for QEURO depositors and stakers. QP have no monetary value and confer no right to any token or allocation. The terms are published (Rewards Program Terms); the program is not yet open in the application.
 
 ***
 
 ### RWAs (Real World Assets)
 
-Tokenized representations of real-world financial instruments (e.g., Treasury Bills), used as collateral in Quantillon vaults.
+Tokenized representations of real-world financial instruments (e.g., Treasury Bills). Not used by the protocol today; an RWA-backed venue could be onboarded as an external staking vault in a future phase, subject to governance.
 
 ***
 

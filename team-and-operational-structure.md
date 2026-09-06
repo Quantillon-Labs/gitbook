@@ -16,7 +16,7 @@ With **20 years of experience** in software engineering and project leadership, 
 
 Quantillon's core team includes **two full-stack blockchain developers** specializing in Solidity, DeFi integrations, and protocol-level testing. The product division includes a **UX/UI designer** and a **communications strategist** responsible for user onboarding, documentation, and market engagement.
 
-This lean structure ensures rapid iteration while maintaining rigorous technical standards. Team roles are documented on-chain for transparency and incentivized through long-term vesting in $QTI tokens.
+This lean structure ensures rapid iteration while maintaining rigorous technical standards. Team roles are intended to be incentivized through long-term vesting in $QTI tokens once the token is activated (QTI is currently dormant, with no tokens issued).
 
 ### Organizational Entities
 
@@ -24,7 +24,7 @@ To manage legal exposure, regulatory dialogue, and decentralized operations, Qua
 
 **🔗 Quantillon Protocol (on-chain)**
 
-**Fully decentralized smart contracts** governed by $QTI holders. Responsible for minting, vault logic, hedging infrastructure, and governance proposals.
+The on-chain smart contracts responsible for minting, vault logic, hedging infrastructure and governance proposals — governed today by the 2-of-3 governance Safe with a 12-hour upgrade timelock, and by $QTI holders once governance is activated (see [Quantillon DAO](quantillon-dao.md)).
 
 **🔬 Quantillon Labs (development)**
 
@@ -32,8 +32,8 @@ A **French SAS** (Mérignac, France — see the [Legal Notice](complementary-inf
 
 **🏛️ Quantillon Foundation (compliance — planned)**
 
-A **planned future non-profit entity**, with jurisdiction to be determined, that will interface with regulators, auditors, and legal stakeholders once established. It is intended to safeguard multisig access, publish disclosures, and facilitate DAO transitions. Until then, these responsibilities sit with Quantillon Labs.
+A **planned future entity**, with legal form and jurisdiction to be determined, that will interface with regulators, auditors, and legal stakeholders once established. It is intended to safeguard multisig access, publish disclosures, and facilitate DAO transitions. Until then, these responsibilities sit with Quantillon Labs.
 
-> **This tripartite model preserves decentralization while ensuring institutional credibility and legal defensibility—especially relevant under MiCA's evolving guidance.**
+> **This tripartite model is designed to support progressive decentralization while ensuring institutional credibility and legal defensibility—especially relevant under MiCA's evolving guidance.**
 
 Quantillon's human capital strategy focuses on high-leverage contributors, external auditors, and community-aligned governance. The team is well-positioned to evolve into a DAO-governed protocol with scalable institutional interfaces.

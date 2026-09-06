@@ -1,6 +1,6 @@
 # Market Landscape & Competitive Analysis
 
-### 📊 Global Stablecoin Market Overview
+### 📊 Global Stablecoin Market Overview (market data as of mid-2025)
 
 The stablecoin market has reached unprecedented scale, with total market capitalization hitting $246 billion by mid-2025, reflecting a 17% year-over-year increase. Market analysts project explosive growth from USD 230 billion in 2025 to USD 2 trillion by the end of 2028, driven by institutional adoption and expanding use cases. USDT and USDC together account for over 90% of the stablecoin market, demonstrating overwhelming USD dominance in the sector.
 
@@ -60,7 +60,7 @@ QEURO inherits USDC liquidity on the user side and Forex liquidity via the hedge
 
 **⚖️ Delta-Neutral Hedging**
 
-Unlike existing euro stablecoins, the QEURO deployment uses Quantillon's permissionless hedging layer to let collateral providers neutralize EUR/USD exposure through protocol-native instruments. This supports peg stability and institutional hedging needs.
+Unlike existing euro stablecoins, the QEURO deployment uses Quantillon's protocol-native hedging layer (a single designated hedger in the current phase) to neutralize EUR/USD exposure through protocol-native instruments. This supports peg stability and institutional hedging needs.
 
 **📈 Yield Shift Mechanism**
 
@@ -77,8 +77,8 @@ These components create a sustainable first deployment that addresses both suppl
 | **⚖️ Hedging Mechanism**  | ✅ **Delta-neutral hedgers**   | ❌ None              | ❌ None         | ❌ None        | ⚠️ Dynamic reserves |
 | **🏛️ Governance**        | ✅ **Progressive decentralization** | ❌ Centralized | ❌ Centralized  | ❌ Centralized | ✅ DAO               |
 | **🔗 DeFi Integration**   | ✅ **Full composability**      | ⚠️ Limited          | ❌ Poor         | ❌ Poor        | ⚠️ Moderate         |
-| **⚖️ Regulatory Clarity** | ✅ **MiCA Recital 22 exemption** | ✅ Clear          | ⚠️ Unclear     | ❌ Concerns    | ⚠️ Evolving         |
-| **💰 Capital Efficiency** | ✅ **≥105% overcollateralized** | ✅ 1:1 backed      | ✅ 1:1 backed   | ⚠️ Unclear    | ❌ Variable          |
+| **⚖️ Regulatory Clarity** | 🎯 **Targeting the MiCA Recital 22 exemption** | ✅ Clear          | ⚠️ Unclear     | ❌ Concerns    | ⚠️ Evolving         |
+| **💰 Capital Efficiency** | ✅ **≥102.5% overcollateralized (governance-set floor)** | ✅ 1:1 backed      | ✅ 1:1 backed   | ⚠️ Unclear    | ❌ Variable          |
 
 ***
 

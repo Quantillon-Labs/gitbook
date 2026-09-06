@@ -22,7 +22,7 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 | **Symbol**        | QTI                         | Memorable, brandable ticker    |
 | **Standard**      | ERC-20 (UUPS Upgradeable)   | Future-proof with security     |
 | **Network**       | Base L2 (Primary)           | L2 efficiency and lower costs  |
-| **Total Supply**  | 100,000,000 QTI (Fixed)     | Scarcity-driven value model    |
+| **Supply cap**    | 100,000,000 QTI (`TOTAL_SUPPLY_CAP`; live supply 0) | Scarcity-driven value model    |
 | **Decimals**      | 18                          | Full ERC-20 compatibility      |
 | **Contract Type** | OpenZeppelin + Custom Logic | Battle-tested + innovation     |
 
@@ -32,8 +32,6 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 * **On-Chain Governance**: Proposal creation, voting, and execution
 * **Emergency Controls**: Pausable with time-locked upgrades via UUPS
 * **Progressive Decentralization**: Configurable decentralization levels
-
-> **🚧 Roadmap Features**: Cross-chain compatibility, meta-transactions (EIP-2771), and snapshot integration are planned for future phases.
 
 ***
 
@@ -84,7 +82,7 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 * **Lock Periods**: 7 days minimum to 365 days (1 year) maximum
 * **Voting Power**: Linear multiplier up to 4x base weight at max lock
 * **Decay Mechanism**: Gradual reduction until unlock
-* **Delegation**: Transferable voting rights with penalties
+* **Delegation**: not implemented — there is no delegation function in the deployed contract
 
 **Governance Parameters (as coded, inactive while QTI is dormant)**
 
@@ -104,8 +102,6 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 1. **QEURO Operations**: mint/redeem fees via QuantillonVault — currently 0, governance-settable up to 5%
 2. **Yield Fees**: per-series stQEURO yield fee (currently 0, capped at 20%) and the treasury share of harvested external-vault yield
 3. **Hedger Position Fees**: entry/exit/margin fees (currently 0, governance-settable) plus a 20% reward fee split on hedger rewards
-
-> **🚧 Future Revenue**: Cross-chain bridge fees and additional vault fees are planned for future protocol phases.
 
 **Revenue Allocation Model (as coded — FeeCollector)**
 
@@ -156,98 +152,26 @@ Where:
 
 > **Note**: Additional whale protection mechanisms (voting caps, sybil resistance) may be implemented via governance proposals.
 
-**Market Stability Mechanisms**
-
-* **Liquidity Backstops**: Emergency AMM support during volatility
-* **Circuit Breakers**: Trading halts during extreme price movements
-* **Buyback Programs**: Automated market support during downturns
-* **Burn Mechanisms**: Deflationary pressure during surplus periods
-
 #### 🔐 Security & Risk Management
 
 **Smart Contract Security**
 
-* **Audit Process**: Independent security reviews before mainnet
+* **Audit Process**: independent audit with on-chain remediation (July 2026)
 * **OpenZeppelin Base**: Battle-tested upgradeable contracts
-* **Bug Bounty Program**: Planned for post-launch (amounts TBD via governance)
-* **Continuous Monitoring**: Real-time monitoring via OpenZeppelin Defender
+* **Bug Bounty Program**: planned (amounts TBD)
+* **Continuous Monitoring**: independent hedging/oracle watchdog with automatic pause and alerting
 
 **Operational Security**
 
 * **Multi-Sig Treasury**: 2-of-3 Gnosis Safe
 * **Time-Lock Upgrades**: 12-hour OZ TimelockController on core-contract upgrades
 * **Emergency Procedures**: Rapid response for critical threats
-* **Insurance Coverage**
 
 ***
 
-### Governance Evolution Roadmap
+### Governance Activation
 
-#### Phase 1: Foundation (Months 1-6)
-
-* **Bootstrap Governance**: Core team + community council
-* **Basic Voting**: Simple proposals with 48-hour voting periods
-* **Treasury Management**: Multi-sig controlled with transparency reports
-
-#### Phase 2: Expansion (Months 7-18)
-
-* **veQTI Launch**: Vote-escrow system implementation
-* **Delegation Network**: Voter delegation with incentives
-* **Advanced Proposals**: Multi-option voting and quadratic mechanisms
-
-#### Phase 3: Maturation (Months 19-36)
-
-* **Full Decentralization**: Community-controlled protocol upgrades
-* **Cross-Chain Governance**: Multi-network voting coordination
-* **Algorithmic Management**: Automated parameter adjustments
-
-#### Phase 4: Innovation (Months 37+)
-
-* **AI-Assisted Governance**: Machine learning for optimal parameters
-* **Futarchy Integration**: Prediction market-based decision making
-* **Meta-Governance**: Participation in broader DeFi governance
-
-***
-
-### Financial Modeling & Projections
-
-#### Conservative Growth Scenario
-
-| Metric                | Year 1 | Year 2 | Year 3 | Year 4 | Year 5 |
-| --------------------- | ------ | ------ | ------ | ------ | ------ |
-| **QEURO Supply**      | €25M   | €100M  | €300M  | €600M  | €1B    |
-| **Protocol Revenue**  | €375K  | €2.5M  | €6M    | €12M   | €20M   |
-| **QTI Market Cap**    | $15M   | $50M   | $120M  | $200M  | $300M  |
-| **Treasury Value**    | €1M    | €8M    | €25M   | €60M   | €120M  |
-| **Staking APY**       | 18%    | 15%    | 12%    | 10%    | 8%     |
-| **Active Governance** | 15%    | 25%    | 35%    | 45%    | 55%    |
-
-#### Optimistic Growth Scenario
-
-| Metric                | Year 1 | Year 2 | Year 3 | Year 4 | Year 5 |
-| --------------------- | ------ | ------ | ------ | ------ | ------ |
-| **QEURO Supply**      | €50M   | €250M  | €750M  | €1.5B  | €3B    |
-| **Protocol Revenue**  | €750K  | €6.25M | €18M   | €37.5M | €75M   |
-| **QTI Market Cap**    | $30M   | $150M  | $400M  | $800M  | $1.5B  |
-| **Treasury Value**    | €2M    | €20M   | €75M   | €200M  | €500M  |
-| **Staking APY**       | 25%    | 22%    | 18%    | 15%    | 12%    |
-| **Active Governance** | 20%    | 35%    | 50%    | 65%    | 75%    |
-
-#### Key Performance Indicators (KPIs)
-
-**Growth Metrics**
-
-* **Monthly Active Users**: Target 10K+ by Year 2
-* **Total Value Locked**: Target €100M+ by Year 2
-* **Cross-Chain Adoption**: 3+ networks by Year 3
-* **Integration Partners**: 50+ dApps by Year 3
-
-**Health Metrics**
-
-* **Governance Participation**: Target >40% voting rate
-* **Token Distribution**: Gini coefficient <0.7
-* **Revenue Sustainability**: Operating margin >25%
-* **Security Score**: Zero critical vulnerabilities
+QTI governance activates with a future upgrade that wires a mint path and enables lock, vote and propose. Sequencing and prerequisites are tracked on the [Roadmap](../../roadmap-and-adoption-strategy.md); no dates are committed. No financial projections are published for the token.
 
 ***
 
@@ -257,16 +181,15 @@ Where:
 
 | Risk Factor                 | Probability | Impact   | Mitigation Strategy                             |
 | --------------------------- | ----------- | -------- | ----------------------------------------------- |
-| **Smart Contract Exploits** | Medium      | Critical | Multiple audits, formal verification, insurance |
+| **Smart Contract Exploits** | Medium      | Critical | Independent audit + on-chain remediation (July 2026), continuous monitoring |
 | **Oracle Manipulation**     | Low         | High     | Hyperliquid mid + Chainlink fallback, circuit breakers |
 | **Governance Attacks**      | Low         | High     | Vote-escrow system, time delays, caps           |
-| **Cross-Chain Failures**    | Medium      | Medium   | Bridge redundancy, emergency procedures         |
 
 #### Economic Risks
 
 | Risk Factor                | Probability | Impact | Mitigation Strategy                            |
 | -------------------------- | ----------- | ------ | ---------------------------------------------- |
-| **Token Price Volatility** | High        | Medium | Liquidity incentives, buyback programs         |
+| **Token Price Volatility** | High        | Medium | Liquidity incentives (governance-decided after activation) |
 | **Regulatory Changes**     | Medium      | High   | Legal compliance, jurisdiction flexibility     |
 | **Competitive Pressure**   | High        | Medium | Innovation focus, ecosystem building           |
 | **Market Downturns**       | High        | Medium | Treasury diversification, emission flexibility |
@@ -278,7 +201,7 @@ Where:
 | **Team Dependency**         | Medium      | High   | Progressive decentralization, documentation  |
 | **Key Person Risk**         | Low         | High   | Multi-sig controls, succession planning      |
 | **Community Fragmentation** | Low         | Medium | Transparent governance, inclusive processes  |
-| **Scalability Issues**      | Medium      | Medium | Layer 2 integration, efficiency improvements |
+| **Scalability Issues**      | Medium      | Medium | Base L2 deployment, efficiency improvements |
 
 ***
 
@@ -288,7 +211,7 @@ Where:
 
 **Foundation Setup (planned)**
 
-* **Quantillon Foundation**: planned future non-profit entity for protocol governance — jurisdiction to be determined
+* **Quantillon Foundation**: planned future entity for protocol governance — legal form and jurisdiction to be determined
 * **Regulatory Classification**: QTI intended as a utility/governance token
 * **Operational Flexibility**: Global team coordination
 
@@ -296,7 +219,7 @@ Where:
 
 **MiCA Regulation Alignment**
 
-* **Stablecoin Reserves**: 100% backing with regulated assets
+* **Stablecoin Reserves**: over-collateralized backing in USDC held on-chain, partly deployed in DeFi money markets
 * **Reporting Standards**: Quarterly transparency reports
 * **Consumer Protection**: Clear risk disclosures
 * **Governance Standards**: Democratic decision-making processes
@@ -322,27 +245,6 @@ Where:
 * **Traditional Finance**: Bridge to institutional adoption
 * **Academic Institutions**: Research collaboration programs
 * **Regulatory Bodies**: Proactive engagement and compliance
-
-#### Innovation Pipeline
-
-**Short-term (6-18 months)**
-
-* **Mobile Integration**: Seamless mobile DeFi experience
-* **Fiat On/Off Ramps**: Direct bank integration
-* **Institutional Tools**: Professional trading interfaces
-* **DeFi Composability**: Yield aggregation strategies
-
-**Medium-term (18-36 months)**
-
-* **Cross-Chain Expansion**: Deployment on 5+ major networks
-
-**Long-term (36+ months)**
-
-* **Central Bank Integration**: CBDC compatibility layer
-* **Autonomous Governance**: AI-assisted decision making
-* **Global Adoption**: Mainstream financial integration
-
-***
 
 ### Community Engagement Framework
 

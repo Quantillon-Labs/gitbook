@@ -14,8 +14,6 @@ The deployed protocol ships with a complete fee framework, most of which is deli
 #### 2. stQEURO Yield Infrastructure
 
 * **Yield fee**: a per-series fee on credited staker yield — currently 0, capped at 20%
-* **Enhanced trading volume** through improved user retention
-* **Premium yield optimization services** for institutional users
 
 #### 3. Hedging Operations
 
@@ -46,7 +44,7 @@ Annual Revenue Calculation (illustrative fee assumptions):
 
 Total Annual Revenue: €1,100K
 Operating Costs: €600K (development, infrastructure, legal, audits)
-Net Operating Profit: €500K (45% margin)
+Net Operating Profit: €500K (45% operating margin)
 ```
 
 #### Optimistic Growth Scenario (€500M TVL by Year 2)

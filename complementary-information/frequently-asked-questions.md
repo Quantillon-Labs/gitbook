@@ -30,6 +30,8 @@ Welcome to the Quantillon Protocol FAQ. This page is intentionally **protocol-fi
 
 * [How can I get $QEURO?](frequently-asked-questions.md#q-how-can-i-get-usdqeuro)
 * [Can I redeem $QEURO back to USDC?](frequently-asked-questions.md#q-can-i-redeem-usdqeuro-back-to-usdc)
+* [How is the hedge collateralised?](frequently-asked-questions.md#q-how-is-the-hedge-collateralised)
+* [What is Quantillon Rewards?](frequently-asked-questions.md#q-what-is-quantillon-rewards)
 
 ### 🌍 Community & Ecosystem
 
@@ -88,7 +90,7 @@ So QEURO is the first proof point, not the ceiling of the protocol.
 
 #### **Q: What is the purpose of the $QTI token?**
 
-**A:** **QTI** is the governance layer for the protocol as a whole. It is not only about QEURO. It is used to coordinate:
+**A:** **QTI** is the governance layer for the protocol as a whole. It is not only about QEURO. QTI is deployed but **dormant** (supply 0); until activation the protocol is governed by a 2-of-3 Safe with a 12-hour upgrade timelock. Once activated, it is designed to coordinate:
 
 * risk parameters
 * incentive design
@@ -130,12 +132,14 @@ This creates a self-balancing incentive loop where market forces help maintain d
 
 **A:** Quantillon’s security model spans more than contract audits. It includes:
 
-* transparent smart contracts and public observability
-* oracle and collateral controls
-* liquidation and pause paths
-* governance guardrails around protocol parameters
+* an independent audit with on-chain remediation (July 2026); all contracts verified on Basescan
+* an `OracleRouter` with the Hyperliquid market mid as the active EUR/USD source and Chainlink as a one-transaction fallback, with staleness checks, price bounds and circuit breakers
+* over-collateralization (minting floor currently 102.5%) and a protocol-level liquidation mode at 101%
+* token-level guardrails: a global mint/burn rate limit, a minting killswitch and pause
+* an independent watchdog that freezes mint/redeem automatically if the hedge or the oracle is unhealthy
+* a 2-of-3 governance Safe with a 12-hour timelock on core-contract upgrades
 
-The details evolve by deployment, but the design goal is consistent: keep the protocol legible, observable, and controllable under stress.
+The design goal is consistent: keep the protocol legible, observable, and controllable under stress.
 
 ***
 
@@ -153,7 +157,15 @@ If you are evaluating the protocol itself, read the architecture pages first and
 
 #### **Q: Can I redeem $QEURO back to USDC?**
 
-**A:** Yes. QEURO is built on top of a USD liquidity path, so redemption back through that underlying path remains part of the first deployment model.
+**A:** Yes. QEURO is redeemed for USDC at the oracle EUR/USD rate, via the app or directly with `QuantillonVault.redeemQEURO`; the redemption fee is currently 0 (governance-settable, capped at 5%). If the protocol collateralization ratio is at or below 101% (liquidation mode), redemptions are served pro-rata on the remaining collateral — see [Liquidation Mode](../protocol/liquidation-mode.md).
+
+#### **Q: How is the hedge collateralised?**
+
+**A:** The EUR/USD exposure created by QEURO is neutralized by a single designated hedger — Quantillon Labs' hedging engine — which holds a short-EUR position in the `HedgerPool` on Base and a matching long-EUR perpetual on Hyperliquid. Since September 2026 the hedge runs on a margin policy targeting 2.5%: the on-chain HedgerPool minimum margin ratio is 2.5% (250 bps) and the minting floor is 102.5%. The engine keeps the collateral of both legs near that target through bounded, monitored USDC transfers, and an independent watchdog freezes mint/redeem if the hedge becomes unhealthy — see [HedgerPool](../protocol/hedger-pool.md#operational-margin-policy-september-2026).
+
+#### **Q: What is Quantillon Rewards?**
+
+**A:** Quantillon Rewards is an off-chain points program operated by Quantillon Labs for QEURO depositors and stakers. Points (QP) have no monetary value and promise no token or allocation. Its terms are published ([Rewards Program Terms](rewards-program-terms.md)); the program is **not yet open** in the application and no opening date is committed.
 
 ***
 

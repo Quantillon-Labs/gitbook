@@ -46,7 +46,7 @@ The user-facing asset should match the target currency of the market being serve
 
 ### 4. Keep governance above any single deployment
 
-QTI governs protocol risk, incentives, and expansion decisions. This is important because the governance surface is larger than any one market deployment.
+QTI is designed to govern protocol risk, incentives, and expansion decisions (the token is deployed but dormant; a 2-of-3 Safe with a 12-hour timelock governs today). This is important because the governance surface is larger than any one market deployment.
 
 ## Why QEURO Matters
 
