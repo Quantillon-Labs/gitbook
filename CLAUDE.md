@@ -19,6 +19,10 @@ Pushing to `main` or `dev` triggers `.github/workflows/Telegram Notifications.ym
 - All files are GitBook-compatible Markdown (no MDX, no JSX).
 - Use relative paths for internal links (e.g., `../protocol/mechanisms.md`).
 - Assets go in `.gitbook/assets/`.
+- **Never use em-dashes (U+2014) anywhere in this repo.** Prefer a comma, semicolon or
+  parentheses; use a standard hyphen `-` only when a dash is really needed. Applies to prose,
+  table cells, headings and code-block comments alike. Existing en-dashes in numeric ranges
+  (0.80-1.40, 3-14 days) are left untouched.
 - Commit messages follow conventional commits (`docs:`, `fix:`, `feat:`).
 
 ## Protocol Domain Knowledge
@@ -28,7 +32,7 @@ When editing documentation, the following are established facts about the protoc
 is the source of truth for on-chain behavior, the live chain beats any .md file):
 
 **Three-token ecosystem:**
-- **QEURO** — Euro-pegged stablecoin, USDC-collateralized. **No fixed tokenomic supply cap** —
+- **QEURO** - Euro-pegged stablecoin, USDC-collateralized. **No fixed tokenomic supply cap** -
   supply is bounded by hedging capacity: minting requires the protocol CR to stay above the
   governance-set minting floor, **currently 102.5 %** (lowered from 105 % on 2026-09-02; hard
   minimum 101 %); liquidation/critical mode engages at 101 % (pro-rata redemption inside
@@ -36,16 +40,18 @@ is the source of truth for on-chain behavior, the live chain beats any .md file)
   (governance-raisable) and a **global** mint/burn rate limit of 10M QEURO per 300-block window
   (~10 min on Base). Mint/redeem fees are 0 (governance-settable, max 5 %). Minting also enforces a
   2 % price-deviation guard against the oracle cache.
-- **stQEURO** — Yield-bearing staked QEURO (ERC-4626 vault, one series per external vault via
+- **stQEURO** - Yield-bearing staked QEURO (ERC-4626 vault, one series per external vault via
   `stQEUROFactory`; live series `stQEUROMORPHO1`, vaultId 2); exchange rate rises as vault yield
-  is credited by `QuantillonVault.harvestAndDistributeVaultYield` — no rebasing, no claim.
-- **QTI** — Governance token with vote-escrow mechanics (veQTI), 100M supply cap.
+  is credited by `QuantillonVault.harvestAndDistributeVaultYield` - no rebasing, no claim.
+- **QTI** - Governance token with vote-escrow mechanics (veQTI), 100M supply cap.
   **Currently dormant**: no mint path is wired, supply is 0; lock/vote/propose activate with a
   future upgrade. Never describe QTI governance, QTI incentives or QTI vesting in the present tense.
 
 **Smart contract stack** (documented here, implemented in the smart-contracts repo):
 - Solidity 0.8.24, OpenZeppelin UUPS upgradeable proxies, Foundry framework.
-- **Live on Base Mainnet (chain 8453) since June 2026**, governed by a 2-of-3 Gnosis Safe
+- **Contracts deployed on Base Mainnet (chain 8453) since June 2026; the public launch (the
+  application open to users) is planned for Q4 2026 - docs say "deployed", never "live/open
+  to users" for the product**, governed by a 2-of-3 Gnosis Safe
   (0x1d7fF432…e6cd). Upgrades of the core contracts (QuantillonVault, QEUROToken, QTIToken,
   UserPool, HedgerPool, YieldShift, stQEUROFactory, stQEUROToken) go through the OZ
   TimelockController (0x7Ade8f3B…8342, 12 h). FeeCollector, OracleRouter, ChainlinkOracle,
@@ -78,7 +84,7 @@ is the source of truth for on-chain behavior, the live chain beats any .md file)
   sequencer-uptime check with 1 h grace, dev mode = two-step 48 h, disabled). An independent
   watchdog freezes mint+redeem (vault pause) on stale/circuit-broken oracle, HL-vs-Chainlink
   basis > 100 bps, or unhealthy hedging; it lifts only its own pauses.
-- There is no `AaveVault` or `LiquidationSystem` contract (historical design names) —
+- There is no `AaveVault` or `LiquidationSystem` contract (historical design names) -
   liquidation-mode redemption lives in `QuantillonVault`; Aave/Morpho exposure goes through the
   staking vault adapters (MetaMorpho live as vaultId 2). There is no vault-level "emergency
   withdraw" from the external vault; USDC leaves it on redemption or when governance
@@ -99,8 +105,8 @@ is the source of truth for on-chain behavior, the live chain beats any .md file)
   Hyperliquid pocket (long EUR) toward a 2.5 % equity/notional target in 25 bps steps: EUR down →
   bounded Quantillon→Hyperliquid transfers, one at a time, blocked if the projected CR would
   come too close to the mint floor; EUR up → manual fresh-USDC top-up + alert. As of 2026-09-05
-  the automated transfer path runs in observation (dry-run) — describe the policy on public
-  pages, not an automated execution. **Public depth (D-4): qualitative only — target, step
+  the automated transfer path runs in observation (dry-run) - describe the policy on public
+  pages, not an automated execution. **Public depth (D-4): qualitative only - target, step
   size, direction asymmetry, CR guard, the 250 bps contract floor. Never publish the operated
   floor/buffers, USDC caps, daily limits, the bridge route or env variable names.** Canonical
   doc: `quantillon-dapp/docs/hedging-engine-margin-rebalancing.md`. Owner section:
@@ -118,8 +124,15 @@ the dApp uses the vault and stQEURO directly); stQEURO yieldFee 0 (max 20 %); Fe
 60/25/15; YieldShift base 50 % / max 90 %, adjustmentSpeed 100, targetPoolRatio 10000, 7-day
 holding, 24 h TWAP, MAX_HISTORY_LENGTH 1000, no yield source authorised live; QEURO whitelist
 mode off, killswitch off. **Usage is near zero** (QEURO supply 1 wei, no hedger margin, no
-stakes) — **rule (D-12): never quote TVL, volume or user counts as current; every projection
+stakes) - **rule (D-12): never quote TVL, volume or user counts as current; every projection
 or target is labelled illustrative / target, not a current figure.**
+**Canonical TVL targets (the only trajectory any page may state, always as a target):**
+Q4 2026 (public launch) $1M; Q2 2027 $10M; Q1 2028 $10M to $100M. Owner pages:
+`roadmap-and-adoption-strategy.md` (Directional Targets table),
+`strategic-context/market-landscape-and-competitive-analysis.md` (SOM) and the business-model
+KPI list - the three must stay identical. **No revenue, burn-rate, operating-margin or
+user-count projections are published anywhere** (the €50M/€500M revenue scenarios and the
+€20M-TVL surplus claim were removed 2026-09-08); do not reintroduce them.
 
 **Governance parameters** (as coded in QTIToken; inactive while QTI is dormant):
 - Proposal threshold: 100k QTI | Quorum: 1M QTI | Voting period: 3–14 days | Execution delay: 2 days
@@ -127,35 +140,49 @@ or target is labelled illustrative / target, not a current figure.**
 - `cancelProposal`: proposer or GOVERNANCE_ROLE (not the emergency role)
 - Older "60–85% decision thresholds / 4-year lock" figures were aspirational design, not code
 
-**QTI distribution (100M total — planned/aspirational; supply is currently 0):**
-- Community & Ecosystem 50%, Team & Founders 15%, Investors 10%, DAO Treasury 13%, Liquidity 5%, Strategic Partners 5%, Advisors 2%
+**QTI distribution (100M total - planned/aspirational; supply is currently 0):**
+- Community & Ecosystem 40%, Treasury & Liquidity 30%, Team & Advisors 20%, Investors (SAFT/BSA) 10%.
+  Four buckets only (revised 2026-09-08): no separate Strategic Partners, Advisors, DAO Treasury or
+  Liquidity Provision line. Owner tables: `tokenomics-and-governance.md` and
+  `protocol/quantillon-protocols-tokens/qti-token.md` - they must stay identical.
 
 **Aspirational content (D-10):** multi-collateral, cross-chain, buybacks/burns, insurance fund,
-5-year projections, month-based governance phases live only under the "Aspirational — not
+5-year projections, month-based governance phases live only under the "Aspirational - not
 implemented, no timeline" callout on `roadmap-and-adoption-strategy.md`; prune them from token
 and component pages.
 
 **Quantillon Rewards (QP points, off-chain):** terms published 2026-09-04
 (`complementary-information/rewards-program-terms.md`, v1) and reflected in the privacy policy.
 The rewards engine and gateway proxy are deployed on the live host, but the program is closed by
-its master switch and the UI is hidden — say **"deployed, program not yet open, no date"**
+its master switch and the UI is hidden - say **"deployed, program not yet open, no date"**
 wherever it is mentioned (terms page status line, roadmap, privacy policy, tokenomics, FAQ,
 glossary); never "no proxy" and never a launch date. QP have no monetary value and promise no
 token. The design documents in the dapp repo (`docs/rewards-program.md`,
 `docs/rewards-program-legal-notes.md`, `GAMIFICATION_SPECS.md`) are local-only and must never be
 linked or quoted; only `docs/rewards-program-runbook.md` is committed.
 
-**Security claims (D-9):** one independent audit with on-chain remediation (live 2026-07-06);
-a bug bounty is *planned*; never claim "formal verification", "multiple audits" or "continuous
-bug bounty". If a security contact is needed, use team@quantillon.money.
+**Security claims (D-9):** **no audit by a professional security firm has ever been carried out.**
+What exists: repeated code-review passes with several frontier AI code-analysis models, plus
+findings from independent whitehat researchers; findings are remediated on-chain continuously,
+along the way, through the normal upgrade path. **Never publish a remediation date or present
+remediation as a completed one-off milestone** - it is ongoing work. Describe it as "AI-driven
+security review + whitehat reports, remediated on-chain as findings come in", always paired
+with the fact that an audit-firm review has not been done; a bug bounty is *planned*. Never
+write "independent audit", "audited by", "formal verification", "multiple audits" or
+"continuous bug bounty" (calling OpenZeppelin
+and Gnosis Safe themselves audited is fine - that is their audit, not ours). Owner page for the
+security posture: `risk-management-and-sustainability/risks-and-mitigation-strategies.md`
+("Smart Contract and Oracle Risk"); other pages carry one sentence and link to it. Do not name
+specific AI models or vendors on public pages. If a security contact is needed, use
+team@quantillon.money.
 
 **Regulatory positioning:**
-- Targeting the MiCA Recital 22 exemption (fully decentralized, no central issuer) — "targeting",
+- Targeting the MiCA Recital 22 exemption (fully decentralized, no central issuer) - "targeting",
   never "confirmed"/"acknowledged" unless a written regulator position is cited; the Recital 22
   tables on `strategic-context/macro-regulatory-and-legal.md` are target state vs current state
-- Three-entity structure: Quantillon Protocol (on-chain), Quantillon Labs (dev — French SAS,
+- Three-entity structure: Quantillon Protocol (on-chain), Quantillon Labs (dev - French SAS,
   2 Avenue de Lognac, 33700 Mérignac, RCS Bordeaux / SIREN 988 682 613, VAT FR87988682613),
-  Quantillon Foundation (planned future entity, legal form and jurisdiction TBD — never "Swiss"
+  Quantillon Foundation (planned future entity, legal form and jurisdiction TBD - never "Swiss"
   or "Loi 1901" as fact)
 - Ongoing dialogue with the French ACPR on the Recital 22 analysis
 - Legal pages: Terms of Service carry an interim sentence until published; the legal notice's
@@ -165,9 +192,10 @@ bug bounty". If a security contact is needed, use team@quantillon.money.
 t.me/QuantillonLabs (discord.gg/quantillon is dead).
 
 **Timeline** (for the roadmap page): Base mainnet launch June 2026; Hyperliquid oracle live
-2026-06-25; audit remediation (10 proxies) live 2026-07-06; stQEUROToken 1.0.3 + HedgerPool 1.0.7
+2026-06-25; 10-proxy upgrade bundle live 2026-07-06 (security fixes; do not publish it as a
+remediation date); stQEUROToken 1.0.3 + HedgerPool 1.0.7
 mid-July; frontend restyle + public protocol dashboard July 2026; Lighter evaluation closed
 2026-09-01; QuantillonVault 1.1.11 (loss-aware external-vault collateral) 2026-08-17;
 eight-contract maintenance bundle live after 2026-08-26; HedgerPool 1.0.8 + margin policy +
-102.5 % mint floor 2026-09-02; Rewards terms 2026-09-04 (program not open). Pending: QTI
-activation, Foundation, additional external vaults.
+102.5 % mint floor 2026-09-02; Rewards terms 2026-09-04 (program not open). Pending: public
+launch Q4 2026 (application open to users), QTI activation, Foundation, additional external vaults.

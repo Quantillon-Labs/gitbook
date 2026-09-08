@@ -80,7 +80,7 @@ yield strategy (Morpho on Base, via a vault adapter). The gross yield is split *
 ```
 Gross yield realized from the strategy (variable APY)
 │
-├── 1. Hedger funding (FIRST) — an absolute, time-prorated funding rate on the hedged
+├── 1. Hedger funding (FIRST) - an absolute, time-prorated funding rate on the hedged
 │       notional (governance-set; 0 at launch). Covers the cost of maintaining the hedge.
 │
 └── 2. Residual (= gross − hedger funding), split by the staking ratio:
@@ -141,7 +141,7 @@ function deposit(uint256 qeuroAssets, address receiver) external returns (uint25
 ```
 
 1. User approves QEURO for the vault-specific stQEURO contract
-2. User calls `deposit()` — or `mintAndStakeQEURO()` on QuantillonVault to mint + stake in one transaction
+2. User calls `deposit()` - or `mintAndStakeQEURO()` on QuantillonVault to mint + stake in one transaction
 3. stQEURO shares are minted at the current exchange rate
 
 **📤 Unstaking (stQEURO → QEURO)**
@@ -152,7 +152,7 @@ function redeem(uint256 stQEUROShares, address receiver, address owner) external
 
 1. User calls `redeem()` with their stQEURO shares
 2. QEURO is returned at the current exchange rate (original stake + accrued yield)
-3. Instant — no lock period
+3. Instant - no lock period
 
 **Preview / conversion helpers**: `convertToAssets`, `convertToShares`, `previewDeposit`, `previewRedeem` (standard ERC-4626).
 
@@ -162,7 +162,7 @@ function redeem(uint256 stQEUROShares, address receiver, address owner) external
 
 stQEURO yield is credited on-chain by the protocol vault's `harvestAndDistributeVaultYield` function,
 which harvests the strategy yield, pays the hedger funding share first, and credits the staked-user
-share into stQEURO — raising the exchange rate. The **user** side reaches stakers through the exchange
+share into stQEURO - raising the exchange rate. The **user** side reaches stakers through the exchange
 rate (no claim). YieldShift remains the accounting/claim ledger for the **hedger** side of protocol
 yield (`claimHedgerYield`).
 
@@ -317,7 +317,7 @@ interface IstQEURO {
 **Contract Dependencies**
 
 * `QEURO`: Underlying stablecoin token (the only asset the contract holds)
-* `QuantillonVault`: Yield distributor — realizes strategy yield and credits the staker share as QEURO backing
+* `QuantillonVault`: Yield distributor - realizes strategy yield and credits the staker share as QEURO backing
 * `Treasury`: Fee recipient
 
 ***

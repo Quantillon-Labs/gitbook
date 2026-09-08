@@ -12,15 +12,12 @@ The $QTI token serves as the governance backbone of the Quantillon Protocol, fea
 
 **Strategic Token Allocation:**
 
-| Category                  | Allocation | Amount         | Lock Period | Vesting Schedule            |
-| ------------------------- | ---------- | -------------- | ----------- | --------------------------- |
-| **Community & Ecosystem** | 50%        | 50,000,000 QTI | Variable    | 48-month algorithmic curve  |
-| **Team & Founders**       | 15%        | 15,000,000 QTI | 12 months   | 36 months linear            |
-| **Investors (SAFT/BSA)**  | 10%        | 10,000,000 QTI | 6 months    | 24-36 months tiered         |
-| **DAO Treasury**          | 13%        | 13,000,000 QTI | Immediate   | Governance-controlled       |
-| **Strategic Partners**    | 5%         | 5,000,000 QTI  | 6 months    | 18 months performance-based |
-| **Advisors**              | 2%         | 2,000,000 QTI  | 6 months    | 18 months milestone-driven  |
-| **Liquidity Provision**   | 5%         | 5,000,000 QTI  | Immediate   | Market-responsive release   |
+| Category                  | Allocation | Amount         | Lock Period | Vesting Schedule           |
+| ------------------------- | ---------- | -------------- | ----------- | -------------------------- |
+| **Community & Ecosystem** | 40%        | 40,000,000 QTI | Variable    | 48-month algorithmic curve |
+| **Treasury & Liquidity**  | 30%        | 30,000,000 QTI | Immediate   | Governance-controlled      |
+| **Team & Advisors**       | 20%        | 20,000,000 QTI | 12 months   | 36 months linear           |
+| **Investors (SAFT/BSA)**  | 10%        | 10,000,000 QTI | 6 months    | 24-36 months tiered        |
 
 **Vote-Escrow (veQTI) System**
 
@@ -33,7 +30,7 @@ QTI holders can lock their tokens for periods ranging from 7 days to 365 days (1
 * **Voting period:** 3 days minimum, 14 days maximum
 * **Execution delay:** 2 days
 
-A multi-layer proposal model (higher thresholds for constitutional changes than for operational decisions) is **aspirational — subject to governance design, not implemented in the deployed contracts**. Until QTI activation, the protocol is governed by a 2-of-3 Gnosis Safe with a 12-hour upgrade timelock (see [Quantillon DAO](quantillon-dao.md)).
+A multi-layer proposal model (higher thresholds for constitutional changes than for operational decisions) is **aspirational - subject to governance design, not implemented in the deployed contracts**. Until QTI activation, the protocol is governed by a 2-of-3 Gnosis Safe with a 12-hour upgrade timelock (see [Quantillon DAO](quantillon-dao.md)).
 
 **stQEURO: Yield-Bearing Euro Infrastructure**
 
@@ -54,7 +51,7 @@ Quantillon introduces an innovative mechanism called the **Yield Shift**, which 
 
 Collateral deployed in external staking vaults (currently Morpho USDC lending on Base) generates a baseline APY. When that yield is harvested:
 
-1. **A hedger funding carve-out is taken first** — a governance-set annual rate, capped at 50% of each harvest, compensating the EUR/USD hedge (currently 0 bps: no carve-out is taken today).
+1. **A hedger funding carve-out is taken first** - a governance-set annual rate, capped at 50% of each harvest, compensating the EUR/USD hedge (currently 0 bps: no carve-out is taken today).
 2. **The residual is split between stQEURO stakers and the treasury** according to the staked share of QEURO.
 3. On the yield-pool allocation layer, the Yield Shift adjusts the user/hedger split (base 50%, up to 90% to users):
    * **Positive Yield Shift**: More yield incentivizes Hedgers when their supply is insufficient.
@@ -64,7 +61,7 @@ This creates a dynamic equilibrium. The Yield Shift is not discretionary; it is 
 
 ### Incentive Alignment and Protocol Sustainability
 
-Once activated, $QTI is intended to serve as an incentive layer through **liquidity mining programs**, staking multipliers, and governance rewards — time-bound incentives designed to bootstrap adoption without creating long-term inflationary pressures. Today the only incentive program is **Quantillon Rewards**, an off-chain points program for QEURO depositors and stakers whose terms are published ([Rewards Program Terms](complementary-information/rewards-program-terms.md)); the program is not yet open in the application, and it promises no token or allocation.
+Once activated, $QTI is intended to serve as an incentive layer through **liquidity mining programs**, staking multipliers, and governance rewards - time-bound incentives designed to bootstrap adoption without creating long-term inflationary pressures. Today the only incentive program is **Quantillon Rewards**, an off-chain points program for QEURO depositors and stakers whose terms are published ([Rewards Program Terms](complementary-information/rewards-program-terms.md)); the program is not yet open in the application, and it promises no token or allocation.
 
 In the longer term, the protocol aims to activate the **Fee Switch**, diverting a portion of transaction and yield fees to a treasury governed by $QTI holders. This treasury may be used to:
 
@@ -72,7 +69,7 @@ In the longer term, the protocol aims to activate the **Fee Switch**, diverting 
 * 🛡️ Provide insurance buffers
 * 🌉 Invest in ecosystem integrations or cross-chain bridges
 
-Sustainability is further supported by the protocol's lean cost structure. **Illustrative**: assuming fee activation and €20M of TVL, an estimated burn rate of €400,000 per year against projected revenues of €500,000 would put Quantillon in operating surplus; such a surplus could be reinvested in growth or redistributed through mechanisms decided by governance. These are projections, not current figures — fees are currently 0.
+Sustainability is further supported by the protocol's lean cost structure. No revenue or burn-rate projections are published: fees are currently 0, and whether the protocol reaches an operating surplus depends on fee levels governance has not set and on volumes that do not exist yet. Any future surplus could be reinvested in growth or redistributed through mechanisms decided by governance.
 
 Governance mechanisms are engineered to be progressive. In the current phase, protocol changes require multi-signature validation by a 2-of-3 Gnosis Safe, with core-contract upgrades gated by a 12-hour timelock, to ensure operational security. Over time, power will transition toward full DAO control, contingent on metrics like TVL, QTI token dispersion, and governance participation rates.
 

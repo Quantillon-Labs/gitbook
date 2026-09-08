@@ -106,7 +106,7 @@ As Quantillon expands beyond its first deployment, QTI remains the governance su
 * **QEURO** = the EUR exposure layer built on the Quantillon architecture
 * **stQEURO** = the yield-bearing wrapper around that first deployment
 
-These are implementation-specific assets. They show how the architecture works in production today.
+These are implementation-specific assets. They show how the architecture is implemented in the contracts deployed on Base mainnet; the public launch is planned for Q4 2026.
 
 #### **Q: How does the "Yield Shift" mechanism work?**
 
@@ -130,16 +130,20 @@ This creates a self-balancing incentive loop where market forces help maintain d
 
 #### **Q: Is Quantillon secure?**
 
-**A:** Quantillon’s security model spans more than contract audits. It includes:
+**A:** Start with what Quantillon has **not** done: **the contracts have not been audited by a professional security firm.** That review is not yet in place, and no report from an audit firm exists.
 
-* an independent audit with on-chain remediation (July 2026); all contracts verified on Basescan
+What has been done:
+
+* repeated code-review passes with several frontier AI code-analysis models, plus findings from independent whitehat researchers; findings are remediated on-chain as they come in, as continuous work rather than a one-off pass. All contracts are verified on Basescan
 * an `OracleRouter` with the Hyperliquid market mid as the active EUR/USD source and Chainlink as a one-transaction fallback, with staleness checks, price bounds and circuit breakers
 * over-collateralization (minting floor currently 102.5%) and a protocol-level liquidation mode at 101%
 * token-level guardrails: a global mint/burn rate limit, a minting killswitch and pause
 * an independent watchdog that freezes mint/redeem automatically if the hedge or the oracle is unhealthy
 * a 2-of-3 governance Safe with a 12-hour timelock on core-contract upgrades
 
-The design goal is consistent: keep the protocol legible, observable, and controllable under stress.
+A bug bounty is planned, and an audit-firm review remains the main gap in this list.
+
+The design goal is consistent: keep the protocol legible, observable, and controllable under stress. See [Risks & Mitigation](../risk-management-and-sustainability/risks-and-mitigation-strategies.md) for the full security posture.
 
 ***
 
@@ -147,7 +151,7 @@ The design goal is consistent: keep the protocol legible, observable, and contro
 
 #### **Q: How can I get $QEURO?**
 
-**A:** QEURO is the first user-facing market in the Quantillon stack. To use it, start with the app and documentation:
+**A:** QEURO is the first user-facing market in the Quantillon stack. The application opens to users at the **public launch, planned for Q4 2026**; until then the flow below is documentation of what launch will look like:
 
 1. Visit [the app](https://app.quantillon.money/)
 2. Connect your wallet
@@ -157,11 +161,11 @@ If you are evaluating the protocol itself, read the architecture pages first and
 
 #### **Q: Can I redeem $QEURO back to USDC?**
 
-**A:** Yes. QEURO is redeemed for USDC at the oracle EUR/USD rate, via the app or directly with `QuantillonVault.redeemQEURO`; the redemption fee is currently 0 (governance-settable, capped at 5%). If the protocol collateralization ratio is at or below 101% (liquidation mode), redemptions are served pro-rata on the remaining collateral — see [Liquidation Mode](../protocol/liquidation-mode.md).
+**A:** Yes. QEURO is redeemed for USDC at the oracle EUR/USD rate, via the app or directly with `QuantillonVault.redeemQEURO`; the redemption fee is currently 0 (governance-settable, capped at 5%). If the protocol collateralization ratio is at or below 101% (liquidation mode), redemptions are served pro-rata on the remaining collateral - see [Liquidation Mode](../protocol/liquidation-mode.md).
 
 #### **Q: How is the hedge collateralised?**
 
-**A:** The EUR/USD exposure created by QEURO is neutralized by a single designated hedger — Quantillon Labs' hedging engine — which holds a short-EUR position in the `HedgerPool` on Base and a matching long-EUR perpetual on Hyperliquid. Since September 2026 the hedge runs on a margin policy targeting 2.5%: the on-chain HedgerPool minimum margin ratio is 2.5% (250 bps) and the minting floor is 102.5%. The engine keeps the collateral of both legs near that target through bounded, monitored USDC transfers, and an independent watchdog freezes mint/redeem if the hedge becomes unhealthy — see [HedgerPool](../protocol/hedger-pool.md#operational-margin-policy-september-2026).
+**A:** The EUR/USD exposure created by QEURO is neutralized by a single designated hedger - Quantillon Labs' hedging engine - which holds a short-EUR position in the `HedgerPool` on Base and a matching long-EUR perpetual on Hyperliquid. Since September 2026 the hedge runs on a margin policy targeting 2.5%: the on-chain HedgerPool minimum margin ratio is 2.5% (250 bps) and the minting floor is 102.5%. The engine keeps the collateral of both legs near that target through bounded, monitored USDC transfers, and an independent watchdog freezes mint/redeem if the hedge becomes unhealthy - see [HedgerPool](../protocol/hedger-pool.md#operational-margin-policy-september-2026).
 
 #### **Q: What is Quantillon Rewards?**
 

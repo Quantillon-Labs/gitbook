@@ -2,7 +2,7 @@
 
 ## QTI Tokenomics: Advanced Economic Design
 
-> **⏸️ Current Status: DORMANT.** The QTI contract is deployed on Base with a 100,000,000 QTI supply cap, but **live supply is 0** — no mint path is wired, and no tokens have been issued or distributed. Lock (veQTI), voting, and proposal functions are inactive until a future activation upgrade. Until then, the protocol is governed by a 2-of-3 Gnosis Safe with a 12-hour upgrade timelock (see [Quantillon DAO](../../quantillon-dao.md)). Everything below describes the coded design and the planned distribution strategy, not a live token.
+> **⏸️ Current Status: DORMANT.** The QTI contract is deployed on Base with a 100,000,000 QTI supply cap, but **live supply is 0** - no mint path is wired, and no tokens have been issued or distributed. Lock (veQTI), voting, and proposal functions are inactive until a future activation upgrade. Until then, the protocol is governed by a 2-of-3 Gnosis Safe with a 12-hour upgrade timelock (see [Quantillon DAO](../../quantillon-dao.md)). Everything below describes the coded design and the planned distribution strategy, not a live token.
 
 ### 📋 Executive Summary
 
@@ -37,39 +37,36 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 
 ### Token Distribution Architecture
 
-> **Important**: QTI token distribution is managed through governance and operational decisions. The smart contract only defines `TOTAL_SUPPLY_CAP = 100,000,000 QTI`. The allocations below represent the **planned distribution strategy**, not on-chain constraints — and no tokens have been minted yet (supply is 0 while QTI is dormant).
+> **Important**: QTI token distribution is managed through governance and operational decisions. The smart contract only defines `TOTAL_SUPPLY_CAP = 100,000,000 QTI`. The allocations below represent the **planned distribution strategy**, not on-chain constraints - and no tokens have been minted yet (supply is 0 while QTI is dormant).
 
 #### Strategic Allocation Framework
 
-| Category                     | Allocation | Amount         | Lock Period | Vesting Schedule    | Release Mechanism    |
-| ---------------------------- | ---------- | -------------- | ----------- | ------------------- | -------------------- |
-| **🌍 Community & Ecosystem** | 50%        | 50,000,000 QTI | Variable    | 48-month curve      | Governance-managed   |
-| **👥 Team & Founders**       | 15%        | 15,000,000 QTI | 12 months   | 36 months linear    | Governance-managed   |
-| **💼 Investors (SAFT/BSA)**  | 10%        | 10,000,000 QTI | 6 months    | 24-36 months        | Governance-managed   |
-| **🏛️ DAO Treasury**         | 13%        | 13,000,000 QTI | Immediate   | Governance-gated    | Vote-controlled      |
-| **🤝 Strategic Partners**    | 5%         | 5,000,000 QTI  | 6 months    | 18 months           | Governance-managed   |
-| **🎯 Advisors**              | 2%         | 2,000,000 QTI  | 6 months    | 18 months           | Governance-managed   |
-| **💧 Liquidity Provision**   | 5%         | 5,000,000 QTI  | Immediate   | Progressive release | Governance-managed   |
+| Category                     | Allocation | Amount         | Lock Period | Vesting Schedule | Release Mechanism  |
+| ---------------------------- | ---------- | -------------- | ----------- | ---------------- | ------------------ |
+| **🌍 Community & Ecosystem** | 40%        | 40,000,000 QTI | Variable    | 48-month curve   | Governance-managed |
+| **🏛️ Treasury & Liquidity** | 30%        | 30,000,000 QTI | Immediate   | Governance-gated | Vote-controlled    |
+| **👥 Team & Advisors**       | 20%        | 20,000,000 QTI | 12 months   | 36 months linear | Governance-managed |
+| **💼 Investors (SAFT/BSA)**  | 10%        | 10,000,000 QTI | 6 months    | 24-36 months     | Governance-managed |
 
-#### Community & Ecosystem Breakdown (50M QTI)
+#### Community & Ecosystem Breakdown (40M QTI)
 
-**Phase 1: Bootstrap Incentives (20M QTI - Years 1-2)**
+**Phase 1: Bootstrap Incentives (16M QTI - Years 1-2)**
 
-* **Liquidity Mining**: 12M QTI across major DEX pairs
-* **User Acquisition**: 5M QTI for onboarding campaigns
+* **Liquidity Mining**: 9M QTI across major DEX pairs
+* **User Acquisition**: 4M QTI for onboarding campaigns
 * **Developer Grants**: 3M QTI for ecosystem development
 
-**Phase 2: Growth Acceleration (20M QTI - Years 3-4)**
+**Phase 2: Growth Acceleration (16M QTI - Years 3-4)**
 
-* **Advanced Features**: 8M QTI for new protocol modules
-* **Governance Participation**: 6M QTI for voting incentives
-* **Cross-Chain Expansion**: 6M QTI for multi-chain deployment
+* **Advanced Features**: 7M QTI for new protocol modules
+* **Governance Participation**: 5M QTI for voting incentives
+* **Cross-Chain Expansion**: 4M QTI for multi-chain deployment
 
-**Phase 3: Maturity & Innovation (10M QTI - Years 5+)**
+**Phase 3: Maturity & Innovation (8M QTI - Years 5+)**
 
-* **Research & Development**: 4M QTI for protocol evolution
+* **Research & Development**: 3M QTI for protocol evolution
 * **Strategic Partnerships**: 3M QTI for institutional integration
-* **Community Treasury**: 3M QTI for long-term sustainability
+* **Community Treasury**: 2M QTI for long-term sustainability
 
 ***
 
@@ -82,7 +79,7 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 * **Lock Periods**: 7 days minimum to 365 days (1 year) maximum
 * **Voting Power**: Linear multiplier up to 4x base weight at max lock
 * **Decay Mechanism**: Gradual reduction until unlock
-* **Delegation**: not implemented — there is no delegation function in the deployed contract
+* **Delegation**: not implemented - there is no delegation function in the deployed contract
 
 **Governance Parameters (as coded, inactive while QTI is dormant)**
 
@@ -93,17 +90,17 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 | **Voting period** | 3 days minimum, 14 days maximum |
 | **Execution delay** | 2 days |
 
-> **Aspirational — subject to governance design, not implemented in the deployed contracts**: a multi-layer proposal model (e.g. higher thresholds and longer timelocks for constitutional changes than for operational decisions) is under consideration for the activation upgrade.
+> **Aspirational - subject to governance design, not implemented in the deployed contracts**: a multi-layer proposal model (e.g. higher thresholds and longer timelocks for constitutional changes than for operational decisions) is under consideration for the activation upgrade.
 
 #### 💰 Revenue Generation & Distribution
 
 **Primary Revenue Streams (live framework)**
 
-1. **QEURO Operations**: mint/redeem fees via QuantillonVault — currently 0, governance-settable up to 5%
+1. **QEURO Operations**: mint/redeem fees via QuantillonVault - currently 0, governance-settable up to 5%
 2. **Yield Fees**: per-series stQEURO yield fee (currently 0, capped at 20%) and the treasury share of harvested external-vault yield
 3. **Hedger Position Fees**: entry/exit/margin fees (currently 0, governance-settable) plus a 20% reward fee split on hedger rewards
 
-**Revenue Allocation Model (as coded — FeeCollector)**
+**Revenue Allocation Model (as coded - FeeCollector)**
 
 ```
 Collected protocol fees (100%)
@@ -113,11 +110,11 @@ Collected protocol fees (100%)
 (governance-adjustable, must sum to 100%)
 ```
 
-> **Aspirational — subject to governance design, not implemented in the deployed contracts**: routing a share of protocol revenue to veQTI stakers, an insurance fund, or buyback-and-burn programs would require future governance decisions once QTI is activated.
+> **Aspirational - subject to governance design, not implemented in the deployed contracts**: routing a share of protocol revenue to veQTI stakers, an insurance fund, or buyback-and-burn programs would require future governance decisions once QTI is activated.
 
 #### 🔄 Dynamic Reward Systems
 
-> **Aspirational — subject to governance design, not implemented in the deployed contracts.** QTI is dormant with zero supply and no mint path; no emissions of any kind are occurring. The schedule and reward formula below are a design sketch for the future activation, not coded behavior.
+> **Aspirational - subject to governance design, not implemented in the deployed contracts.** QTI is dormant with zero supply and no mint path; no emissions of any kind are occurring. The schedule and reward formula below are a design sketch for the future activation, not coded behavior.
 
 **Adaptive Emission Schedule (illustrative)**
 
@@ -156,7 +153,7 @@ Where:
 
 **Smart Contract Security**
 
-* **Audit Process**: independent audit with on-chain remediation (July 2026)
+* **Review Process**: AI-driven code review and whitehat reports, remediated on-chain as findings come in; **no professional audit-firm review to date** - see [Risks & Mitigation](../../risk-management-and-sustainability/risks-and-mitigation-strategies.md)
 * **OpenZeppelin Base**: Battle-tested upgradeable contracts
 * **Bug Bounty Program**: planned (amounts TBD)
 * **Continuous Monitoring**: independent hedging/oracle watchdog with automatic pause and alerting
@@ -181,7 +178,7 @@ QTI governance activates with a future upgrade that wires a mint path and enable
 
 | Risk Factor                 | Probability | Impact   | Mitigation Strategy                             |
 | --------------------------- | ----------- | -------- | ----------------------------------------------- |
-| **Smart Contract Exploits** | Medium      | Critical | Independent audit + on-chain remediation (July 2026), continuous monitoring |
+| **Smart Contract Exploits** | Medium      | Critical | AI-driven review + whitehat reports, remediated on-chain as they come in; no audit-firm review yet; continuous monitoring |
 | **Oracle Manipulation**     | Low         | High     | Hyperliquid mid + Chainlink fallback, circuit breakers |
 | **Governance Attacks**      | Low         | High     | Vote-escrow system, time delays, caps           |
 
@@ -211,7 +208,7 @@ QTI governance activates with a future upgrade that wires a mint path and enable
 
 **Foundation Setup (planned)**
 
-* **Quantillon Foundation**: planned future entity for protocol governance — legal form and jurisdiction to be determined
+* **Quantillon Foundation**: planned future entity for protocol governance - legal form and jurisdiction to be determined
 * **Regulatory Classification**: QTI intended as a utility/governance token
 * **Operational Flexibility**: Global team coordination
 

@@ -16,7 +16,8 @@
 
 ## Where It Stands (September 2026)
 
-- **Live on Base mainnet** (chain 8453) since June 2026 — mint/redeem, stQEURO staking with external-vault yield, autonomous hedging with an independent watchdog
+- **Contracts deployed on Base mainnet** (chain 8453) since June 2026 - mint/redeem, stQEURO staking with external-vault yield, autonomous hedging with an independent watchdog
+- **Public launch planned for Q4 2026** - the application is not yet open to users
 - **USDC collateral**, EUR/USD hedged on Hyperliquid and priced off that venue's market mid, with Chainlink as fallback
 - **Governed by a 2-of-3 Safe** with a 12-hour upgrade timelock; QTI governance is coded but dormant
 

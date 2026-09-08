@@ -6,7 +6,7 @@
 
 The HedgerPool is the contract responsible for managing EUR/USD hedging positions in the Quantillon protocol. It allows the designated hedger to provide delta-neutral coverage, maintaining QEURO peg stability while generating revenue.
 
-> **Single hedger model**: the protocol runs a **single designated hedger** — the `singleHedger` address set by governance. In the current phase that hedger is Quantillon Labs' hedging engine, which neutralizes the EUR/USD exposure on Hyperliquid (see [Oracle Architecture](oracle-architecture.md) for why mint/redeem pricing follows the hedge venue). Hedger USDC is pooled in `QuantillonVault` for unified liquidity.
+> **Single hedger model**: the protocol runs a **single designated hedger** - the `singleHedger` address set by governance. In the current phase that hedger is Quantillon Labs' hedging engine, which neutralizes the EUR/USD exposure on Hyperliquid (see [Oracle Architecture](oracle-architecture.md) for why mint/redeem pricing follows the hedge venue). Hedger USDC is pooled in `QuantillonVault` for unified liquidity.
 
 ***
 
@@ -30,7 +30,7 @@ contract HedgerPool is
 | Contract | Role |
 |----------|------|
 | `IERC20 usdc` | Collateral token |
-| `IOracle oracle` | EUR/USD price — the `OracleRouter` (Hyperliquid market mid, Chainlink fallback) |
+| `IOracle oracle` | EUR/USD price - the `OracleRouter` (Hyperliquid market mid, Chainlink fallback) |
 | `IYieldShift yieldShift` | Hedger-side yield ledger |
 | `IQuantillonVault vault` | Mint/redeem synchronization and pooled hedger USDC |
 | `address feeCollector` | Receives position fees (currently 0) |
@@ -154,8 +154,8 @@ function exitHedgePosition(uint256 positionId)
 **Validations**
 
 1. Active position owned by the caller
-2. `minPositionHoldBlocks` elapsed since `openBlock` (currently 0 blocks) — otherwise `MinHoldPeriodNotElapsed`
-3. Closure must not leave the protocol under-collateralized — otherwise `PositionClosureRestricted`
+2. `minPositionHoldBlocks` elapsed since `openBlock` (currently 0 blocks) - otherwise `MinHoldPeriodNotElapsed`
+3. Closure must not leave the protocol under-collateralized - otherwise `PositionClosureRestricted`
 
 **Flow**
 
@@ -268,7 +268,7 @@ function recordLiquidationRedeem(uint256 qeuroAmount, uint256 totalQeuroSupply)
     external onlyVault whenNotPaused;
 ```
 
-Called when the vault is in liquidation mode (protocol collateralization ratio ≤ 101%). In that mode the hedger's effective margin is treated as 0 and redemptions draw pro-rata on remaining collateral — there is no per-position keeper liquidation. See [Liquidation Mode](liquidation-mode.md).
+Called when the vault is in liquidation mode (protocol collateralization ratio ≤ 101%). In that mode the hedger's effective margin is treated as 0 and redemptions draw pro-rata on remaining collateral - there is no per-position keeper liquidation. See [Liquidation Mode](liquidation-mode.md).
 
 ***
 
@@ -276,7 +276,7 @@ Called when the vault is in liquidation mode (protocol collateralization ratio �
 
 #### Hedger Revenue Sources
 
-1. **Hedger Funding**: a carve-out taken first out of each external-vault yield harvest (governance-set annual rate, capped at 50% of the harvest), accounted through YieldShift's hedger ledger — **currently 0 bps with no recipient configured**: Quantillon Labs, the sole hedger, receives no funding carve-out today
+1. **Hedger Funding**: a carve-out taken first out of each external-vault yield harvest (governance-set annual rate, capped at 50% of the harvest), accounted through YieldShift's hedger ledger - **currently 0 bps with no recipient configured**: Quantillon Labs, the sole hedger, receives no funding carve-out today
 2. **EUR/USD Rate Differential**: compensation for FX risk (currently 3.50% EUR / 4.50% USD, governance-set)
 3. **Position Fees**: entry/exit/margin fees are currently 0 (governance-settable)
 
@@ -324,7 +324,7 @@ struct CoreParams {
 
 | Parameter | Live Value | Description |
 |-----------|------------|-------------|
-| `minMarginRatio` | **250 bps (2.5%)** — live since 2 September 2026 (HedgerPool v1.0.8); was 500 bps at launch. Governance-set, cannot go below the 250 bps contract floor (`DEFAULT_MIN_MARGIN_RATIO_BPS`) | Minimum margin/position ratio |
+| `minMarginRatio` | **250 bps (2.5%)** - live since 2 September 2026 (HedgerPool v1.0.8); was 500 bps at launch. Governance-set, cannot go below the 250 bps contract floor (`DEFAULT_MIN_MARGIN_RATIO_BPS`) | Minimum margin/position ratio |
 | `maxLeverage` | 20 | Max 20× leverage (the setter caps it at 20) |
 | `entryFee` | 0 | Currently 0 (governance-settable) |
 | `exitFee` | 0 | Currently 0 (governance-settable) |
@@ -359,10 +359,10 @@ struct HedgerDependencyConfig {
     address feeCollector;          // changing it requires DEFAULT_ADMIN_ROLE
 }
 
-// Risk parameters, fees and interest rates — GOVERNANCE_ROLE
+// Risk parameters, fees and interest rates - GOVERNANCE_ROLE
 function configureRiskAndFees(HedgerRiskConfig calldata cfg) external;
 
-// Contract dependencies — GOVERNANCE_ROLE
+// Contract dependencies - GOVERNANCE_ROLE
 function configureDependencies(HedgerDependencyConfig calldata cfg) external;
 ```
 
@@ -370,7 +370,7 @@ function configureDependencies(HedgerDependencyConfig calldata cfg) external;
 
 ### ⚖️ Operational margin policy (September 2026)
 
-Since September 2026 the hedge runs on a **margin policy targeting 2.5%**: the on-chain HedgerPool minimum margin ratio is 2.5% (250 bps, v1.0.8) and the QuantillonVault minting floor is 102.5%. Quantillon Labs' hedging engine keeps the collateral of the two legs of the hedge — the HedgerPool position on Base (short EUR) and the Hyperliquid perpetual (long EUR) — near a 2.5% equity-to-notional target, moving USDC from the HedgerPool to Hyperliquid in bounded steps (25 bps of notional) when EUR/USD falls, and topping the HedgerPool up with fresh USDC when EUR/USD rises. Transfers are bounded in size, executed one at a time, and are blocked whenever they would push the protocol collateralization ratio too close to the minting floor. The 250 bps on-chain minimum is a hard floor that the engine operates above; the independent watchdog freezes mint/redeem if the hedge becomes unhealthy (see [Oracle Architecture](oracle-architecture.md#independent-watchdog-defence-in-depth)).
+Since September 2026 the hedge runs on a **margin policy targeting 2.5%**: the on-chain HedgerPool minimum margin ratio is 2.5% (250 bps, v1.0.8) and the QuantillonVault minting floor is 102.5%. Quantillon Labs' hedging engine keeps the collateral of the two legs of the hedge - the HedgerPool position on Base (short EUR) and the Hyperliquid perpetual (long EUR) - near a 2.5% equity-to-notional target, moving USDC from the HedgerPool to Hyperliquid in bounded steps (25 bps of notional) when EUR/USD falls, and topping the HedgerPool up with fresh USDC when EUR/USD rises. Transfers are bounded in size, executed one at a time, and are blocked whenever they would push the protocol collateralization ratio too close to the minting floor. The 250 bps on-chain minimum is a hard floor that the engine operates above; the independent watchdog freezes mint/redeem if the hedge becomes unhealthy (see [Oracle Architecture](oracle-architecture.md#independent-watchdog-defence-in-depth)).
 
 ***
 
@@ -495,7 +495,7 @@ IYieldShift public yieldShift;
 External staking vault (Morpho) generates yield
     ↓
 QuantillonVault harvests; a hedger funding carve-out is taken first
-(governance-set annual rate, capped at 50% of each harvest — currently 0 bps)
+(governance-set annual rate, capped at 50% of each harvest - currently 0 bps)
     ↓
 YieldShift tracks the hedger's claimable share
     ↓
@@ -553,4 +553,4 @@ Generic reverts (`NotAuthorized`, `InvalidAmount`, `ConfigValueTooHigh/TooLow`, 
 
 ***
 
-> **Summary**: The HedgerPool is the core of Quantillon's hedging mechanics. A single designated hedger — Quantillon Labs' hedging engine in the current phase — provides EUR/USD coverage, earning revenue via the rate differential and YieldShift. The margin health gate, the September 2026 margin policy and the emergency controls keep the hedge and the protocol collateralization aligned.
+> **Summary**: The HedgerPool is the core of Quantillon's hedging mechanics. A single designated hedger - Quantillon Labs' hedging engine in the current phase - provides EUR/USD coverage, earning revenue via the rate differential and YieldShift. The margin health gate, the September 2026 margin policy and the emergency controls keep the hedge and the protocol collateralization aligned.

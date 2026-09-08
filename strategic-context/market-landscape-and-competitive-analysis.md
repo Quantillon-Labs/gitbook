@@ -28,7 +28,7 @@ The consistent problem across all these assets is their failure to create meanin
 
 ### 🇪🇺 The European Savings Paradox
 
-Despite the eurozone representing one of the world's largest economic blocs with over 300 million users, euro-denominated stablecoins remain dramatically underrepresented in the global market. Meanwhile, European savers exhibit high precautionary saving rates — **over 12% of household income** across the eurozone — yet most of this capital remains trapped in underperforming vehicles:
+Despite the eurozone representing one of the world's largest economic blocs with over 300 million users, euro-denominated stablecoins remain dramatically underrepresented in the global market. Meanwhile, European savers exhibit high precautionary saving rates - **over 12% of household income** across the eurozone - yet most of this capital remains trapped in underperforming vehicles:
 
 * **Traditional Savings Products**: Livret A (France) offering just 1.7% returns
 * **Life Insurance Contracts**: Opaque fee structures with minimal capital appreciation
@@ -44,9 +44,9 @@ As of mid-2025, **over 99% of DeFi stablecoin liquidity** is denominated in USD.
 
 From a European perspective, engaging in DeFi through USD-based assets introduces three layers of friction:
 
-1. **🔄 FX risk** — EUR/USD fluctuations can nullify yield gains or exacerbate losses.
-2. **💸 Operational slippage** — On-ramping EUR into USD-based DeFi typically requires high-friction conversions via centralized exchanges.
-3. **📋 Regulatory and tax complexity** — Cross-currency gains may introduce additional accounting burdens and reduce fiscal clarity.
+1. **🔄 FX risk** - EUR/USD fluctuations can nullify yield gains or exacerbate losses.
+2. **💸 Operational slippage** - On-ramping EUR into USD-based DeFi typically requires high-friction conversions via centralized exchanges.
+3. **📋 Regulatory and tax complexity** - Cross-currency gains may introduce additional accounting burdens and reduce fiscal clarity.
 
 Consequently, euro-based users and institutions either remain absent from DeFi altogether or engage through inefficient intermediaries. This creates an untapped market segment, particularly among family offices, corporate treasuries, and fintech platforms seeking native euro liquidity.
 
@@ -66,7 +66,7 @@ Unlike existing euro stablecoins, the QEURO deployment uses Quantillon's protoco
 
 QEURO is not only a stablecoin but a savings instrument. By redistributing most of the yield from collateral deployment (e.g., Morpho) to users and hedgers via a dynamic 'Yield Shift', the protocol incentivizes long-term participation and peg maintenance.
 
-These components create a sustainable first deployment that addresses both supply (hedgers) and demand (EUR users) sides of the market. By leveraging DeFi primitives and real-world financial theory—including FX swap economics and interest rate parity—Quantillon uses QEURO to prove that USD liquidity can be transformed into local-currency exposure.
+These components create a sustainable first deployment that addresses both supply (hedgers) and demand (EUR users) sides of the market. By leveraging DeFi primitives and real-world financial theory - including FX swap economics and interest rate parity - Quantillon uses QEURO to prove that USD liquidity can be transformed into local-currency exposure.
 
 ### 🥊 Comparative Advantage Matrix
 
@@ -98,13 +98,13 @@ These components create a sustainable first deployment that addresses both suppl
 
 #### Serviceable Obtainable Market (SOM)
 
-**Directional 3-year projections** (aspirational, not commitments):
+**Directional TVL targets** (targets, not commitments or current figures):
 
-* **Year 1**: €50M TVL (0.04% of SAM)
-* **Year 2**: €250M TVL (0.2% of SAM)
-* **Year 3**: €1B+ TVL (0.8% of SAM)
+* **Q4 2026** (public launch): $1M TVL
+* **Q2 2027**: $10M TVL
+* **Q1 2028**: $10M to $100M TVL
 
-These projections reflect Quantillon's conservative, utility-driven growth model focused on sustainable adoption rather than speculative pumps.
+Even the upper end of the Q1 2028 target is a fraction of a percent of the SAM above: the constraint is hedging capacity and a deliberate, utility-driven growth model focused on sustainable adoption, not addressable demand.
 
 ***
 

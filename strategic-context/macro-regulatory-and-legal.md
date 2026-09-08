@@ -16,9 +16,9 @@ Following the COVID-19 pandemic, these weaknesses became more visible. The ECB's
 
 ### 💶 Why EUR Is the First Deployment Case
 
-European savers face a paradox. While they exhibit high precautionary saving rates—estimated at over **12% of household income** across the eurozone—most of this capital is deployed in vehicles offering negligible returns: Livret A (France, 1.7%), regulated life insurance contracts, and pension products. These products are structurally constrained by regulation, subject to opaque fee structures, and offer limited capital appreciation.
+European savers face a paradox. While they exhibit high precautionary saving rates - estimated at over **12% of household income** across the eurozone - most of this capital is deployed in vehicles offering negligible returns: Livret A (France, 1.7%), regulated life insurance contracts, and pension products. These products are structurally constrained by regulation, subject to opaque fee structures, and offer limited capital appreciation.
 
-At the macro level, the lack of EUR-denominated yield instruments exacerbates the **Cantillon Effect**. Monetary stimulus disproportionately benefits financial intermediaries and capital holders close to the central bank's monetary base. Retail savers, by contrast, receive only the diluted remnants of yield transmission. This creates a structural transfer from savers to asset managers—a pattern Quantillon explicitly seeks to reverse through its first deployment.
+At the macro level, the lack of EUR-denominated yield instruments exacerbates the **Cantillon Effect**. Monetary stimulus disproportionately benefits financial intermediaries and capital holders close to the central bank's monetary base. Retail savers, by contrast, receive only the diluted remnants of yield transmission. This creates a structural transfer from savers to asset managers - a pattern Quantillon explicitly seeks to reverse through its first deployment.
 
 By introducing QEURO as the first euro-denominated, over-collateralized deployment of the Quantillon architecture, the protocol offers a bridge between monetary sovereignty and decentralized market participation. Users retain euro exposure while accessing USD-sourced DeFi opportunities through a protocol-native FX hedging layer. The EUR market is therefore the first proof point, not the limit of the protocol's addressable design.
 
@@ -89,7 +89,7 @@ Decentralization in the context of MiCA refers to the extent to which a crypto-a
 
 **🎯 Target State vs Current State**
 
-Quantillon is on a progressive-decentralization path. The table distinguishes the target state the protocol is designed to reach — the basis of its Recital 22 analysis — from the current state on Base mainnet, so that no reader mistakes one for the other.
+Quantillon is on a progressive-decentralization path. The table distinguishes the target state the protocol is designed to reach - the basis of its Recital 22 analysis - from the current state on Base mainnet, so that no reader mistakes one for the other.
 
 | Characteristic                | Target state (design)                                   | Current state (Base mainnet, September 2026)                                                      |
 | ----------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -102,9 +102,9 @@ Quantillon is on a progressive-decentralization path. The table distinguishes th
 
 **Legal Entity Separation**
 
-* **⚖️ Protocol Layer**: on-chain smart contracts — target: Recital 22 exemption once decentralized
+* **⚖️ Protocol Layer**: on-chain smart contracts - target: Recital 22 exemption once decentralized
 * **🔬 Development Layer**: Quantillon Labs (French SAS)
-* **🏛️ Foundation Layer**: Quantillon Foundation (planned regulatory interface — not yet established)
+* **🏛️ Foundation Layer**: Quantillon Foundation (planned regulatory interface - not yet established)
 
 #### Regulatory Interpretation Challenges
 
@@ -134,14 +134,14 @@ Quantillon operates through a carefully designed multi-entity structure that bal
 
 **🔬 Quantillon Labs (Development Entity)**
 
-* **Legal Status**: French SAS (Mérignac, France; SIREN 988 682 613 — see the [Legal Notice](../complementary-information/legal-notice.md))
+* **Legal Status**: French SAS (Mérignac, France; SIREN 988 682 613 - see the [Legal Notice](../complementary-information/legal-notice.md))
 * **Functions**: Protocol development, initial liquidity provision, technical maintenance
 * **Regulatory Position**: Standard corporate compliance requirements
 * **Transition**: Reduces role as protocol matures toward full DAO governance
 
-**🏛️ Quantillon Foundation (Compliance Interface — planned)**
+**🏛️ Quantillon Foundation (Compliance Interface - planned)**
 
-* **Legal Status**: Planned future entity — **not yet established; legal form and jurisdiction to be determined**
+* **Legal Status**: Planned future entity - **not yet established; legal form and jurisdiction to be determined**
 * **Functions (once established)**: Regulatory dialogue, voluntary disclosures, multisig management
 * **Regulatory Position**: Interface with authorities when required
 * **Purpose**: Bridge between decentralized protocol and institutional needs
@@ -217,7 +217,7 @@ While focused on European compliance, Quantillon considers global regulatory dev
 
 **🇨🇭 Switzerland**
 
-* **Candidate Foundation Domicile**: one of the jurisdictions under evaluation for the planned Quantillon Foundation — no domicile decision has been made
+* **Candidate Foundation Domicile**: one of the jurisdictions under evaluation for the planned Quantillon Foundation - no domicile decision has been made
 * **Regulatory Clarity**: Well-established crypto legal framework
 * **Strategic Value**: Gateway for institutional European adoption
 
@@ -342,12 +342,12 @@ While focused on European compliance, Quantillon considers global regulatory dev
 
 * **📄 Technical Whitepaper**: Comprehensive protocol specification
 * **⚖️ Legal Analysis**: Regulatory compliance memorandum
-* **🔍 Audit Reports**: Security and compliance audits
+* **🔍 Security Review Records**: AI-driven code review and whitehat findings with their on-chain remediation (no audit-firm report to date)
 * **📋 Governance Framework**: DAO operation and voting procedures
 
 **Entity Documentation**
 
-* **🏢 Foundation Charter**: Quantillon Foundation governing documents (planned — to be published once the Foundation is established)
+* **🏢 Foundation Charter**: Quantillon Foundation governing documents (planned - to be published once the Foundation is established)
 * **💼 Corporate Structure**: Entity relationship and control documentation
 * **📊 Compliance Policies**: AML, KYC, and risk management procedures
 * **🤝 Partnership Agreements**: Third-party integration compliance frameworks
@@ -425,6 +425,6 @@ While focused on European compliance, Quantillon considers global regulatory dev
 
 ***
 
-_This regulatory analysis is current as of September 2026 and will be updated as the regulatory landscape evolves. For the most current regulatory information, visit_ [_quantillon.money/legal_](https://quantillon.money/legal) _or consult Quantillon Labs' regulatory updates._
+_This regulatory analysis is current as of September 2026 and will be updated as the regulatory landscape evolves. The current legal documents are the_ [_Legal Notice_](../complementary-information/legal-notice.md)_,_ [_Privacy Policy_](../complementary-information/privacy-policy.md) _and_ [_Terms of Services_](../complementary-information/terms-of-services.md)_._
 
-> **🎯 Ready to engage with compliant, decentralized local-currency DeFi?** Visit our [dApp](https://app.quantillon.money/) to explore QEURO as Quantillon's first deployment, built for regulatory clarity and sustainable operation.
+> **🎯 Ready to engage with compliant, decentralized local-currency DeFi?** Visit our [dApp](https://app.quantillon.money/) to explore QEURO as Quantillon's first deployment, built for regulatory clarity and sustainable operation. The application opens to users at the public launch, planned for Q4 2026.

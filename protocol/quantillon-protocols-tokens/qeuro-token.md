@@ -22,16 +22,16 @@ Our stablecoin architecture incorporates advanced mechanisms including overcolla
 | **Network**       | Base L2 (Primary)           | L2 efficiency and lower costs  |
 | **Peg Target**    | 1 QEURO = 1 EUR             | Direct euro denomination       |
 | **Decimals**      | 18                          | Full ERC-20 compatibility      |
-| **Supply Model**  | No fixed cap — bounded by hedging capacity | Safety ceiling (currently 100M) is governance-raisable |
+| **Supply Model**  | No fixed cap - bounded by hedging capacity | Safety ceiling (currently 100M) is governance-raisable |
 | **Contract Type** | OpenZeppelin + Custom Logic | Battle-tested + innovation     |
 
 **Supply Model**
 
-QEURO has **no fixed tokenomic supply cap** — supply is bounded by the protocol's hedging capacity: minting reverts whenever protocol collateralization would drop below the governance-set minting floor — currently **102.5%** (lowered from 105% on 2 September 2026; hard minimum 101%); 101% is the critical threshold that triggers liquidation mode. The token contract carries two adjustable safety guardrails on top of that economic limit: an **administrative supply ceiling** (currently 100,000,000 QEURO, raisable by governance at any time) and a **mint/burn rate limiter** (10M QEURO per 300-block window, ~10 minutes on Base) that contains blast radius if the mint path were ever compromised.
+QEURO has **no fixed tokenomic supply cap** - supply is bounded by the protocol's hedging capacity: minting reverts whenever protocol collateralization would drop below the governance-set minting floor - currently **102.5%** (lowered from 105% on 2 September 2026; hard minimum 101%); 101% is the critical threshold that triggers liquidation mode. The token contract carries two adjustable safety guardrails on top of that economic limit: an **administrative supply ceiling** (currently 100,000,000 QEURO, raisable by governance at any time) and a **mint/burn rate limiter** (10M QEURO per 300-block window, ~10 minutes on Base) that contains blast radius if the mint path were ever compromised.
 
 **Implemented Features**
 
-* **Oracle Integration**: the hedge venue's EUR/USD market mid (Hyperliquid) with Chainlink as fallback and USDC/USD validation, all behind circuit breakers — see [Oracle Architecture](../oracle-architecture.md)
+* **Oracle Integration**: the hedge venue's EUR/USD market mid (Hyperliquid) with Chainlink as fallback and USDC/USD validation, all behind circuit breakers - see [Oracle Architecture](../oracle-architecture.md)
 * **Slippage-Free Operations**: Mint/redeem at oracle rates; fees are currently 0 (governance-settable, capped at 5%)
 * **Emergency Controls**: Pausable with time-locked upgrades via UUPS pattern
 * **Compliance System**: Blacklist/whitelist functionality for regulatory compliance
@@ -48,7 +48,7 @@ QEURO has **no fixed tokenomic supply cap** — supply is bounded by the protoco
 
 | Collateral Type | Status | Minimum Ratio | Accepted Assets |
 | --------------- | ------ | ------------- | --------------- |
-| **Primary**     | ✅ Live | Governance-set minting floor — currently 102.5% (105% at launch); 101% is the critical/liquidation threshold | USDC (sole collateral) |
+| **Primary**     | ✅ Live | Governance-set minting floor - currently 102.5% (105% at launch); 101% is the critical/liquidation threshold | USDC (sole collateral) |
 
 **🔒 Security Mechanisms**
 
@@ -91,14 +91,14 @@ QEURO Burn → Oracle Verification → Collateral Release → USDC Transfer
 
 **💰 Collateral Deployment**
 
-USDC collateral can be deployed to external staking vaults — currently a MetaMorpho (Morpho) USDC vault via a dedicated adapter — to generate yield. Deployment is executed by the vault-operator role, USDC is withdrawn automatically to serve redemptions, and governance can deactivate a vault or pause the protocol. See [External Staking Vaults](../external-staking-vaults.md) for details.
+USDC collateral can be deployed to external staking vaults - currently a MetaMorpho (Morpho) USDC vault via a dedicated adapter - to generate yield. Deployment is executed by the vault-operator role, USDC is withdrawn automatically to serve redemptions, and governance can deactivate a vault or pause the protocol. See [External Staking Vaults](../external-staking-vaults.md) for details.
 
 **Revenue Distribution Model (Harvest + YieldShift)**
 
 ```
 External Vault Yield (Variable APY), harvested by QuantillonVault
 ├── 1. Hedger funding carve-out first
-│      (governance-set annual rate, capped at 50% of each harvest — currently 0 bps)
+│      (governance-set annual rate, capped at 50% of each harvest - currently 0 bps)
 └── 2. Residual split between stQEURO stakers and the treasury
        according to the staked share
 ```
@@ -121,14 +121,14 @@ External Vault Yield (Variable APY), harvested by QuantillonVault
 **Participation Requirements**:
 
 * **Minimum Stake**: Configurable via governance (minStakeAmount)
-* **Collateral Ratio**: Minting requires the protocol collateralization ratio to stay above the minting floor — currently 102.5% (101% is the critical threshold)
+* **Collateral Ratio**: Minting requires the protocol collateralization ratio to stay above the minting floor - currently 102.5% (101% is the critical threshold)
 * **Holding Period**: 7-day minimum for yield claims (anti-manipulation)
 
 **🛡️ Hedger Pool Mechanics**
 
 **Current Implementation: Single Hedger Model**
 
-> **Important**: The protocol runs a single designated hedger — Quantillon Labs' hedging engine, executing on Hyperliquid — in the current phase. See [HedgerPool](../hedger-pool.md).
+> **Important**: The protocol runs a single designated hedger - Quantillon Labs' hedging engine, executing on Hyperliquid - in the current phase. See [HedgerPool](../hedger-pool.md).
 
 **Hedger Functions**:
 
@@ -149,7 +149,7 @@ Base Compensation: EUR/USD Interest Rate Differential
 
 * **Margin Requirements**: Governance-set minimum margin ratio (`minMarginRatio`, currently 250 bps = 2.5%)
 * **Leverage Limits**: Maximum leverage configurable by governance (`maxLeverage`, currently 20×)
-* **Health Gate**: Margin cannot be withdrawn below the minimum ratio; there is no per-position auto-liquidation — the protocol-level liquidation mode at CR ≤ 101% is the only liquidation mechanism
+* **Health Gate**: Margin cannot be withdrawn below the minimum ratio; there is no per-position auto-liquidation - the protocol-level liquidation mode at CR ≤ 101% is the only liquidation mechanism
 * **Entry/Exit Fees**: Configurable fees for position management (currently 0)
 
 ***
@@ -158,7 +158,7 @@ Base Compensation: EUR/USD Interest Rate Differential
 
 **⚖️ Dynamic Equilibrium System**
 
-The Yield Shift represents QEURO's most innovative feature—automatically rebalancing incentives between Users and Hedgers based on real-time market conditions.
+The Yield Shift represents QEURO's most innovative feature - automatically rebalancing incentives between Users and Hedgers based on real-time market conditions.
 
 **📊 Technical Parameters (Code Values)**
 
@@ -459,7 +459,7 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 
 | Risk Factor | Probability | Impact | Mitigation Strategy |
 | ----------- | ----------- | ------ | ------------------- |
-| **Smart Contract Bug** | Medium | Critical | Independent audit + on-chain remediation (July 2026), continuous monitoring |
+| **Smart Contract Bug** | Medium | Critical | AI-driven review + whitehat reports, remediated on-chain as they come in; no audit-firm review yet; continuous monitoring |
 | **Oracle Manipulation** | Low | High | Chainlink + circuit breakers, 5% deviation limit |
 | **External Vault (Morpho) Risk** | Low | Medium | Governance can deactivate the vault and pause the protocol; USDC is withdrawn on redemption; loss-aware collateral accounting |
 | **Liquidation Cascade** | Low | High | Circuit breakers, emergency pause |
@@ -494,7 +494,7 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 
 **Contract Addresses**
 
-> The protocol is live on Base mainnet (chain 8453) since June 2026. QuantillonVault: `0x833E5Ba510a241b21F1C60c987D1c49eB52E4a07`. See [Oracle Architecture](../oracle-architecture.md) for the oracle contract addresses.
+> The protocol contracts are deployed on Base mainnet (chain 8453) since June 2026; the public launch is planned for Q4 2026. QuantillonVault: `0x833E5Ba510a241b21F1C60c987D1c49eB52E4a07`. See [Oracle Architecture](../oracle-architecture.md) for the oracle contract addresses.
 
 **Key Constants**
 

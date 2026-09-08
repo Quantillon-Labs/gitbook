@@ -4,11 +4,11 @@ Quantillon is driven by a multidisciplinary team combining decades of experience
 
 ### Founding Team
 
-**👨‍💼 Toni Cantarutti — CEO**
+**👨‍💼 Toni Cantarutti - CEO**
 
 Toni brings over **15 years of experience** as a software architect specializing in core C++ and system-level development. His career spans R\&D roles at Intuisphere, Orange Labs, and Thermo Fisher Scientific. He is the founder of Benarius, a CeFi euro-yield platform, which laid the groundwork for Quantillon. Toni leads protocol design, team coordination, and strategic vision.
 
-**👨‍💻 Nicolas Bellengé — CTO**
+**👨‍💻 Nicolas Bellengé - CTO**
 
 With **20 years of experience** in software engineering and project leadership, Nicolas is an expert in Web2/Web3 stack integration. He is the CEO of NBTC SAS, a company focused on the acquisition, resale, and management of crypto assets. At Quantillon, Nicolas oversees the smart contract infrastructure, full-stack development, and cybersecurity framework.
 
@@ -24,16 +24,16 @@ To manage legal exposure, regulatory dialogue, and decentralized operations, Qua
 
 **🔗 Quantillon Protocol (on-chain)**
 
-The on-chain smart contracts responsible for minting, vault logic, hedging infrastructure and governance proposals — governed today by the 2-of-3 governance Safe with a 12-hour upgrade timelock, and by $QTI holders once governance is activated (see [Quantillon DAO](quantillon-dao.md)).
+The on-chain smart contracts responsible for minting, vault logic, hedging infrastructure and governance proposals - governed today by the 2-of-3 governance Safe with a 12-hour upgrade timelock, and by $QTI holders once governance is activated (see [Quantillon DAO](quantillon-dao.md)).
 
 **🔬 Quantillon Labs (development)**
 
-A **French SAS** (Mérignac, France — see the [Legal Notice](complementary-information/legal-notice.md)) responsible for developing and launching the protocol. Initially acts as a liquidity provider and hedger, remunerated by the protocol. Labs ensures code security, DevOps, and integrations.
+A **French SAS** (Mérignac, France - see the [Legal Notice](complementary-information/legal-notice.md)) responsible for developing and launching the protocol. Initially acts as a liquidity provider and hedger, remunerated by the protocol. Labs ensures code security, DevOps, and integrations.
 
-**🏛️ Quantillon Foundation (compliance — planned)**
+**🏛️ Quantillon Foundation (compliance - planned)**
 
 A **planned future entity**, with legal form and jurisdiction to be determined, that will interface with regulators, auditors, and legal stakeholders once established. It is intended to safeguard multisig access, publish disclosures, and facilitate DAO transitions. Until then, these responsibilities sit with Quantillon Labs.
 
-> **This tripartite model is designed to support progressive decentralization while ensuring institutional credibility and legal defensibility—especially relevant under MiCA's evolving guidance.**
+> **This tripartite model is designed to support progressive decentralization while ensuring institutional credibility and legal defensibility - especially relevant under MiCA's evolving guidance.**
 
 Quantillon's human capital strategy focuses on high-leverage contributors, external auditors, and community-aligned governance. The team is well-positioned to evolve into a DAO-governed protocol with scalable institutional interfaces.

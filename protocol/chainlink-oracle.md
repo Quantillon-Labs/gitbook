@@ -104,7 +104,7 @@ uint256 public constant DEV_MODE_DELAY = 48 hours;
 function getEurUsdPrice() external returns (uint256 price, bool isValid);
 ```
 
-Not a `view`: a valid read advances `lastValidEurUsdPrice` / `lastPriceUpdateTime` / `lastPriceUpdateBlock` and emits `PriceUpdated`. On any failed check the function returns `(lastValidEurUsdPrice, false)` — it never reverts. **Consumers treat `isValid = false` as a hard stop**: `QuantillonVault` reverts mint and redeem on an invalid price.
+Not a `view`: a valid read advances `lastValidEurUsdPrice` / `lastPriceUpdateTime` / `lastPriceUpdateBlock` and emits `PriceUpdated`. On any failed check the function returns `(lastValidEurUsdPrice, false)` - it never reverts. **Consumers treat `isValid = false` as a hard stop**: `QuantillonVault` reverts mint and redeem on an invalid price.
 
 **Validation Flow**
 
@@ -133,7 +133,7 @@ Not a `view`: a valid read advances `lastValidEurUsdPrice` / `lastPriceUpdateTim
 │     └── |price - lastValidPrice| <= 5% of lastValidPrice    │
 │                                                              │
 │  6. Commit: update lastValid* state, emit PriceUpdated       │
-│  7. Return (price, true) — 18 decimals                       │
+│  7. Return (price, true) - 18 decimals                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -248,7 +248,7 @@ function checkPriceFeedConnectivity() external view
 ### ⚙️ Configuration
 
 ```solidity
-// Price bounds (18 decimals) — reverts if _minPrice == 0 or _maxPrice <= _minPrice
+// Price bounds (18 decimals) - reverts if _minPrice == 0 or _maxPrice <= _minPrice
 function updatePriceBounds(uint256 _minPrice, uint256 _maxPrice)
     external onlyRole(ORACLE_MANAGER_ROLE);
 

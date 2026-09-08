@@ -1,9 +1,8 @@
 # Privacy Policy
 
-_Date of the latest revision: 4th of September 2026_\
-<sub>_(credits to xrpl-commons and usual)_</sub>
+_Date of the latest revision: 4th of September 2026_
 
-_Change log: 4 September 2026 — data categories, purposes, legal bases and retention periods for the Quantillon Rewards program added; Brevo listed as an email-delivery processor. 26 June 2025 — initial version._
+_Change log: 4 September 2026 - data categories, purposes, legal bases and retention periods for the Quantillon Rewards program added; Brevo listed as an email-delivery processor. 26 June 2025 - initial version._
 
 
 

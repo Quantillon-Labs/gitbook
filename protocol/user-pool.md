@@ -4,7 +4,7 @@
 
 ### 📋 Overview
 
-The UserPool is an **optional batch deposit/stake contract**: it lets an address mint QEURO from USDC in batches, stake QEURO under a governance-set APY with an unstaking cooldown, and keeps per-user deposit/withdrawal histories. The dApp's primary flows use `QuantillonVault` directly (`mintQEURO`, `mintAndStakeQEURO`, `redeemQEURO`) and the stQEURO ERC-4626 series for yield — see [Core Mechanisms](mechanisms.md) and [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md).
+The UserPool is an **optional batch deposit/stake contract**: it lets an address mint QEURO from USDC in batches, stake QEURO under a governance-set APY with an unstaking cooldown, and keeps per-user deposit/withdrawal histories. The dApp's primary flows use `QuantillonVault` directly (`mintQEURO`, `mintAndStakeQEURO`, `redeemQEURO`) and the stQEURO ERC-4626 series for yield - see [Core Mechanisms](mechanisms.md) and [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md).
 
 Live version: **1.0.3** · address `0x712bCc77e7aa53C79870A40d044D440Ad2901bF2` (Base mainnet).
 
@@ -430,4 +430,4 @@ event ETHRecovered(address indexed to, uint256 indexed amount);
 
 ***
 
-> **Summary**: The UserPool is an optional batch interface over the vault — batched USDC→QEURO deposits and withdrawals with per-item slippage guards, QEURO staking with a governance-set APY and a 7-day unstaking cooldown, and per-user histories. The dApp's main flows go through `QuantillonVault` and the stQEURO series directly.
+> **Summary**: The UserPool is an optional batch interface over the vault - batched USDC→QEURO deposits and withdrawals with per-item slippage guards, QEURO staking with a governance-set APY and a 7-day unstaking cooldown, and per-user histories. The dApp's main flows go through `QuantillonVault` and the stQEURO series directly.

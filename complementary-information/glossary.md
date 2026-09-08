@@ -52,14 +52,14 @@ A hybrid approach combining centralized and decentralized systems, often integra
 
 ### Chainlink
 
-A decentralized oracle network used by Quantillon as the **fallback** EUR/USD source and for USDC/USD collateral validation. The active EUR/USD source is the market mid of the active hedge venue (currently Hyperliquid) — see the Oracle Architecture page.
+A decentralized oracle network used by Quantillon as the **fallback** EUR/USD source and for USDC/USD collateral validation. The active EUR/USD source is the market mid of the active hedge venue (currently Hyperliquid) - see the Oracle Architecture page.
 
 ***
 
 ### Overcollateralization
 
 A system where the value of pledged collateral exceeds the value of the issued loan or stablecoin.\
-**Minting QEURO requires the protocol collateralization ratio to stay above the governance-set minting floor — currently 102.5% (since 2 September 2026; 105% at launch); 101% is the critical threshold that triggers liquidation mode.**
+**Minting QEURO requires the protocol collateralization ratio to stay above the governance-set minting floor - currently 102.5% (since 2 September 2026; 105% at launch); 101% is the critical threshold that triggers liquidation mode.**
 
 ***
 
@@ -102,13 +102,13 @@ The global market for currency trading. Quantillon leverages its depth and liqui
 
 ### Hedgers
 
-Participants who provide USDC to hedge against EUR/USD volatility, in exchange for compensation via the Yield Shift mechanism. In the current phase a single designated hedger (Quantillon Labs' hedging engine, executing on Hyperliquid) fills this role — see the HedgerPool page.
+Participants who provide USDC to hedge against EUR/USD volatility, in exchange for compensation via the Yield Shift mechanism. In the current phase a single designated hedger (Quantillon Labs' hedging engine, executing on Hyperliquid) fills this role - see the HedgerPool page.
 
 ***
 
 ### Hyperliquid
 
-A decentralized perpetual-futures exchange. Currently the protocol's **active venue** for EUR/USD hedge execution, whose market mid is the active on-chain EUR/USD pricing source — see the Oracle Architecture page.
+A decentralized perpetual-futures exchange. Currently the protocol's **active venue** for EUR/USD hedge execution, whose market mid is the active on-chain EUR/USD pricing source - see the Oracle Architecture page.
 
 ***
 
@@ -121,13 +121,13 @@ Examples: **TVL**, **swap volume**, **user base**.
 
 ### Liquidity by Design
 
-Quantillon's strategy of leveraging **existing liquidity** (USDC and Forex) instead of building new liquidity from scratch—reducing costs and slippage.
+Quantillon's strategy of leveraging **existing liquidity** (USDC and Forex) instead of building new liquidity from scratch - reducing costs and slippage.
 
 ***
 
 ### Margin Rebalancing
 
-The operational policy, in force since September 2026, under which Quantillon Labs' hedging engine keeps the collateral of the two legs of the EUR/USD hedge — the HedgerPool position on Base and the Hyperliquid perpetual — near a 2.5% equity-to-notional target through bounded, monitored USDC transfers. The on-chain HedgerPool minimum margin ratio is 250 bps (2.5%) and the minting floor is 102.5% — see the HedgerPool page.
+The operational policy, in force since September 2026, under which Quantillon Labs' hedging engine keeps the collateral of the two legs of the EUR/USD hedge - the HedgerPool position on Base and the Hyperliquid perpetual - near a 2.5% equity-to-notional target through bounded, monitored USDC transfers. The on-chain HedgerPool minimum margin ratio is 250 bps (2.5%) and the minting floor is 102.5% - see the HedgerPool page.
 
 ***
 

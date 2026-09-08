@@ -9,15 +9,15 @@ The deployed protocol ships with a complete fee framework, most of which is deli
 #### 1. QEURO Operations (Core Stablecoin Activity)
 
 * **Mint/redeem fees**: currently 0, governance-settable up to a 5% cap
-* **Yield management**: the treasury share of harvested external-vault yield (currently Morpho USDC lending) — the portion attributable to unstaked QEURO accrues to the treasury
+* **Yield management**: the treasury share of harvested external-vault yield (currently Morpho USDC lending) - the portion attributable to unstaked QEURO accrues to the treasury
 
 #### 2. stQEURO Yield Infrastructure
 
-* **Yield fee**: a per-series fee on credited staker yield — currently 0, capped at 20%
+* **Yield fee**: a per-series fee on credited staker yield - currently 0, capped at 20%
 
 #### 3. Hedging Operations
 
-* **Hedger position fees**: entry/exit/margin fees — currently 0, governance-settable
+* **Hedger position fees**: entry/exit/margin fees - currently 0, governance-settable
 * **Reward fee split**: 20% of hedger rewards at claim time
 
 #### 4. Cross-Protocol Integration (planned)
@@ -28,54 +28,20 @@ The deployed protocol ships with a complete fee framework, most of which is deli
 
 ### Financial Projections
 
-> **Illustrative and aspirational**: the projections below assume fee levels that are **not currently active** (fees are 0 at launch) and volumes that depend on adoption. They model what the fee framework could yield if governance activates it — they are not forecasts of current revenue.
-
-#### Conservative Growth Scenario (€50M TVL by Year 1)
-
-**Revenue Breakdown:**
-
-```
-Annual Revenue Calculation (illustrative fee assumptions):
-├── Mint/Redeem Volume: €500M (10x TVL turnover)
-│   └── Fees if activated at 0.1% (cap 5%): €500M × 0.1% = €500K
-├── Yield Management: €50M × 7% yield × 10% treasury share = €350K
-├── stQEURO Yield Fee if activated at 5% (cap 20%): €20M staked × 5% yield × 5% = €50K
-└── Cross-Chain Fees (future phases): €100M volume × 0.2% average = €200K
-
-Total Annual Revenue: €1,100K
-Operating Costs: €600K (development, infrastructure, legal, audits)
-Net Operating Profit: €500K (45% operating margin)
-```
-
-#### Optimistic Growth Scenario (€500M TVL by Year 2)
-
-**Revenue Breakdown:**
-
-```
-Annual Revenue Calculation (illustrative fee assumptions):
-├── Mint/Redeem Volume: €5B (10x TVL turnover)
-│   └── Fees if activated at 0.1% (cap 5%): €5B × 0.1% = €5M
-├── Yield Management: €500M × 7% yield × 10% treasury share = €3.5M
-├── stQEURO Yield Fee if activated at 5% (cap 20%): €300M staked × 5% yield × 5% = €750K
-└── Cross-Chain Fees (future phases): €1.5B volume × 0.2% average = €3M
-
-Total Annual Revenue: €12.25M
-Operating Costs: €2.5M (scaled operations)
-Net Operating Profit: €9.75M (80% margin)
-```
+**No revenue projections are published.** All fees are currently 0, usage is at pre-launch levels, and the public launch is planned for Q4 2026; any revenue figure would be an assumption about fee levels governance has not set and volumes that do not exist yet. The fee levers above are what the deployed contracts support, and the TVL targets below are targets, not forecasts.
 
 ### Key Performance Indicators
 
 #### Growth Metrics
 
-* **TVL Growth**: Target €100M by Month 12, €1B by Month 36
-* **Staking Adoption**: 50%+ of QEURO supply in stQEURO by Year 2
+* **TVL Growth**: Target $1M at the Q4 2026 launch, $10M by Q2 2027, $10M to $100M by Q1 2028
+* **Staking Adoption**: 50%+ of QEURO supply in stQEURO within two years of launch
 * **Daily Volume**: 2-5% of TVL in trading activity
-* **Cross-Chain Distribution**: Base-first today; multi-chain expansion targeted from Year 2
+* **Cross-Chain Distribution**: Base-first today; multi-chain expansion targeted from the second year after launch
 
 #### Sustainability Metrics
 
-* **Operating Margin**: Maintain >40% across market conditions
+* **Operating Margin**: keep the cost base below fee revenue once governance activates fees (no target margin published)
 * **Revenue Diversification**: No single source >60% of total revenue
 * **User Retention**: >80% of stQEURO holders active after 6 months
 * **Protocol Utilization**: Average >80% of collateral deployed in yield strategies

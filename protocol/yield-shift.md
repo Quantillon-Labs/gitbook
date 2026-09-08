@@ -6,7 +6,7 @@
 
 YieldShift is the dynamic yield-allocation engine of the Quantillon protocol. It balances the split of yield between the user side (stQEURO holders) and the hedger side according to pool conditions, and keeps the **hedger-side yield ledger** from which the hedger claims.
 
-> **How yield flows in the live deployment**: the yield earned by the external staking vault (Morpho) is harvested by `QuantillonVault.harvestAndDistributeVaultYield`, which credits the stakers' share **directly** into the stQEURO series (exchange rate) and the treasury's share to the treasury. YieldShift receives yield only from governance-authorised sources through `addYield` and tracks the hedger's claimable share. No yield source is authorised on the live deployment today, and the hedger funding carve-out is currently 0 bps — see [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md) for the harvest split.
+> **How yield flows in the live deployment**: the yield earned by the external staking vault (Morpho) is harvested by `QuantillonVault.harvestAndDistributeVaultYield`, which credits the stakers' share **directly** into the stQEURO series (exchange rate) and the treasury's share to the treasury. YieldShift receives yield only from governance-authorised sources through `addYield` and tracks the hedger's claimable share. No yield source is authorised on the live deployment today, and the hedger funding carve-out is currently 0 bps - see [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md) for the harvest split.
 
 Live version: **1.0.5** · address `0xdcd66568F8623bDa3387287c31F14b43e49665b1` (Base mainnet).
 
@@ -183,7 +183,7 @@ function _getEligiblePoolMetrics() internal view returns (
 );
 ```
 
-This function returns only "eligible" pool sizes — deposits that have passed the holding period.
+This function returns only "eligible" pool sizes - deposits that have passed the holding period.
 
 **Why This Matters**
 
@@ -244,7 +244,7 @@ function setSourceVaultBindingEnforcement(bool enabled) external;              /
 function addYield(uint256 vaultId, uint256 yieldAmount, bytes32 source) external;
 ```
 
-Reverts unless the caller is an authorised source of that `source` type, `vaultId != 0`, and — while enforcement is on — `vaultId` equals the caller's bound vault. The USDC is pulled from the caller (exact amount checked) and split into `userYieldPool` / `hedgerYieldPool` according to `currentYieldShift`; emits `YieldAdded`.
+Reverts unless the caller is an authorised source of that `source` type, `vaultId != 0`, and - while enforcement is on - `vaultId` equals the caller's bound vault. The USDC is pulled from the caller (exact amount checked) and split into `userYieldPool` / `hedgerYieldPool` according to `currentYieldShift`; emits `YieldAdded`.
 
 #### Source Tracking
 
@@ -286,7 +286,7 @@ mapping(address => uint256) public hedgerLastClaim;
 │  QuantillonVault.harvestAndDistributeVaultYield(vaultId)     │
 │     ├── hedger funding carve-out first (currently 0 bps)     │
 │     ├── stakers' share credited to the stQEURO series        │
-│     │   (exchange rate rises — no claim needed)              │
+│     │   (exchange rate rises - no claim needed)              │
 │     └── treasury share to the treasury                        │
 │                                                              │
 │  Hedger side (YieldShift ledger)                             │
