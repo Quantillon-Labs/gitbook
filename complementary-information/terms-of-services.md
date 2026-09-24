@@ -1,20 +1,20 @@
 # Terms of Service
 
-**Version:** 1.0
+_Date of the latest revision: 24th of September 2026_
 
-**Effective date:** 24 September 2026
+_Version 1.0 — Effective date: 24 September 2026_
 
 These Terms of Service (the **Terms**) govern your use of the Quantillon website at https://quantillon.money and application at https://app.quantillon.money (together, the **Interface**) and the related services provided by Quantillon Labs through the Interface.
 
 Crypto-assets and decentralized finance involve significant risks, including the loss of all assets committed to a protocol. Read these Terms and the information for each feature before using it. A target value, an estimated yield or a past result is not a guarantee of future performance.
 
-## 1. Who we are
+#### 1. WHO WE ARE
 
 The Interface is operated by **Quantillon Labs**, a French simplified joint stock company (*société par actions simplifiée*), registered with the Commercial and Companies Register of Bordeaux under number **988 682 613**, with its registered office at **2 Avenue de Lognac, 33700 Mérignac, France** (**Quantillon Labs**, **we**, **us**).
 
 For questions or complaints, contact **support@quantillon.money** or write to our registered office. Additional company information appears in our [Legal Notice](legal-notice.md).
 
-## 2. Scope and acceptance
+#### 2. SCOPE AND ACCEPTANCE
 
 The Interface provides access to information and features associated with the Quantillon protocol, including QEURO minting and redemption, QEURO staking through vaults, portfolio information and, when available, the Quantillon Rewards program.
 
@@ -28,7 +28,7 @@ Our [Privacy Policy](privacy-policy.md) explains how personal data is processed.
 
 Additional terms may apply to a specific feature. They will be identified and made available before you accept or use that feature. The [Rewards Program Terms](rewards-program-terms.md) apply separately to participation in that program. In the event of a conflict, feature-specific terms govern that feature, subject to mandatory law. The Legal Notice provides supplementary information; it does not displace these Terms or mandatory disclosures.
 
-## 3. Eligibility and permitted locations
+#### 3. ELIGIBILITY AND PERMITTED LOCATIONS
 
 The Interface is available to individuals and organizations that meet the requirements in this section. An individual must be at least 18 years old, have reached the age of majority in their jurisdiction if higher, and have legal capacity to enter into these Terms. An organization must be validly established and act through an authorized representative. You must be authorized to use the wallet you connect and to instruct transactions involving the relevant assets.
 
@@ -40,7 +40,7 @@ We may limit the availability of particular features by jurisdiction or user cat
 
 You must not misrepresent your eligibility or use a VPN, proxy, alternative wallet or other method to evade a restriction that applies to you. This does not prohibit ordinary privacy tools used without evading a restriction. Where reasonably necessary and lawful, we may request information to establish eligibility and restrict access while an unresolved eligibility concern is assessed. Any collection of personal data is subject to the Privacy Policy. Your responsibility to comply with laws applicable to you does not replace our own legal obligations.
 
-## 4. Wallets, authentication and security
+#### 4. WALLETS, AUTHENTICATION AND SECURITY
 
 You use a compatible wallet to authenticate and authorize operations. You remain responsible for safeguarding its private keys, recovery phrases, signing devices and access credentials. Quantillon Labs will never ask you to disclose your private key or recovery phrase. We cannot reconstruct a lost private key.
 
@@ -48,7 +48,7 @@ Review the domain, message, network, recipient, contract address, amount and req
 
 A wallet signature demonstrates authorization through the wallet's signing mechanism. It does not, by itself, verify a person's civil identity. If you suspect unauthorized use, secure your wallet, revoke permissions where appropriate and contact us promptly. Any responsibility for unauthorized activity will be determined under applicable law and the circumstances; these Terms do not automatically attribute every disputed operation to you.
 
-## 5. How protocol interactions work
+#### 5. HOW PROTOCOL INTERACTIONS WORK
 
 The Interface helps you prepare and submit operations to smart contracts on supported networks. Assets deposited into the protocol are governed by those contracts and their dependencies; they are not simply held in your connected wallet throughout the operation.
 
@@ -58,7 +58,7 @@ The Interface may display information supplied by blockchain nodes, indexers, or
 
 Wallet providers, networks, collateral issuers, trading venues and underlying protocols may have their own terms and operational restrictions. Where you use a separate third-party service, review the terms that apply to it. A link or integration does not guarantee that provider's performance. This distinction does not remove responsibilities that applicable law places on Quantillon Labs for the services it provides.
 
-## 6. Minting and redeeming QEURO
+#### 6. MINTING AND REDEEMING QEURO
 
 Where available, the Interface allows you to deposit supported collateral to mint QEURO and to redeem QEURO for the supported redemption asset. Review the asset, network, quoted amount, applicable fees and transaction settings before authorizing each operation.
 
@@ -68,7 +68,7 @@ Execution depends on the relevant smart contracts and available collateral, liqu
 
 The technical description in this section does not exclude any redemption, reimbursement or other rights that applicable law gives you.
 
-## 7. Staking, vault shares and yield
+#### 7. STAKING, VAULT SHARES AND YIELD
 
 Where available, depositing QEURO into a staking vault provides shares associated with that vault. Different vaults may have different strategies, share tokens and risks. The amount of QEURO represented by a share can change; there is no general promise that your initial amount will be preserved.
 
@@ -78,7 +78,7 @@ For vaults using the current share-value release mechanism, collected yield is a
 
 Withdrawal availability depends on the selected vault's rules, liquidity, underlying strategies and safeguards. A yield release period does not by itself establish a lock on principal, but other technical or liquidity constraints may prevent immediate withdrawal. Review the information for the selected vault before depositing.
 
-## 8. Fees and costs
+#### 8. FEES AND COSTS
 
 Operations may involve protocol fees, strategy charges, hedging or funding costs, spreads, slippage and blockchain network fees. Some costs reduce the amount received or the yield allocated rather than appearing as a separate payment.
 
@@ -88,7 +88,7 @@ Signing the off-chain authentication message does not itself incur a blockchain 
 
 Changes to our fees will be disclosed before they apply to new operations. Changes affecting an ongoing service or position will be subject to the applicable terms, notice requirements and mandatory law.
 
-## 9. Material risks
+#### 9. MATERIAL RISKS
 
 Before committing assets, consider in particular:
 
@@ -103,19 +103,19 @@ Before committing assets, consider in particular:
 
 These examples are not exhaustive. You may lose some or all of the assets committed. Acknowledging risk does not waive your rights or excuse a breach of our legal obligations.
 
-## 10. Information and independent decisions
+#### 10. INFORMATION AND INDEPENDENT DECISIONS
 
 General information, simulations, estimates and documentation are not personalized investment, legal or tax advice. Assess whether you understand the relevant operation and can bear its risks; seek independent professional advice where appropriate.
 
 You are responsible for determining and meeting tax and reporting obligations applicable to your activities. We remain responsible for any reporting or other obligations applicable to us. Nothing in these Terms overrides an obligation to provide advice, information or protection where the law requires it.
 
-## 11. Rewards and optional features
+#### 11. REWARDS AND OPTIONAL FEATURES
 
 Participation in Quantillon Rewards is optional and requires separate acceptance of the Rewards Program Terms. Signing in to the Interface does not, by itself, enroll you in that program.
 
 Quantillon Points (QP) measure participation. They are non-transferable, have no monetary value and do not confer a right to a token distribution, payment or allocation. Program rules, eligibility, corrections and exclusions are governed by the separate program terms. Do not treat points, badges or rankings as investment returns.
 
-## 12. Acceptable use and intellectual property
+#### 12. ACCEPTABLE USE AND INTELLECTUAL PROPERTY
 
 You must not use the Interface to commit fraud, launder assets, breach applicable sanctions, impersonate another person, manipulate prices or program results, infringe others' rights, obtain unauthorized access or deliberately impair the Interface or its security. You must not submit unlawful content or false information in connection with optional features.
 
@@ -123,7 +123,7 @@ Report suspected vulnerabilities to support@quantillon.money. Any testing must r
 
 Quantillon Labs and its licensors retain their rights in the Interface, branding and content. We permit you to access and use the Interface for its intended purposes in accordance with these Terms. Separately published open-source licenses continue to govern the software they cover. These Terms do not replace or narrow rights granted under those licenses.
 
-## 13. Availability, suspension and ending use
+#### 13. AVAILABILITY, SUSPENSION AND ENDING USE
 
 We may restrict or suspend access where reasonably necessary to address a security incident, comply with law, prevent abuse, perform maintenance or respond to a material breach of these Terms. Measures will be proportionate to their purpose. Where feasible and lawful, we will provide notice, explain the reason and give you an opportunity to resolve a remediable breach or contest a restriction.
 
@@ -133,7 +133,7 @@ Restricting Interface access does not, by itself, transfer ownership of your ass
 
 You may stop using the Interface at any time. Signing out or deleting an application profile does not automatically close positions, redeem vault shares, revoke token approvals or erase blockchain records. Review and address open positions and permissions separately. You can contact support about ending an ongoing service. Ending use does not extinguish accrued rights or obligations.
 
-## 14. Responsibility and legal protections
+#### 14. RESPONSIBILITY AND LEGAL PROTECTIONS
 
 We are responsible for performing our obligations under these Terms and applicable law. You are responsible for your own breaches and for exercising reasonable care when using your wallet and the Interface. Responsibility for a loss depends on its cause, the parties' conduct and the law that applies.
 
@@ -141,19 +141,19 @@ We do not guarantee a particular price, yield or uninterrupted access. The exist
 
 Nothing in these Terms excludes or limits liability for fraud, intentional misconduct, gross negligence, death or personal injury where liability cannot lawfully be limited, or any other liability that applicable law does not permit us to exclude or limit. Nothing excludes mandatory consumer protections, statutory guarantees or available remedies.
 
-## 15. Personal data
+#### 15. PERSONAL DATA
 
 Our Privacy Policy describes the data we process, purposes and legal bases, recipients, retention periods and your rights. Wallet addresses and blockchain activity may constitute personal data. Public blockchain records may remain accessible even after you disconnect your wallet or delete an application profile.
 
 Optional marketing communications or other activities requiring consent are subject to separate choices. Refusing such optional consent does not, by itself, prevent acceptance of these Terms.
 
-## 16. Changes to these Terms
+#### 16. CHANGES TO THESE TERMS
 
 We may propose changes to reflect changes in law, security requirements, the Interface or available features. Updated versions will state their version and effective date. We will provide reasonable advance notice of material changes and request renewed acceptance where required; merely publishing a new version does not establish that you accepted it.
 
 Where law or an urgent security requirement requires a shorter notice period, we will explain this where lawful and practicable. Changes will not retrospectively remove accrued rights. If you do not accept a material change, you may stop using the affected service, subject to applicable exit arrangements and mandatory rights. A technical contract upgrade is not, by itself, acceptance of revised legal terms.
 
-## 17. Complaints and disputes
+#### 17. COMPLAINTS AND DISPUTES
 
 Send complaints to support@quantillon.money or our registered office, with enough information to identify the issue. Do not send private keys or recovery phrases. We will acknowledge the complaint and seek to resolve it within a reasonable period, subject to any applicable statutory deadlines.
 
@@ -161,7 +161,7 @@ If you are a consumer, you may have a right to refer an unresolved dispute to a 
 
 These Terms are governed by French law. If you are a consumer, this choice does not deprive you of mandatory protections applicable under the law of your country of habitual residence where those protections apply. Disputes may be brought before the courts having jurisdiction under applicable law. Nothing requires a consumer to bring proceedings exclusively in Bordeaux or to waive a right to bring proceedings available under mandatory law.
 
-## 18. General provisions
+#### 18. GENERAL PROVISIONS
 
 If a provision is invalid or unenforceable, the remaining provisions continue to apply to the extent permitted by law. A failure to enforce a provision on one occasion does not waive the right to enforce it later. No interpretation of these Terms may remove rights or obligations imposed by mandatory law.
 
