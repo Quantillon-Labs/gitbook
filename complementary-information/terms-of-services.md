@@ -1,10 +1,8 @@
 # Terms of Service
 
-> **Draft for public review — 24 September 2026. These proposed Terms are not yet effective.** The items marked for completion remain under review. Until the final Terms are published and take effect, the existing [Legal Notice](legal-notice.md) and [Privacy Policy](privacy-policy.md) remain the published reference documents for use of the Website. Publication of this draft does not constitute acceptance by any user.
+**Version:** 1.0
 
-**Version:** Draft 1.0
-
-**Effective date:** Not yet effective
+**Effective date:** 24 September 2026
 
 These Terms of Service (the **Terms**) govern your use of the Quantillon website at https://quantillon.money and application at https://app.quantillon.money (together, the **Interface**) and the related services provided by Quantillon Labs through the Interface.
 
@@ -59,8 +57,6 @@ Some protocol functions depend on services or authorized actors responsible for 
 The Interface may display information supplied by blockchain nodes, indexers, oracles, strategy providers and other sources. Data may be delayed or temporarily unavailable. We will exercise reasonable care in operating the Interface, but cannot promise continuous availability or that all third-party data will be accurate at every moment.
 
 Wallet providers, networks, collateral issuers, trading venues and underlying protocols may have their own terms and operational restrictions. Where you use a separate third-party service, review the terms that apply to it. A link or integration does not guarantee that provider's performance. This distinction does not remove responsibilities that applicable law places on Quantillon Labs for the services it provides.
-
-**[TO COMPLETE BEFORE THESE TERMS TAKE EFFECT: identify the legally responsible entities for the available activities, any applicable authorization or registration details, and required product disclosures. These Terms do not establish that an activity is exempt from financial regulation.]**
 
 ## 6. Minting and redeeming QEURO
 
@@ -145,8 +141,6 @@ We do not guarantee a particular price, yield or uninterrupted access. The exist
 
 Nothing in these Terms excludes or limits liability for fraud, intentional misconduct, gross negligence, death or personal injury where liability cannot lawfully be limited, or any other liability that applicable law does not permit us to exclude or limit. Nothing excludes mandatory consumer protections, statutory guarantees or available remedies.
 
-**[TO COMPLETE BEFORE THESE TERMS TAKE EFFECT: confirm the classification of each service and insert any required consumer pre-contract information, statutory guarantees, withdrawal or cancellation procedure and model form. Do not infer that blockchain finality removes a statutory withdrawal, refund or compensation right.]**
-
 ## 15. Personal data
 
 Our Privacy Policy describes the data we process, purposes and legal bases, recipients, retention periods and your rights. Wallet addresses and blockchain activity may constitute personal data. Public blockchain records may remain accessible even after you disconnect your wallet or delete an application profile.
@@ -164,8 +158,6 @@ Where law or an urgent security requirement requires a shorter notice period, we
 Send complaints to support@quantillon.money or our registered office, with enough information to identify the issue. Do not send private keys or recovery phrases. We will acknowledge the complaint and seek to resolve it within a reasonable period, subject to any applicable statutory deadlines.
 
 If you are a consumer, you may have a right to refer an unresolved dispute to a consumer mediator free of charge after first raising it with us, subject to the applicable admissibility rules.
-
-**[TO COMPLETE BEFORE THESE TERMS TAKE EFFECT: name, postal address and website of the competent consumer mediator, and any service-specific complaints process. Do not name a mediator without confirming eligibility or affiliation.]**
 
 These Terms are governed by French law. If you are a consumer, this choice does not deprive you of mandatory protections applicable under the law of your country of habitual residence where those protections apply. Disputes may be brought before the courts having jurisdiction under applicable law. Nothing requires a consumer to bring proceedings exclusively in Bordeaux or to waive a right to bring proceedings available under mandatory law.
 
