@@ -32,46 +32,60 @@ The QEURO minting mechanism is designed for simplicity and capital efficiency:
 
 1. **USDC Deposit**: Users deposit USDC to the QuantillonVault
 2. **Oracle Price Check**: the protocol's EUR/USD oracle provides the real-time exchange rate (the hedge venue's market mid, Hyperliquid, with Chainlink as fallback; see [Oracle Architecture](oracle-architecture.md))
-3. **Collateral Verification**: Protocol verifies that the collateralization ratio stays at or above the minting floor (currently 102.5%)
-4. **QEURO Issuance**: Users receive QEURO at the current oracle price; the minting fee is currently 0 (governance-settable, capped at 5%)
+3. **Eligibility Checks**: The protocol checks collateralization, published execution capacity, price freshness and available execution liquidity
+4. **QEURO Issuance**: Users receive the amount supported by the execution quote, subject to the minimum output they accept and any configured minting fee
 5. **Yield Deployment**: USDC collateral can be deployed to external staking vaults (currently Morpho/MetaMorpho - see [External Staking Vaults](external-staking-vaults.md)) for yield generation
 
 > **Note**: USDC is the sole collateral accepted by the protocol.
 
 ```
-Minting Transaction Example:
+Illustrative minting calculation, assuming a valid quote and sufficient capacity:
 User deposits: 1,000 USDC
-EUR/USD rate: 1.10
-Minting fee: currently 0 (governance-settable, max 5%)
+Quoted execution rate: 1.10 USDC per QEURO
+Assumed minting fee: 0
 Net collateral: 1,000 USDC
 QEURO received: 1,000 ÷ 1.10 = 909.09 QEURO
 ```
 
 **⚡ Key Features**
 
-* **Zero slippage**: Minting at oracle rates, no DEX impact (a `minQeuroOut` guard protects against an oracle move between quote and execution)
-* **Instant settlement**: Single-block transaction finality
-* **Open access**: Any address can deposit/redeem via the Vault
+* **Quoted execution**: Pricing reflects execution conditions; the accepted minimum output protects against an unfavorable change before settlement
+* **Atomic settlement**: A transaction either completes or reverts; inclusion and confirmation times depend on the network
+* **Vault access**: Users interact through the vault, subject to its eligibility and pause controls
 * **Rate limiting**: Global mint and burn cap of 10M QEURO per 300-block window (~10 minutes on Base) against large-scale manipulation
+
+#### Minting quotes and capacity
+
+The app provides an execution quote and the capacity available for minting QEURO.
+The backend calculates capacity from usable hedge collateral and publishes it
+on-chain. The vault uses that capacity together with price, liquidity and
+collateralization checks when processing a mint.
+
+Usable collateral includes margin already assigned to the EUR hedge as well as
+free USDC. The engine prepares collateral inside Hyperliquid as needed for
+additional hedge orders, while retaining the required margin. See
+[HedgerPool](hedger-pool.md#minting-capacity-and-hedge-collateral) for the collateral
+mechanism.
 
 #### Redemption Process
 
-Redemption operates as the inverse of minting, ensuring users can always exit at fair value:
+Redemption converts QEURO back into USDC subject to the applicable pricing,
+liquidity and protocol checks:
 
 **📤 Step-by-Step Redemption**
 
 1. **QEURO Submission**: Users submit QEURO for redemption via Vault
-2. **Oracle Verification**: Current EUR/USD rate determines USDC value
+2. **Quote Verification**: Reference prices and available execution liquidity determine the normal redemption quote
 3. **Collateral Release**: Equivalent USDC released from the vault (withdrawn from the external staking vault if deployed)
 4. **Fee Deduction**: redemption fee applied - currently 0 (governance-settable, capped at 5%)
 5. **USDC Transfer**: Net USDC transferred to user wallet
 
 ```
-Redemption Transaction Example:
+Illustrative normal redemption calculation, assuming a valid executable quote:
 User redeems: 900 QEURO
-EUR/USD rate: 1.08
+Quoted execution rate: 1.08 USDC per QEURO
 USD value: 900 × 1.08 = 972 USDC
-Redemption fee: currently 0 (governance-settable, max 5%)
+Assumed redemption fee: 0
 Net USDC received: 972 USDC
 ```
 
@@ -319,7 +333,11 @@ See [Liquidation Mode](liquidation-mode.md).
 
 #### Hedger Risk Management
 
-The hedger's margin is bounded by `minMarginRatio` (250 bps) and `maxLeverage` (20×). Since September 2026 the hedge runs on a margin policy targeting 2.5%: the on-chain HedgerPool minimum margin ratio is 2.5% and the minting floor is 102.5%. Quantillon Labs' hedging engine keeps the collateral of the two legs of the hedge - the HedgerPool position on Base and the Hyperliquid perpetual - near a 2.5% equity-to-notional target through bounded, monitored transfers. Details: [HedgerPool - Operational margin policy](hedger-pool.md#operational-margin-policy-september-2026).
+The HedgerPool and the Hyperliquid position have distinct margin requirements.
+The engine evaluates usable collateral when admitting new exposure and prepares
+margin for a necessary hedge order, subject to the venue's rules. Details:
+[HedgerPool margin policy](hedger-pool.md#operational-margin-policy-september-2026)
+and [minting capacity](hedger-pool.md#minting-capacity-and-hedge-collateral).
 
 **Emergency Close**
 

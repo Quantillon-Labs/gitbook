@@ -165,7 +165,7 @@ If you are evaluating the protocol itself, read the architecture pages first and
 
 #### **Q: How is the hedge collateralised?**
 
-**A:** The EUR/USD exposure created by QEURO is neutralized by a single designated hedger - Quantillon Labs' hedging engine - which holds a short-EUR position in the `HedgerPool` on Base and a matching long-EUR perpetual on Hyperliquid. Since September 2026 the hedge runs on a margin policy targeting 2.5%: the on-chain HedgerPool minimum margin ratio is 2.5% (250 bps) and the minting floor is 102.5%. The engine keeps the collateral of both legs near that target through bounded, monitored USDC transfers, and an independent watchdog freezes mint/redeem if the hedge becomes unhealthy - see [HedgerPool](../protocol/hedger-pool.md#operational-margin-policy-september-2026).
+**A:** A designated hedger maintains a HedgerPool position on Base and a corresponding EUR perpetual position on Hyperliquid. Both require adequate collateral. Usable margin already supporting the EUR hedge can contribute to minting capacity, alongside free USDC, subject to margin and execution requirements. See [HedgerPool](../protocol/hedger-pool.md#minting-capacity-and-hedge-collateral).
 
 #### **Q: What is Quantillon Rewards?**
 

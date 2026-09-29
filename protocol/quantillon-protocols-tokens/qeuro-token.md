@@ -32,7 +32,7 @@ QEURO has **no fixed tokenomic supply cap** - supply is bounded by the protocol'
 **Implemented Features**
 
 * **Oracle Integration**: the hedge venue's EUR/USD market mid (Hyperliquid) with Chainlink as fallback and USDC/USD validation, all behind circuit breakers - see [Oracle Architecture](../oracle-architecture.md)
-* **Slippage-Free Operations**: Mint/redeem at oracle rates; fees are currently 0 (governance-settable, capped at 5%)
+* **Quoted Execution**: Minting and normal redemption use execution quotes informed by reference prices and available liquidity
 * **Emergency Controls**: Pausable with time-locked upgrades via UUPS pattern
 * **Compliance System**: Blacklist/whitelist functionality for regulatory compliance
 * **Rate Limiting**: Protection against large-scale manipulation attacks
@@ -63,14 +63,19 @@ QEURO has **no fixed tokenomic supply cap** - supply is bounded by the protocol'
 **📥 Minting Workflow**
 
 ```
-User USDC → QuantillonVault → Oracle Price Check → QEURO Mint → External Vault Deployment
+User USDC → QuantillonVault → Price, Capacity and Collateral Checks → QEURO Mint → External Vault Deployment
 ```
 
 1. **USDC Deposit**: Users deposit USDC to the QuantillonVault
 2. **Oracle Price Check**: Real-time EUR/USD rate verification via the oracle router (Hyperliquid mid, Chainlink fallback)
-3. **Collateral Lock**: Protocol enforces the minting floor (currently 102.5%) on the protocol collateralization ratio
-4. **QEURO Issuance**: Vault mints QEURO at the oracle rate; the minting fee is currently 0 (governance-settable, max 5%)
+3. **Capacity and Collateral Checks**: The protocol checks published execution capacity and collateralization before admitting the mint
+4. **QEURO Issuance**: The vault mints the quoted amount, subject to the user's accepted minimum output and configured minting fee
 5. **Yield Deployment**: Collateral can be deployed to external staking vaults (currently Morpho/MetaMorpho)
+
+Minting capacity accounts for usable collateral already assigned to the EUR hedge
+as well as free USDC. See [minting quotes and capacity](../mechanisms.md#minting-quotes-and-capacity)
+for the user flow and [HedgerPool](../hedger-pool.md#minting-capacity-and-hedge-collateral)
+for how hedge collateral supports it.
 
 > **Important**: Minting occurs via the QuantillonVault contract which holds the MINTER_ROLE. Users interact through the Vault interface, not directly with the QEURO token contract.
 
@@ -82,7 +87,7 @@ QEURO Burn → Oracle Verification → Collateral Release → USDC Transfer
 
 **Key Benefits**:
 
-* **Zero Slippage**: Oracle-based pricing eliminates DEX impact
+* **Execution Quotes**: Users review the expected output and set their accepted minimum before submitting
 * **24/7 Operations**: No banking hours or geographic restrictions
 * **Instant Settlement**: Single-block transaction finality
 * **Open Access**: Any address can deposit/redeem via the Vault

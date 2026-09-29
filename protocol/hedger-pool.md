@@ -370,7 +370,39 @@ function configureDependencies(HedgerDependencyConfig calldata cfg) external;
 
 ### ⚖️ Operational margin policy (September 2026)
 
-Since September 2026 the hedge runs on a **margin policy targeting 2.5%**: the on-chain HedgerPool minimum margin ratio is 2.5% (250 bps, v1.0.8) and the QuantillonVault minting floor is 102.5%. Quantillon Labs' hedging engine keeps the collateral of the two legs of the hedge - the HedgerPool position on Base (short EUR) and the Hyperliquid perpetual (long EUR) - near a 2.5% equity-to-notional target, moving USDC from the HedgerPool to Hyperliquid in bounded steps (25 bps of notional) when EUR/USD falls, and topping the HedgerPool up with fresh USDC when EUR/USD rises. Transfers are bounded in size, executed one at a time, and are blocked whenever they would push the protocol collateralization ratio too close to the minting floor. The 250 bps on-chain minimum is a hard floor that the engine operates above; the independent watchdog freezes mint/redeem if the hedge becomes unhealthy (see [Oracle Architecture](oracle-architecture.md#independent-watchdog-defence-in-depth)).
+The margin policy targets sufficient collateral for both legs of the hedge: the
+HedgerPool position on Base and the EUR perpetual position on Hyperliquid. Its
+reference target is 2.5% equity relative to notional exposure, with a 25 bps
+shortfall threshold for assessing a transfer. This is a policy target, not a
+promise that collateral will always equal that percentage. Venue requirements
+and protocol safeguards can require more collateral to remain in place.
+
+The policy distinguishes transfers to support the Hyperliquid position from
+fresh-USDC top-ups of the HedgerPool. Transfers between the two are subject to
+operational controls and collateralization checks; they must not compromise the
+protocol's backing. The on-chain HedgerPool minimum is 250 bps. An independent
+watchdog can pause the vault when hedge health is not adequate (see
+[Oracle Architecture](oracle-architecture.md#independent-watchdog-defence-in-depth)).
+
+### Minting capacity and hedge collateral
+
+Minting capacity depends on whether the protocol can support the additional EUR
+exposure. The calculation considers collateral already supporting the EUR hedge
+as well as free USDC, while reserving the margin and execution costs needed to
+maintain that hedge.
+
+When a new hedge order needs free collateral, the engine can move the necessary
+permitted surplus out of the existing isolated position into the free balance
+within Hyperliquid. If the position needs additional margin, it can allocate the
+shortfall from free USDC. These internal adjustments preserve required margin and
+are distinct from withdrawing funds from Hyperliquid. The engine checks that the
+venue permits the order before submitting it.
+
+The protocol publishes the resulting capacity on-chain. Smart contracts enforce
+that capacity alongside price freshness, execution liquidity, collateralization
+and other eligibility checks. The app displays the available quote and capacity.
+User minting and the conversion of strategy yield into QEURO use this shared
+capacity. See [Core Mechanisms](mechanisms.md#minting-quotes-and-capacity).
 
 ***
 
