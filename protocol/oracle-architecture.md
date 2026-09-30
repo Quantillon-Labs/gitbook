@@ -1,195 +1,56 @@
 # Oracle Architecture
 
-## EUR/USD Oracle Architecture
+## Valuation and execution
 
-### 📋 Overview
+OracleRouter provides the EUR/USD reference for QEURO valuation. Slot **1**, the active MARKET slot, reads HyperliquidEurUsdOracle, which consumes the published `xyz:EUR` perpetual mid from SlippageStorage. Slot **0** reads ChainlinkOracle and is a manual governance fallback. ChainlinkOracle also validates USDC/USD.
 
-QEURO mint and redeem are priced off the **EUR/USD market price used to execute the protocol's hedge** - the EUR/USD perpetual mid of the active hedge venue (currently the Hyperliquid `EUR` perp) - rather than a generic spot-FX feed. This keeps the on-chain valuation of QEURO aligned with the venue where the EUR/USD exposure is actually neutralized, eliminating the basis between the QEURO liability and its hedge.
+Normal user execution additionally uses directional order-book quotes from [ExecutionPricing](execution-pricing.md). Using the hedge venue's reference reduces valuation mismatch; it does not eliminate spreads, funding costs, slippage, timing differences or hedge failure risk.
 
-Pricing is served through an **`OracleRouter`** that can switch between two sources:
+## Data flow
 
-| Slot | Source | Status | What it provides |
-|------|--------|--------|------------------|
-| 1 | **HyperliquidEurUsdOracle** | **Active** | The Hyperliquid `EUR` market mid (hedge-aligned) |
-| 0 | **ChainlinkOracle** | Fallback | Chainlink EUR/USD spot + USDC/USD validation |
-
-The router exposes a single, oracle-agnostic `IOracle` interface to the rest of the protocol, so `QuantillonVault` and other consumers are unaware of which source is active. A one-transaction governance call (`switchOracle`) flips between them.
-
-Slot 1 is the **market** slot: it hosts the oracle of the hedge venue - Hyperliquid (`HyperliquidEurUsdOracle`). The slot is venue-agnostic by design (see *The Market Slot* below).
-
-***
-
-### 🏗️ Architecture & Data Flow
-
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                        EUR/USD PRICE PATH                              │
-├──────────────────────────────────────────────────────────────────────┤
-│  Hyperliquid market (EUR perpetual mid)                                │
-│        │  read off-chain                                               │
-│        ▼                                                                │
-│  Price Publisher (off-chain service)                                   │
-│        │  publishes the mid on-chain (cadence / price-move triggered)  │
-│        ▼                                                                │
-│  SlippageStorage  ──►  HyperliquidEurUsdOracle                          │
-│                          • freshness, price bounds, circuit breaker     │
-│                          • USDC/USD delegated to ChainlinkOracle        │
-│        ┌─────────────────────────┘                                      │
-│        ▼                                                                │
-│  OracleRouter (active = Hyperliquid)   ◄── ChainlinkOracle (fallback)   │
-│        │  IOracle.getEurUsdPrice()                                      │
-│        ▼                                                                │
-│  QuantillonVault  (QEURO mint / redeem pricing)                         │
-│        +                                                                │
-│  Independent watchdog  →  freezes mint/redeem if the price is stale,    │
-│                           circuit-broken, or diverges from Chainlink    │
-└──────────────────────────────────────────────────────────────────────┘
+```text
+Hyperliquid mid -> operated publisher -> SlippageStorage -> market oracle
+Chainlink EUR/USD -------------------------------> independent reference check
+market oracle / Chainlink fallback -> OracleRouter -> vault valuation
+Hyperliquid depth + hedge admission -> ExecutionPricing -> mint/redeem quote
 ```
 
-***
+The publisher is an operated service with a restricted writing role. Availability depends on that service and its transaction funding. On-chain checks limit accepted data; they do not prove every accepted observation is economically correct.
 
-### 🔁 Why Hedge-Aligned Pricing
+## Market-oracle protections
 
-The protocol neutralizes the EUR/USD leg by holding a hedge on a perpetual venue - currently Hyperliquid. If QEURO were minted/redeemed at a *spot* EUR/USD price while the hedge fills at the *venue* price, the small-but-persistent gap (the basis) would leak value and desynchronize the liability from its hedge. Reading the venue mid on-chain removes that gap by construction. Chainlink spot is kept as a safety reference and fallback, not as the primary valuation source.
+The market oracle checks publication age, EUR/USD bounds, deviation from its last valid price and an **independent Chainlink EUR/USD reference on-chain**. At the [30 September snapshot](deployment-status.md), the market observation limit was 900 seconds (hard maximum one hour), bounds were 0.80 to 1.40 USD/EUR and the consecutive-price deviation limit was 5%.
 
-***
+The independent-reference divergence limit was 2%, with a 3% off-hours band. Its configured age ceiling was 8,100 seconds; the Chainlink reader's own 7,200-second EUR/USD freshness limit also applies. The off-hours band does **not** waive reference freshness: a stale reference can stop valid pricing on weekends or holidays while Hyperliquid continues trading.
 
-### 🧩 The OracleRouter
+Rejected reads return a last-valid value with `isValid = false`; consumers must respect that flag. A cached numerical price is not permission to transact. USDC/USD validation is delegated to ChainlinkOracle. See [ChainlinkOracle](chainlink-oracle.md) for the sequencer guard, feed checks and delayed development-mode controls.
 
-The router holds two oracle slots and routes all reads to the currently active one.
+## The market slot
 
-```solidity
-enum OracleType { CHAINLINK, MARKET }  // slot 0, slot 1 (MARKET was named STORK before router v1.1.0)
-function getEurUsdPrice() external returns (uint256 price, bool isValid);
-function switchOracle(OracleType newOracle) external;        // ORACLE_MANAGER_ROLE (governance)
-function updateOracleAddresses(address chainlink, address slot1) external;
-```
+The router interface permits selecting its sources with `switchOracle` and updating their addresses with the appropriate roles. Source selection alone does not provide compatible execution depth or hedge capacity.
 
-- Reads delegate to the active oracle via the generic `IOracle` interface.
-- Slot 1 (the market slot) hosts the hedge venue's oracle - the Hyperliquid oracle; switching between the two slots is a single governance transaction (`switchOracle`).
-- `activeOracle()` and `getOracleAddresses()` expose the current configuration on-chain.
+A Lighter oracle was deployed during an alternative-venue evaluation; that option was retired on 1 September 2026. Hyperliquid is the sole supported hedge venue.
 
-***
+## Independent watchdog (defence-in-depth)
 
-### 💧 The Price Publisher (off-chain → on-chain)
+A separately hosted watchdog observes hedging and oracle health and can pause QuantillonVault. This freezes mint and redeem. Its operating policy is to lift only pauses it created after health recovers. The on-chain EMERGENCY_ROLE itself permits both pause and unpause; self-owned recovery is a service policy, not a separate contract permission.
 
-A dedicated off-chain service reads the EUR/USD mid of the Hyperliquid `EUR` perp and publishes it on-chain into `SlippageStorage`, signed by a dedicated publisher wallet that holds **only** a write role (`WRITER_ROLE`, no protocol funds). The store is keyed by source id (Hyperliquid is `SOURCE_HYPERLIQUID = 1`; the store supports several sources by design). Every publish passes the publisher's off-chain price-integrity checks and, on-chain, `SlippageStorage`'s mid-price bounds and maximum-deviation guard before it is accepted.
+The Safe retains emergency pause/unpause authority. Granting or revoking a core vault role uses the TimelockController, which holds the core admin role; it is not an immediate direct Safe action. See [Guardians](../quantillon-guardians.md).
 
-It publishes when **any** of these fire:
-- **Cadence** - at least every N seconds.
-- **Price move** - the mid moves more than a small basis-point threshold (keeps the on-chain price fresh during EUR/USD moves).
-- **Liquidity/slippage change** - book conditions shift materially.
+## Fallback and recovery
 
-An on-chain minimum-interval rate limit (`minUpdateInterval`, 20 seconds) bounds write frequency, so the published mid stays fresh without unnecessary gas.
+| Action | Effect and limits |
+| --- | --- |
+| Switch router to Chainlink | Changes valuation source; requires a valid Chainlink feed and does not alone restore minting |
+| Trigger oracle circuit breaker | Marks pricing invalid; the last-valid number is not an executable fallback |
+| Reset circuit breaker | Resets the breaker subject to contract validation; investigate the cause first |
+| Pause vault | Stops guarded operations, including mint and redeem |
+| Restore publisher and hedge health | Allows fresh observations and capacity; other guards and pause state still apply |
 
-> This is a self-operated price source. Its **availability** depends on the publisher running and funded; a failure is **fail-safe** (mint/redeem freezes, or governance falls back to Chainlink) - it never results in a wrong price being used.
+Degraded redemption may be available under [ExecutionPricing's rules](execution-pricing.md). Neither fallback nor liquidation mode guarantees redemption under all conditions.
 
-***
+## Governance and deployed contracts
 
-### 🔐 The HyperliquidEurUsdOracle
+The Safe holds the peripheral oracle administration and upgrade permissions; these upgrades do not use the core 12-hour timelock. OracleRouter also has delegated manager/emergency permissions on the market oracle for its forwarding functions. SlippageStorage writes require WRITER_ROLE.
 
-Reads the published mid and applies the same valuation-grade safety the protocol's other oracles use, then exposes the standard `IOracle` interface.
-
-| Protection | Behaviour |
-|------------|-----------|
-| **Staleness** | Reject a published mid older than the freshness window (`maxPriceStaleness`: 15 minutes; governance-settable up to the 1-hour hard cap) → returns `isValid = false` |
-| **Price bounds** | EUR/USD must be within `[minEurUsdPrice, maxEurUsdPrice]` (default 0.80–1.40) |
-| **Deviation circuit breaker** | Reject a jump > 5% vs the last valid price; fall back to last valid |
-| **Last-valid fallback** | On any rejection, returns the last valid price with `isValid = false` |
-| **USDC/USD** | Delegated to the ChainlinkOracle (a USDC feed issue cannot block an EUR/USD read) |
-
-```solidity
-function getEurUsdPrice() external returns (uint256 price, bool isValid);
-// stale / out-of-bounds / circuit-broken / paused → (lastValidPrice, false)
-// a valid read advances the baseline
-```
-
-A `false` validity flag is treated by the vault as a **hard stop** (mint/redeem revert) - the protocol never values QEURO at a stale or out-of-band price.
-
-***
-
-### 🔀 The Market Slot
-
-The MARKET slot is venue-agnostic by design: any oracle exposing the `IOracle` interface and a `sourceId()` into `SlippageStorage` can be placed in slot 1 by a single governance (2-of-3 Safe) transaction, with Chainlink unchanged in slot 0 as the manual fallback. The venue where the hedge executes and the venue whose mid prices mint/redeem are always the same: the hedging engine refuses to run - and the protocol watchdog freezes mint+redeem - if the execution venue ever differs from the oracle venue (fatal `venue_oracle_mismatch` guard), which eliminates silent cross-venue basis risk.
-
-A `LighterEurUsdOracle` was built and deployed in July 2026 as an alternative-venue evaluation; on 2026-09-01 Quantillon Labs confirmed Hyperliquid as the sole hedge venue and retired that option. The contract remains on-chain without any router role.
-
-***
-
-### ⏱️ Freshness & Staleness
-
-- The publisher keeps the on-chain mid fresh via its cadence plus a price-move trigger; an on-chain rate limit caps write frequency.
-- The oracle rejects anything older than its freshness window, which **freezes mint/redeem** rather than ever using a stale price.
-- Effective freshness tightens automatically when the market is moving (price-move trigger) and relaxes when it is calm (cadence).
-
-***
-
-### 🛡️ Independent Watchdog (defence-in-depth)
-
-An independent, separately-hosted watchdog continuously polls a read-only health verdict from the hedging engine and can **freeze mint+redeem** (pause the vault) when it detects a problem. Beyond the engine's own liveness checks, the verdict now includes an **EUR/USD oracle cross-check**:
-
-- **Stale / circuit-broken** active oracle → unhealthy → freeze.
-- **Basis blow-out** - the active oracle diverges from the Chainlink reference by more than a configured band (e.g. 100 bps) → unhealthy → freeze.
-
-The watchdog is reason-agnostic: any unhealthy verdict triggers a pause, so an oracle dislocation is contained automatically while it is investigated. The watchdog lifts only pauses it set itself, once the verdict is healthy again; the governance Safe can pause or unpause the vault at any time. The watchdog wallet holds a pause-only `EMERGENCY_ROLE` on `QuantillonVault`, which the Safe can revoke at any time. See [Liquidation Mode](liquidation-mode.md) and [Quantillon Guardians](../quantillon-guardians.md) for the broader safety hierarchy.
-
-***
-
-### 🔙 Fallback & Recovery
-
-| Action | Effect |
-|--------|--------|
-| `switchOracle(0)` (governance) | Instantly revert pricing to ChainlinkOracle (spot EUR/USD) |
-| `triggerCircuitBreaker()` (emergency) | Force the last-valid price on the active oracle |
-| `resetCircuitBreaker()` (emergency) | Re-seed after investigation |
-| Vault pause (watchdog/emergency) | Freeze mint+redeem |
-
-Because the ChainlinkOracle remains wired in slot 0, the protocol can always fall back to a third-party spot feed with a single governance transaction.
-
-***
-
-### 🔑 Roles & Governance
-
-The 2-of-3 governance Safe holds the administrative roles on each oracle (configuration, bounds, circuit breaker, upgrades) and operates them directly. The oracle contracts, the `OracleRouter` and `SlippageStorage` are plain UUPS proxies upgraded directly by the Safe (no timelock); core protocol contracts go through the 12-hour upgrade timelock - see [Quantillon DAO](../quantillon-dao.md). By design of the deployment, the `OracleRouter` itself also holds the oracle-manager and emergency roles on the market oracle, so that bounds, tolerance and circuit-breaker operations can be driven through the router's pass-through functions. Write access to `SlippageStorage` (`WRITER_ROLE`) is limited to the publisher wallet and the protocol's operational deployer key; the publisher never custodies protocol funds.
-
-***
-
-### 📍 Deployed Contracts (Base Mainnet)
-
-| Contract | Address |
-|----------|---------|
-| OracleRouter | `0x7ED6aaEd83Db69509A88CAe5C247ef8fA44056E0` |
-| HyperliquidEurUsdOracle | `0x0B58aBB57775E0fCEDfd4460e00dD9D9610C2C43` |
-| ChainlinkOracle (fallback) | `0xaEE3c9c298051ef7242882AbCaE2Fd12d29443E7` |
-| SlippageStorage | `0x0fde0ff2566be3c24af6d654012dddb4f1da099b` |
-
-All contracts are verified on Basescan.
-
-***
-
-### 📐 Example Scenarios
-
-**Normal operation**
-```
-Hyperliquid EUR mid: 1.1347 → published on-chain (fresh)
-Oracle: within bounds ✅, fresh ✅, deviation < 5% ✅
-Router (active = Hyperliquid) → QuantillonVault prices QEURO at 1.1347
-```
-
-**Publisher interruption**
-```
-No fresh publish for > freshness window
-Oracle → isValid = false → mint/redeem revert (fail-safe)
-Recovery: publisher restored, or governance switchOracle(0) → Chainlink
-```
-
-**Basis dislocation**
-```
-Hyperliquid mid diverges > 100 bps from Chainlink spot
-Watchdog verdict → unhealthy → vault paused (mint+redeem frozen)
-Recovery: investigate; resume or switchOracle(0)
-```
-
-***
-
-> **Summary**: QEURO is priced off the hedge venue's EUR/USD mid (Hyperliquid) via a dual-source `OracleRouter`, with Chainlink retained as a one-transaction fallback. An off-chain publisher streams the mid on-chain; the on-chain oracle enforces freshness, bounds, and a circuit breaker; and an independent watchdog freezes mint/redeem on staleness, circuit-break, or a basis dislocation versus Chainlink. Every failure mode is fail-safe - the protocol freezes or falls back, never values QEURO at a wrong price.
+For verified addresses and versions, use [Smart Contract Components](smart-contract-components.md); for the core/peripheral distinction, use [Quantillon DAO](../quantillon-dao.md).

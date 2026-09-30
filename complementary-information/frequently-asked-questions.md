@@ -128,7 +128,7 @@ QuantillonVault 1.5.0 allocates harvested yield by the staked fraction of total 
 
 What has been done:
 
-* repeated code-review passes with several frontier AI code-analysis models, plus findings from independent whitehat researchers; findings are remediated on-chain as they come in, as continuous work rather than a one-off pass. All contracts are verified on Basescan
+* internal, AI-assisted code-review passes; findings are remediated on-chain as they come in, as continuous work rather than a one-off pass. All contracts are verified on Basescan
 * an `OracleRouter` with the Hyperliquid market mid as the active EUR/USD source and Chainlink as a one-transaction fallback, with staleness checks, price bounds and circuit breakers
 * over-collateralization (minting floor currently 102.5%) and a protocol-level liquidation mode at 101%
 * token-level guardrails: a global mint/burn rate limit, a minting killswitch and pause
@@ -155,7 +155,7 @@ If you are evaluating the protocol itself, read the architecture pages first and
 
 #### **Q: Can I redeem $QEURO back to USDC?**
 
-**A:** Yes. QEURO is redeemed for USDC at the oracle EUR/USD rate, via the app or directly with `QuantillonVault.redeemQEURO`; the redemption fee is currently 0 (governance-settable, capped at 5%). If the protocol collateralization ratio is at or below 101% (liquidation mode), redemptions are served pro-rata on the remaining collateral - see [Liquidation Mode](../protocol/liquidation-mode.md).
+**A:** Yes. QEURO is redeemed for USDC using the applicable execution quote (including spreads and buffers), via the app or directly with `QuantillonVault.redeemQEURO`; the redemption fee is currently 0 (governance-settable, capped at 5%). If the computed protocol collateralization ratio is positive and at or below the critical threshold (currently 101%) (liquidation mode), redemptions are served pro-rata on the remaining collateral - see [Liquidation Mode](../protocol/liquidation-mode.md). Pauses, invalid prices, liquidity and minimum-output checks can still prevent redemption.
 
 #### **Q: How is the hedge collateralised?**
 

@@ -1,111 +1,29 @@
 # Market Landscape & Competitive Analysis
 
-### 📊 Global Stablecoin Market Overview (market data as of mid-2025)
+Quantillon's thesis is that users seeking euro exposure may also want access to USD-based DeFi liquidity. Holding USDC directly leaves EUR/USD exposure with the holder; QEURO instead uses a protocol-operated hedge and brings its own contract, collateral, liquidity and operational risks.
 
-The stablecoin market has reached unprecedented scale, with total market capitalization hitting $246 billion by mid-2025, reflecting a 17% year-over-year increase. Market analysts project explosive growth from USD 230 billion in 2025 to USD 2 trillion by the end of 2028, driven by institutional adoption and expanding use cases. USDT and USDC together account for over 90% of the stablecoin market, demonstrating overwhelming USD dominance in the sector.
+## Comparing designs
 
-The surge in stablecoin adoption is driven by several factors:
+| Design | Exposure and dependencies to examine |
+| --- | --- |
+| Fiat-reserve euro token | Issuer, reserves, redemption eligibility, custody and liquidity |
+| Crypto-collateralized euro token | Collateral quality, liquidation rules, oracle design and governance |
+| FX-hedged USD collateral, Quantillon's current design | USDC, the external yield vault, hedge venue, margin capacity, publisher, execution costs and privileged roles |
 
-* **💼 Institutional Integration**: Growing enterprise adoption for cross-border payments and treasury management
-* **🌐 DeFi Expansion**: Increased usage across lending, borrowing, and yield farming protocols
-* **⚖️ Regulatory Clarity**: Improved legal frameworks, particularly with MiCA implementation in Europe
-* **💱 Payment Infrastructure**: Enhanced utility in remittances and e-commerce applications
+These are design categories, not a ranking of competitors' current liquidity, returns or regulatory status. Such comparisons need dated, product-specific evidence.
 
-***
+## QEURO's current implementation
 
-### The Euro Stablecoin Market: Fragmentation and Failure to Launch
+QEURO is deployed on Base and targets euro exposure using USDC backing and a single designated Hyperliquid hedger. stQEURO holders participate in the staked allocation of realized external-vault yield; holding QEURO alone earns none. The allocation is snapshot-based and the displayed provider APY does not guarantee a holder's return. See [Yield Distribution](../protocol/yield-distribution.md).
 
-Despite numerous attempts to develop euro-denominated stablecoins, none have achieved substantial market penetration or liquidity. EUROC (Circle), EURS (Stasis), EURT (Tether), and Angle's EURA represent the most recognizable names in this segment, yet they collectively represent **less than 1%** of the total stablecoin market capitalization as of Q2 2025. Each of these projects suffers from critical structural limitations:
+Normal mint and redemption use execution quotes, including spreads and buffers. Liquidity in the wider USDC or FX markets does not mean unlimited executable liquidity or immediate redemption inside Quantillon. See [Execution Pricing](../protocol/execution-pricing.md).
 
-| Stablecoin | Issuer         | Key Limitations                                                                                                                                                                                                       |
-| ---------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **EUROC**  | Circle         | Despite the credibility of its issuer, EUROC has limited utility and suffers from low liquidity on decentralized exchanges. It also lacks yield generation mechanisms and is primarily used as a compliance showcase. |
-| **EURS**   | Stasis         | EURS is a custodial stablecoin with limited adoption and high on/off-ramp costs. It is centralized and opaque, offering no native integration with DeFi protocols.                                                    |
-| **EURT**   | Tether         | Lacking regulatory clarity and plagued by transparency concerns, EURT is largely avoided by institutional players.                                                                                                    |
-| **EURA**   | Angle Protocol | While technically innovative with a dynamic reserve model, EURA has struggled with capital efficiency and scale, facing depegging events and low yield generation as it is based on euro bonds.                       |
+## Directional adoption targets
 
-The consistent problem across all these assets is their failure to create meaningful liquidity, yield opportunities, and DeFi integration comparable to USD stablecoins. These failings result not from lack of intent but from poor incentive alignment, limited network effects, and insufficient hedging infrastructure for EUR/USD volatility.
+| Period | TVL target, not a forecast or current figure |
+| --- | --- |
+| Q4 2026 public launch | $1M |
+| Q2 2027 | $10M |
+| Q1 2028 | $10M to $100M |
 
-### 🇪🇺 The European Savings Paradox
-
-Despite the eurozone representing one of the world's largest economic blocs with over 300 million users, euro-denominated stablecoins remain dramatically underrepresented in the global market. Meanwhile, European savers exhibit high precautionary saving rates - **over 12% of household income** across the eurozone - yet most of this capital remains trapped in underperforming vehicles:
-
-* **Traditional Savings Products**: Livret A (France) offering just 1.7% returns
-* **Life Insurance Contracts**: Opaque fee structures with minimal capital appreciation
-* **Regulated Pension Products**: Structurally constrained by bureaucratic limitations
-
-This represents a massive untapped market for QEURO as the first local-currency deployment of the Quantillon architecture.
-
-***
-
-### USD Dominance in DeFi: A Structural Bias
-
-As of mid-2025, **over 99% of DeFi stablecoin liquidity** is denominated in USD. The dominance of USDC and USDT on platforms like Aave, Compound, Curve, and MakerDAO creates a feedback loop: most lending, borrowing, and LP positions rely on dollar-based units of account. This has network and liquidity advantages but perpetuates the exclusion of non-USD participants.
-
-From a European perspective, engaging in DeFi through USD-based assets introduces three layers of friction:
-
-1. **🔄 FX risk** - EUR/USD fluctuations can nullify yield gains or exacerbate losses.
-2. **💸 Operational slippage** - On-ramping EUR into USD-based DeFi typically requires high-friction conversions via centralized exchanges.
-3. **📋 Regulatory and tax complexity** - Cross-currency gains may introduce additional accounting burdens and reduce fiscal clarity.
-
-Consequently, euro-based users and institutions either remain absent from DeFi altogether or engage through inefficient intermediaries. This creates an untapped market segment, particularly among family offices, corporate treasuries, and fintech platforms seeking native euro liquidity.
-
-### QEURO as Quantillon's First Competitive Edge
-
-QEURO is positioned to resolve the failures of previous euro stablecoins by applying Quantillon's broader protocol architecture through three innovations:
-
-**🌊 Liquidity by Design**
-
-QEURO inherits USDC liquidity on the user side and Forex liquidity via the hedger side. This dual-channel design mitigates the need for external liquidity mining or bribing mechanisms.
-
-**⚖️ Delta-Neutral Hedging**
-
-Unlike existing euro stablecoins, the QEURO deployment uses Quantillon's protocol-native hedging layer (a single designated hedger in the current phase) to neutralize EUR/USD exposure through protocol-native instruments. This supports peg stability and institutional hedging needs.
-
-**📈 Yield Shift Mechanism**
-
-QEURO is not only a stablecoin but a savings instrument. By redistributing most of the yield from collateral deployment (e.g., Morpho) to users and hedgers via a dynamic 'Yield Shift', the protocol incentivizes long-term participation and peg maintenance.
-
-These components create a sustainable first deployment that addresses both supply (hedgers) and demand (EUR users) sides of the market. By leveraging DeFi primitives and real-world financial theory - including FX swap economics and interest rate parity - Quantillon uses QEURO to prove that USD liquidity can be transformed into local-currency exposure.
-
-### 🥊 Comparative Advantage Matrix
-
-| Feature                   | Quantillon (QEURO)            | EUROC               | EURS           | EURT          | EURA                |
-| ------------------------- | ----------------------------- | ------------------- | -------------- | ------------- | ------------------- |
-| **🌊 Liquidity Design**   | ✅ **Inherits USDC + Forex**   | ❌ Limited bootstrap | ❌ Very limited | ❌ Poor        | ⚠️ Algorithmic      |
-| **📈 Yield Generation**   | ✅ **Native staking rewards**  | ❌ None              | ❌ None         | ❌ None        | ⚠️ Variable         |
-| **⚖️ Hedging Mechanism**  | ✅ **Delta-neutral hedgers**   | ❌ None              | ❌ None         | ❌ None        | ⚠️ Dynamic reserves |
-| **🏛️ Governance**        | ✅ **Progressive decentralization** | ❌ Centralized | ❌ Centralized  | ❌ Centralized | ✅ DAO               |
-| **🔗 DeFi Integration**   | ✅ **Full composability**      | ⚠️ Limited          | ❌ Poor         | ❌ Poor        | ⚠️ Moderate         |
-| **⚖️ Regulatory Clarity** | 🎯 **Targeting the MiCA Recital 22 exemption** | ✅ Clear          | ⚠️ Unclear     | ❌ Concerns    | ⚠️ Evolving         |
-| **💰 Capital Efficiency** | ✅ **≥102.5% overcollateralized (governance-set floor)** | ✅ 1:1 backed      | ✅ 1:1 backed   | ⚠️ Unclear    | ❌ Variable          |
-
-***
-
-### 📈 Market Opportunity Sizing
-
-#### Total Addressable Market (TAM)
-
-* **European Crypto Market**: €2.3 trillion in institutional assets under management
-* **DeFi Market Growth**: Projected 45% CAGR through 2028
-* **Euro Stablecoin Gap**: <2% of total stablecoin market despite 20%+ of global GDP
-
-#### Serviceable Addressable Market (SAM)
-
-* **Euro-Denominated Yield Products**: €850 billion in underperforming savings
-* **DeFi-Ready Institutions**: €120 billion in progressive treasury management
-* **Retail DeFi Adoption**: €25 billion in crypto-native EUR users
-
-#### Serviceable Obtainable Market (SOM)
-
-**Directional TVL targets** (targets, not commitments or current figures):
-
-* **Q4 2026** (public launch): $1M TVL
-* **Q2 2027**: $10M TVL
-* **Q1 2028**: $10M to $100M TVL
-
-Even the upper end of the Q1 2028 target is a fraction of a percent of the SAM above: the constraint is hedging capacity and a deliberate, utility-driven growth model focused on sustainable adoption, not addressable demand.
-
-***
-
-> **In short, QEURO does not merely replicate a euro version of USDC or DAI. It is the first deployment of Quantillon's reusable FX-hedged architecture for local-currency DeFi markets.**
+No current market-share, addressable-market valuation or guaranteed adoption claim is made here. Expansion depends on the constraints in the [Roadmap](../roadmap-and-adoption-strategy.md) and the [risk disclosures](../risk-management-and-sustainability/risks-and-mitigation-strategies.md).

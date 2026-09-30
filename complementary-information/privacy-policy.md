@@ -1,8 +1,8 @@
 # Privacy Policy
 
-_Date of the latest revision: 4th of September 2026_
+_Date of the latest revision: 30 September 2026_
 
-_Change log: 4 September 2026 - data categories, purposes, legal bases and retention periods for the Quantillon Rewards program added; Brevo listed as an email-delivery processor. 26 June 2025 - initial version._
+_Change log: 30 September 2026 - authentication-cookie and wallet-security descriptions aligned with the interface. 4 September 2026 - data categories, purposes, legal bases and retention periods for the Quantillon Rewards program added; Brevo listed as an email-delivery processor. 26 June 2025 - initial version._
 
 
 
@@ -141,7 +141,7 @@ The use of other cookies as referred to below is subject in principle to the pri
 
 C. THE COMPANY’S COOKIES POLICY?
 
-With regard to cookies, the Company implements session cookies for user authentication, for which user consent will be requested when accessing the Site.
+When you request wallet sign-in, the application uses HttpOnly authentication cookies for the selected wallet and previously authenticated wallets. Their configured lifetime is seven days; signing out clears the relevant session cookies. Production cookies use HTTPS. These cookies support the sign-in service you request; signing in does not enroll you in Rewards or accept its separate terms.
 
 Cookies and other tracers or similar technologies may be installed and / or read in your browser or terminal during your visit to the Site.
 
@@ -149,7 +149,7 @@ Cookies and other tracers or similar technologies may be installed and / or read
 
 9. SECURITY
 
-We take reasonable steps to protect your Personal Information from misuse, loss, unauthorized access, modification or disclosure, including implementing appropriate security measures. The security measures in place will, from time to time, be reviewed in line with legal and technical developments. However, we give no guarantee that such misuse, loss, unauthorized access, modification or disclosure will not occur. There are protective measures that you should take which as well include but are not limited to changing password regularly, not sharing your Personal Information with other unless you clearly understand the purpose of their request and you know with whom you are dealing.
+We take reasonable steps to protect your Personal Information from misuse, loss, unauthorized access, modification or disclosure, including implementing appropriate security measures. The security measures in place will, from time to time, be reviewed in line with legal and technical developments. However, we give no guarantee that such misuse, loss, unauthorized access, modification or disclosure will not occur. There are protective measures that you should take which as well include but are not limited to protecting your wallet signing devices and recovery phrase, checking the domain and message before signing, and avoiding disclosure of private keys or unnecessary personal information. Wallet sign-in does not use a Quantillon account password.
 
 
 

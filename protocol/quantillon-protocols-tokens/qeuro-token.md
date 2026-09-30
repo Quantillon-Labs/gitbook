@@ -27,7 +27,7 @@ Our stablecoin architecture incorporates advanced mechanisms including overcolla
 
 **Supply Model**
 
-QEURO has **no fixed tokenomic supply cap** - supply is bounded by the protocol's hedging capacity: minting reverts whenever protocol collateralization would drop below the governance-set minting floor - currently **102.5%** (lowered from 105% on 2 September 2026; hard minimum 101%); 101% is the critical threshold that triggers liquidation mode. The token contract carries two adjustable safety guardrails on top of that economic limit: an **administrative supply ceiling** (currently 100,000,000 QEURO, raisable by governance at any time) and a **mint/burn rate limiter** (10M QEURO per 300-block window, ~10 minutes on Base) that contains blast radius if the mint path were ever compromised.
+QEURO has **no fixed tokenomic supply cap** - supply is bounded by the protocol's hedging capacity: minting reverts whenever protocol collateralization would drop below the governance-set minting floor - currently **102.5%** (lowered from 105% on 2 September 2026; hard minimum 101%); 101% is the critical threshold that triggers liquidation mode. The token contract carries two adjustable safety guardrails on top of that economic limit: an **administrative supply ceiling** (currently 100,000,000 QEURO, raisable through the core admin timelock) and a **mint/burn rate limiter** (10M QEURO per 300-block window, ~10 minutes on Base) that contains blast radius if the mint path were ever compromised.
 
 **Implemented Features**
 
@@ -139,56 +139,32 @@ Holding unstaked QEURO does not earn this yield. Vault 1.5.0 bypasses YieldShift
 
 * **FX Risk Management**: Delta-neutral EUR/USD exposure via margin positions
 * **USDC Provision**: Deposits USDC margin for protocol collateralization
-* **Yield Optimization**: Earns compensation from yield shift allocation
+* **Yield compensation**: No base allocation from Morpho; only the configured haircut on gross staker yield, if nonzero
 * **Peg Maintenance**: Economic incentives to maintain EUR stability
 
 **Compensation Structure**:
 
 ```
 Base Compensation: EUR/USD Interest Rate Differential
-+ Variable Yield Shift: Based on pool utilization ratios
+= Position interest/reward-reserve accounting
+Separate: configured staking-yield haircut and authorized-source rewards, if funded
 = Total Compensation (configurable via governance)
 ```
 
 **Risk Management**:
 
 * **Margin Requirements**: Governance-set minimum margin ratio (`minMarginRatio`, currently 250 bps = 2.5%)
-* **Leverage Limits**: Maximum leverage configurable by governance (`maxLeverage`, currently 20×)
-* **Health Gate**: Margin cannot be withdrawn below the minimum ratio; there is no per-position auto-liquidation - the protocol-level liquidation mode at CR ≤ 101% is the only liquidation mechanism
+* **Leverage Limits**: Maximum leverage configurable by governance (`maxLeverage`, currently 40×)
+* **Health Gate**: Margin cannot be withdrawn below the minimum ratio; there is no per-position auto-liquidation - the protocol-level liquidation mode at 0 < CR ≤ 101% is the only liquidation mechanism
 * **Entry/Exit Fees**: Configurable fees for position management (currently 0)
 
 ***
 
-### Yield Shift Mechanism
+### Yield allocation
 
-**⚖️ Dynamic Equilibrium System**
+Morpho yield is allocated by the harvest-time staking ratio, with the unstaked share sent to treasury. A configured haircut may reduce gross staker yield; no base allocation is made for hedger margin. See [Yield Distribution](../yield-distribution.md).
 
-The Yield Shift represents QEURO's most innovative feature - automatically rebalancing incentives between Users and Hedgers based on real-time market conditions.
-
-**📊 Technical Parameters (Code Values)**
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| **Base Yield Shift** | 50% (5000 bps) | Default allocation to users |
-| **Max Yield Shift** | 90% (9000 bps) | Maximum allocation to users |
-| **Adjustment Speed** | 100 bps | Rate of shift adjustment |
-| **Target Pool Ratio** | 100% (10000 bps) | Optimal user/hedger ratio |
-| **TWAP Period** | 24 hours | Time-weighted average window |
-| **Min Holding Period** | 7 days | Required for yield claims |
-
-**🎯 How It Works**
-
-| Pool Condition | Yield Shift Direction | User Impact | Hedger Impact |
-| -------------- | --------------------- | ----------- | ------------- |
-| **High User Pool** | Shift toward hedgers | Lower yields | Higher compensation |
-| **Balanced Pools** | Neutral | Standard yields | Standard rates |
-| **High Hedger Pool** | Shift toward users | Higher yields | Lower compensation |
-
-**⏱️ Response Mechanism**:
-
-* **Automatic Adjustments**: Based on 24-hour TWAP calculations
-* **Gradual Changes**: Adjustment speed limits sudden shifts
-* **Governance Control**: Parameters adjustable by governance (the 2-of-3 Safe today; QTI governance once activated)
+[YieldShift](../yield-shift.md) contains a separate dynamic allocation ledger. Its holding-period and TWAP rules do not make the Morpho harvest allocation time-weighted.
 
 ***
 
@@ -202,7 +178,7 @@ The Yield Shift represents QEURO's most innovative feature - automatically rebal
 |-----------|-------|-------------|
 | **Backend** | MetaMorpho (Morpho) USDC vault | Primary yield source, accessed via `MetaMorphoStakingVaultAdapter` (vaultId 2) |
 | **Staked series** | stQEUROMORPHO1 | Per-vault stQEURO series deployed by `stQEUROFactory` |
-| **Risk Profile** | 🟢 Low | Established DeFi protocol |
+| **Risk Profile** | Strategy-dependent | Smart-contract, borrower, curator and liquidity risks remain |
 | **Target APY** | Market-dependent | Variable Morpho lending yield |
 
 > **🚧 Future Vault Variants** (Roadmap): additional external staking vaults (other lending markets, tokenized T-Bills/RWAs, advanced strategies) can be added by governance via the adapter and factory pattern.
@@ -443,7 +419,7 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 
 1. **Mint/Redeem Fees**: currently 0 (governance-settable, capped at 5%); when collected, routed to the FeeCollector (60% treasury / 25% dev fund / 15% community)
 2. **Yield Management**: treasury allocation attributable to unstaked QEURO; no additional staking yield fee on vault 1.5.0 credits
-3. **Position Fees**: hedger entry/exit/margin fees (currently 0, governance-settable) plus a 20% reward fee split on hedger rewards
+3. **Position Fees**: hedger entry/exit/margin fees (currently 0, governance-settable) with separate fee-routing settings; see [Production Deployment Status](../deployment-status.md). No 20% tax is charged on hedger reward claims
 
 **🎯 Key Performance Indicators**
 
@@ -464,7 +440,7 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 
 | Risk Factor | Probability | Impact | Mitigation Strategy |
 | ----------- | ----------- | ------ | ------------------- |
-| **Smart Contract Bug** | Medium | Critical | AI-driven review + whitehat reports, remediated on-chain as they come in; no audit-firm review yet; continuous monitoring |
+| **Smart Contract Bug** | Medium | Critical | Internal AI-assisted review, remediated on-chain as they come in; no audit-firm review yet; continuous monitoring |
 | **Oracle Manipulation** | Low | High | Chainlink + circuit breakers, 5% deviation limit |
 | **External Vault (Morpho) Risk** | Low | Medium | Governance can deactivate the vault and pause the protocol; USDC is withdrawn on redemption; loss-aware collateral accounting |
 | **Liquidation Cascade** | Low | High | Circuit breakers, emergency pause |
@@ -524,7 +500,7 @@ The full event list is on [Smart Contract Components](../smart-contract-componen
 
 #### Conclusion: QEURO as the First Deployment
 
-QEURO represents more than just another stablecoin: it is the first production deployment of Quantillon's FX-hedged local-currency architecture. Through innovative dual-pool mechanics, dynamic yield redistribution via YieldShift, and robust security controls, QEURO creates a sustainable foundation for EUR-denominated decentralized finance.
+QEURO represents more than just another stablecoin: it is the first production deployment of Quantillon's FX-hedged local-currency architecture. Through innovative dual-pool mechanics, snapshot-based staking yield allocation, and robust security controls, QEURO creates a sustainable foundation for EUR-denominated decentralized finance.
 
 The live deployment focuses on core functionality with USDC collateral and external staking vault yield generation (currently Morpho/MetaMorpho); additional external vaults can be registered by governance through the adapter and factory pattern.
 

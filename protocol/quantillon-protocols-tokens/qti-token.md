@@ -98,12 +98,12 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 
 1. **QEURO Operations**: mint/redeem fees via QuantillonVault - currently 0, governance-settable up to 5%
 2. **Yield Allocation**: treasury receives the unstaked allocation of harvested strategy yield directly. Vault 1.5.0 ignores the legacy per-series staking yield fee; see [Yield Distribution](../yield-distribution.md).
-3. **Hedger Position Fees**: entry/exit/margin fees (currently 0, governance-settable) plus a 20% reward fee split on hedger rewards
+3. **Hedger Position Fees**: entry/exit/margin fees (currently 0, governance-settable) with separate fee-routing settings; see [Production Deployment Status](../deployment-status.md). No 20% tax is charged on hedger reward claims
 
 **Revenue Allocation Model (as coded - FeeCollector)**
 
 ```
-Collected protocol fees (100%)
+Fees received by FeeCollector (100% of its receipts)
 ├── 60% → Treasury
 ├── 25% → Dev Fund
 └── 15% → Community
@@ -153,7 +153,7 @@ Where:
 
 **Smart Contract Security**
 
-* **Review Process**: AI-driven code review and whitehat reports, remediated on-chain as findings come in; **no professional audit-firm review to date** - see [Risks & Mitigation](../../risk-management-and-sustainability/risks-and-mitigation-strategies.md)
+* **Review Process**: Internal AI-assisted code review, remediated on-chain as findings come in; **no professional audit-firm review to date** - see [Risks & Mitigation](../../risk-management-and-sustainability/risks-and-mitigation-strategies.md)
 * **OpenZeppelin Base**: Battle-tested upgradeable contracts
 * **Bug Bounty Program**: planned (amounts TBD)
 * **Continuous Monitoring**: independent hedging/oracle watchdog with automatic pause and alerting
@@ -178,7 +178,7 @@ QTI governance activates with a future upgrade that wires a mint path and enable
 
 | Risk Factor                 | Probability | Impact   | Mitigation Strategy                             |
 | --------------------------- | ----------- | -------- | ----------------------------------------------- |
-| **Smart Contract Exploits** | Medium      | Critical | AI-driven review + whitehat reports, remediated on-chain as they come in; no audit-firm review yet; continuous monitoring |
+| **Smart Contract Exploits** | Medium      | Critical | Internal AI-assisted review, remediated on-chain as they come in; no audit-firm review yet; continuous monitoring |
 | **Oracle Manipulation**     | Low         | High     | Hyperliquid mid + Chainlink fallback, circuit breakers |
 | **Governance Attacks**      | Low         | High     | Vote-escrow system, time delays, caps           |
 

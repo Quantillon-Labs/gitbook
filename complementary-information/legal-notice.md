@@ -1,10 +1,10 @@
 # Legal Notice
 
-_Date of the latest revision: 26th of June  2025_
+_Date of the latest revision: 30 September 2026_
 
 
 
-The information contained on the websites [https://quantillon.money](https://quantillon.money/) and [https://app.quantillon.money/ ](https://app.quantillon.money/)(together the “Website”) has no contractual value and is provided for information purposes only.
+This notice identifies the publisher and host of [quantillon.money](https://quantillon.money/) and [app.quantillon.money](https://app.quantillon.money/) (together the “Website”). It supplements the [Terms of Service](terms-of-services.md) and does not displace those terms or mandatory legal disclosures.
 
 Quantillon Labs (the “Company”) reserves the right to modify their characteristics at any time and without prior notice. The information contained in this Website shall not be construed as an offer to the public, a solicitation, an investment advice, or a solicitation by the Company to the users of the Website.
 
@@ -18,7 +18,17 @@ The Website is published by the Company.
 
 \- VAT number: FR87988682613
 
+\- Legal form: French SAS (société par actions simplifiée).
+
+\- Registered office: 2 Avenue de Lognac, 33700 Mérignac, France.
+
+\- Commercial register: RCS Bordeaux.
+
 \- Jurisdiction: France.
+
+\- Publication director: **M. Cantarutti Toni**.
+
+\- Hosting provider for the Website: **OVH SAS (OVHcloud)**, 2 rue Kellermann, 59100 Roubaix, France. Provider contact and company information: [OVHcloud legal notice](https://www.ovhcloud.com/fr/terms-and-conditions/).
 
 The Company undertakes to comply with the regulations governing the management and operation of a website.
 

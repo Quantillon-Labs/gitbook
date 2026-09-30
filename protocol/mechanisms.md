@@ -2,7 +2,7 @@
 
 ## Mechanisms
 
-Understanding how Quantillon Protocol operates is essential for both users and developers. This guide describes the mechanisms used by the first deployment, QEURO, and shows how the broader protocol turns USD liquidity into local-currency exposure through FX hedging, overcollateralization, and Yield Shift incentives.
+Understanding how Quantillon Protocol operates is essential for both users and developers. This guide describes the mechanisms used by the first deployment, QEURO, and shows how the broader protocol turns USD liquidity into local-currency exposure through FX hedging, overcollateralization, and staking yield allocation.
 
 > **📋 Scope**: This page is the conceptual overview of the contracts deployed on Base mainnet (public launch planned for Q4 2026). Contract-level detail (signatures, structs, constants, events) lives on the per-contract pages linked from each section - those pages are the reference; this one summarises them.
 
@@ -14,9 +14,9 @@ Quantillon Protocol represents a reusable pattern for local-currency DeFi market
 
 #### Core Design Principles
 
-* **🔒 Over-collateralization**: Minting requires the protocol collateralization ratio to stay above the governance-set minting floor - currently **102.5%** (lowered from 105% on 2 September 2026; hard minimum 101%); 101% is the critical threshold that triggers liquidation mode
+* **🔒 Over-collateralization**: Minting requires the protocol collateralization ratio to meet the governance-set minting floor - currently **102.5%** (lowered from 105% on 2 September 2026; hard minimum 101%); 101% is the critical threshold that triggers liquidation mode
 * **⚖️ Delta-neutral hedging**: FX risk managed by a single designated hedger (Quantillon Labs' hedging engine, executing on Hyperliquid) in the current phase
-* **📈 Dynamic yield distribution**: YieldShift mechanism for market-responsive incentive alignment
+* **📈 Staking yield allocation**: Harvest-time staked share to stakers, unstaked share to treasury; YieldShift is a separate ledger
 * **🌊 Liquidity inheritance**: Leverages existing USDC liquidity depth
 * **🏛️ Progressive decentralization**: Parameters managed today by a 2-of-3 Safe with a 12h upgrade timelock; QTI community governance planned via a future activation upgrade
 
@@ -89,7 +89,7 @@ Assumed redemption fee: 0
 Net USDC received: 972 USDC
 ```
 
-When the protocol collateralization ratio is at or below 101%, redemption switches to **liquidation mode** (pro-rata on the remaining collateral) - see [Liquidation Mode](liquidation-mode.md).
+When the computed protocol collateralization ratio is positive and at or below the critical threshold (currently 101%), redemption switches to **liquidation mode** (pro-rata on the remaining collateral) - see [Liquidation Mode](liquidation-mode.md).
 
 ***
 
@@ -112,7 +112,7 @@ Users are participants who mint/hold QEURO for EUR exposure and yield generation
 
 * Deposit USDC via Vault to mint QEURO
 * Stake QEURO to stQEURO to earn auto-compounding yield
-* Redeem anytime at oracle-determined rates
+* Request redemption using the applicable execution or liquidation quote, subject to protocol checks
 * QTI governance is dormant today; parameters are set by the 2-of-3 governance Safe (see [Quantillon DAO](../quantillon-dao.md))
 
 **Technical Parameters (UserPool, live values)**
@@ -138,7 +138,7 @@ The UserPool is an optional batch deposit/stake contract; the dApp's primary flo
 The designated hedger provides delta-neutral EUR/USD hedging:
 
 * **Position Opening**: Deposits USDC margin to open a hedge position (`enterHedgePosition(usdcAmount, leverage)`)
-* **Leverage**: Governance-set `maxLeverage` - currently 20×
+* **Leverage**: Governance-set `maxLeverage` - currently 40×
 * **P\&L Tracking**: Real-time unrealized and realized P\&L calculation
 * **Strategy Yield Compensation**: Only the configured staking-yield haircut, paid directly to the configured recipient; see [Yield Distribution](yield-distribution.md).
 
@@ -163,7 +163,7 @@ The Morpho harvest does not use YieldShift or an annual funding carve-out.
 | Parameter        | Description               | Live value |
 | ---------------- | ------------------------- | ---------- |
 | `minMarginRatio` | Minimum margin ratio      | 250 bps (2.5%) since 2 September 2026 - contract floor |
-| `maxLeverage`    | Maximum leverage allowed  | 20×        |
+| `maxLeverage`    | Maximum leverage allowed  | 40×        |
 | `entryFee` / `exitFee` / `marginFee` | Position fees | 0 (governance-settable) |
 
 **Position Health**
@@ -178,12 +178,12 @@ Users ←→ QuantillonVault ←→ Hedger
  Euro       USDC           USD
 Exposure   Collateral    Risk Mgmt
   ↓           ↓              ↓
-stQEURO ←→ YieldShift ←→ Rewards
+Morpho harvest → stQEURO / treasury / configured haircut
 ```
 
 * **Users** get euro exposure via QEURO/stQEURO
 * **Hedger** manages EUR/USD risk for yield compensation
-* **Protocol** maintains stability through YieldShift incentives
+* **Protocol** enforces collateral, price, capacity and pause controls
 
 ***
 
@@ -197,7 +197,7 @@ Quantillon uses overcollateralization to mitigate forex market volatility.
 
 | Actor        | Minimum Ratio                 | Threshold  |
 | ------------ | ----------------------------- | ---------------------- |
-| **Protocol** | Governance-set minting floor - currently 102.5% (105% at launch; hard minimum 101%) | ≤ 101% (critical) triggers liquidation mode |
+| **Protocol** | Governance-set minting floor - currently 102.5% (105% at launch; hard minimum 101%) | 0 < CR ≤ 101% (critical) triggers liquidation mode |
 | **Hedger**   | `minMarginRatio` - 250 bps (2.5%) | Margin cannot be withdrawn below it; no per-position liquidation |
 
 **Accepted Collateral**
@@ -267,7 +267,7 @@ Accurate, tamper-resistant pricing is critical for all protocol mechanisms. Pric
 
 #### Active source: the hedge venue's EUR/USD market mid (Hyperliquid)
 
-QEURO mint/redeem is priced off the **EUR/USD perpetual mid of the hedge venue, Hyperliquid** - the venue where the protocol's EUR/USD hedge is executed - published on-chain and read through the `HyperliquidEurUsdOracle`, so the on-chain valuation stays aligned with the hedge. Chainlink spot is the governance fallback.
+Valuation uses the **Hyperliquid EUR/USD perpetual mid**, subject to an independent Chainlink reference check. Normal mint/redeem amounts additionally use directional depth, spreads and buffers through [Execution Pricing](execution-pricing.md). Chainlink is the manual valuation fallback; switching sources does not alone restore mint capacity.
 
 #### Fallback source: ChainlinkOracle
 
@@ -393,7 +393,7 @@ QTI holders will lock tokens for 7 days to 365 days for up to 4× voting power (
 **stQEURO Token (Yield-Bearing, ERC-4626)**
 
 * Exchange rate appreciation model
-* Instant deposit/redeem
+* Deposit/redeem subject to token and vault controls
 * No rebasing (value appreciation)
 * 18 decimals
 
@@ -452,4 +452,4 @@ function getOracleHealth() external returns (bool isHealthy, bool eurUsdFresh, b
 
 ***
 
-> **Quantillon's mechanisms represent a new paradigm in stablecoin design - combining the stability of overcollateralization with the efficiency of delta-neutral hedging and the innovation of dynamic yield distribution. The live deployment runs a single designated hedger and one external staking vault (Morpho/MetaMorpho); additional external vaults can be registered by governance.**
+> **Quantillon's mechanisms represent a new paradigm in stablecoin design - combining the stability of overcollateralization with the efficiency of delta-neutral hedging and snapshot-based staking yield distribution. The live deployment runs a single designated hedger and one external staking vault (Morpho/MetaMorpho); additional external vaults can be registered by governance.**

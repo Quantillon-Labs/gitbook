@@ -37,7 +37,7 @@ This section is the technical inventory of the Quantillon protocol smart contrac
 
 ### Live contracts (Base mainnet, chain 8453)
 
-Versions read on-chain on 30 September 2026 at Base block 51,985,901 (`version()` on each proxy). "Timelock" = UUPS upgrade through the 12-hour OZ TimelockController (`SecureUpgradeable`); "Safe-direct" = plain UUPS upgraded directly by the 2-of-3 governance Safe.
+Versions read on-chain on 30 September 2026 at finalized Base block 51,985,907 (`version()` on each proxy). "Timelock" = UUPS upgrade through the 12-hour OZ TimelockController (`SecureUpgradeable`); "Safe-direct" = plain UUPS upgraded directly by the 2-of-3 governance Safe.
 
 | Contract | Address | Version | Upgrade path |
 |----------|---------|---------|--------------|
@@ -55,6 +55,7 @@ Versions read on-chain on 30 September 2026 at Base block 51,985,901 (`version()
 | `HyperliquidEurUsdOracle` | `0x0B58aBB57775E0fCEDfd4460e00dD9D9610C2C43` | 1.0.6 | Safe-direct |
 | `SlippageStorage` | `0x0fde0ff2566be3c24af6d654012dddb4f1da099b` | 1.0.3 | Safe-direct |
 | `MetaMorphoStakingVaultAdapter` (vaultId 2) | `0x4c9B8b09214d37D5310b8E6768cF28E0dDcEDC30` | - | Replaceable per `vaultId` (governance) |
+| `ExecutionPricing` | `0xFA894CD2e0C8030c95925FfF3b8206F397e0D897` | 1.3.2 | Non-proxy; access-controlled configuration |
 | `TimeProvider` | `0x520236487CBD0a6958B4EefC7853cd7C3F5C56E7` | - | Deployed directly (no proxy) |
 
 Governance: Safe (2-of-3) `0x1d7fF432a93d0085Fb69474c7E567f859829e6cd` · Timelock (12 h) `0x7Ade8f3Bf1FdaF0785efE9Ea5C6339D1aD6B8342`. See [Quantillon DAO](../quantillon-dao.md).
@@ -79,8 +80,8 @@ Governance: Safe (2-of-3) `0x1d7fF432a93d0085Fb69474c7E567f859829e6cd` · Timelo
 
 ### Who holds what
 
-* The **2-of-3 governance Safe** holds every `DEFAULT_ADMIN_ROLE`, `GOVERNANCE_ROLE`, `UPGRADER_ROLE`, `ORACLE_MANAGER_ROLE`, `MANAGER_ROLE`, `TREASURY_ROLE` and `EMERGENCY_ROLE` in the stack, plus `PAUSER_ROLE` / `COMPLIANCE_ROLE` on QEURO.
-* Narrow operational roles are delegated to dedicated wallets, each revocable by the Safe at any time: an **independent hedging watchdog** holds `EMERGENCY_ROLE` on `QuantillonVault` (pause/unpause only); **keeper wallets** designated by governance hold `VAULT_OPERATOR_ROLE` (deploy USDC to the external vault) and `YIELD_DISTRIBUTOR_ROLE` (harvest and distribute yield) on `QuantillonVault`; the **oracle publisher** holds `WRITER_ROLE` on `SlippageStorage`.
+* The **TimelockController holds DEFAULT_ADMIN_ROLE on the eight core contracts**: QuantillonVault, QEUROToken, QTIToken, UserPool, HedgerPool, YieldShift, stQEUROFactory and the stQEURO series. The Safe retains operational governance and emergency roles as configured per contract, and peripheral admin/upgrade permissions. Core role changes use the controller; peripheral role changes use their respective admins. See [Production Deployment Status](deployment-status.md).
+* Narrow operational roles are delegated to dedicated wallets, revocable through the applicable admin (the timelock for core roles): an **independent hedging watchdog** holds `EMERGENCY_ROLE` on `QuantillonVault` (pause/unpause only); **keeper wallets** designated by governance hold `VAULT_OPERATOR_ROLE` (deploy USDC to the external vault) and `YIELD_DISTRIBUTOR_ROLE` (harvest and distribute yield) on `QuantillonVault`; the **oracle publisher** holds `WRITER_ROLE` on `SlippageStorage`.
 * Inter-contract roles: `QuantillonVault` holds `MINTER_ROLE` / `BURNER_ROLE` on QEURO, `VAULT_FACTORY_ROLE` on `stQEUROFactory`, `VAULT_MANAGER_ROLE` on the staking vault adapter and `FEE_SOURCE_ROLE` on `FeeCollector` (as does `HedgerPool`); `OracleRouter` holds `ORACLE_MANAGER_ROLE` and `EMERGENCY_ROLE` on `HyperliquidEurUsdOracle` for its pass-through admin functions.
 * `HedgerPool` has **no hedger role**: hedger-only functions check the `singleHedger` address set by governance (Quantillon Labs' hedging engine in the current phase).
 
@@ -237,7 +238,7 @@ Owner pages hold the full constant lists; this table is the cross-reference.
 |----------|-----------------------------|-----------|
 | `QEUROToken` | No tokenomic supply cap - supply bounded by hedging capacity (governance-set minting CR floor, currently 102.5%). `DEFAULT_MAX_SUPPLY = 100_000_000e18` (administrative ceiling, governance-raisable via `maxSupply`); global mint and burn rate limits 10M QEURO per 300-block window; mint/redeem fees 0 (max 5%, set on `QuantillonVault`) | [QEURO Token](quantillon-protocols-tokens/qeuro-token.md) |
 | `QuantillonVault` | Minting floor 102.5% (hard minimum 101%), critical ratio 101%, mint-time price-deviation guard 2% | [Liquidation Mode](liquidation-mode.md) |
-| `HedgerPool` | Min margin 250 bps (contract floor), max leverage 20×, fees 0, interest 350/450 bps, `rewardFeeSplit` 20% | [HedgerPool](hedger-pool.md) |
+| `HedgerPool` | Min margin 250 bps (contract floor), max leverage 40×, fees 0, interest 350/450 bps, `rewardFeeSplit` 0 | [HedgerPool](hedger-pool.md) |
 | `UserPool` | stakingAPY 8%, depositAPY 4%, min stake 100 QEURO, cooldown 7 days, `MAX_BATCH_SIZE = 100` | [UserPool](user-pool.md) |
 | `QTIToken` | `TOTAL_SUPPLY_CAP = 100_000_000e18`, `MIN_LOCK_TIME = 7 days`, `MAX_LOCK_TIME = 365 days`, `MAX_VE_QTI_MULTIPLIER = 4`, `PROPOSAL_EXECUTION_DELAY = 2 days` (dormant) | [QTI Token](quantillon-protocols-tokens/qti-token.md) |
 | `YieldShift` | `MIN_HOLDING_PERIOD = 7 days`, `TWAP_PERIOD = 24 hours`, `MAX_HISTORY_LENGTH = 1000`; base 50% / max 90% / speed 1% / target ratio 100% | [YieldShift](yield-shift.md) |
@@ -491,7 +492,7 @@ All contracts are UUPS (Universal Upgradeable Proxy Standard) proxies, but they 
 
 | Path | Contracts | Mechanism |
 |------|-----------|-----------|
-| **Timelock (12 h)** | `QuantillonVault`, `QEUROToken`, `QTIToken`, `UserPool`, `HedgerPool`, `YieldShift`, `stQEUROFactory`, `stQEUROToken` | `SecureUpgradeable`: the Safe schedules the upgrade on the OZ `TimelockController` (`0x7Ade8f3B…8342`, `minDelay` 43,200 s) and executes it after the delay; `UPGRADER_ROLE` on the contract |
+| **Timelock (12 h)** | `QuantillonVault`, `QEUROToken`, `QTIToken`, `UserPool`, `HedgerPool`, `YieldShift`, `stQEUROFactory`, `stQEUROToken` | `SecureUpgradeable`: the Safe schedules the upgrade on the OZ `TimelockController` (`0x7Ade8f3B…8342`, `minDelay` 43,200 s) and executes it after the delay while secure upgrades are enabled; the configured controller authorizes the upgrade |
 | **Safe-direct** | `FeeCollector`, `OracleRouter`, `ChainlinkOracle`, `HyperliquidEurUsdOracle`, `SlippageStorage` | Plain UUPS: the 2-of-3 Safe calls `upgradeToAndCall` directly (`UPGRADER_ROLE`, or `GOVERNANCE_ROLE` on `FeeCollector`); no timelock |
 
 ```solidity
@@ -532,4 +533,4 @@ Base mainnet (chain 8453) - **contracts deployed since June 2026; public launch 
 
 ***
 
-> **Documentation updated**: 4 September 2026 - versions and role holders verified on-chain.
+> **Production settings verified**: 30 September 2026, finalized Base block 51,985,907. See [Production Deployment Status](deployment-status.md) and [Execution Pricing](execution-pricing.md).

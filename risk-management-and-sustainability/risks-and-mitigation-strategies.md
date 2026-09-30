@@ -14,13 +14,13 @@ Since September 2026 the hedge runs on a margin policy targeting 2.5%: the on-ch
 
 Periods of market stress may trigger mass redemptions, potentially challenging the protocol's ability to unwind positions or liquidate collateral efficiently.
 
-**🛡️ Mitigation:** Quantillon inherits the deep liquidity of USDC on the user side and leverages the Forex market on the hedger side. Redemption operations are slippage-free, and collateral is deployed on liquid DeFi markets (currently Morpho USDC lending on Base) with instant withdrawal. Furthermore, future vault variants can diversify exposure (e.g., T-Bills, other lending markets), improving redemption resiliency.
+**🛡️ Mitigation:** Quantillon inherits the deep liquidity of USDC on the user side and leverages the Forex market on the hedger side. Redemptions use execution quotes that include spreads and buffers. Collateral deployed on Morpho USDC lending on Base can only be withdrawn to the extent the external strategy makes liquidity available. Furthermore, future vault variants can diversify exposure (e.g., T-Bills, other lending markets), improving redemption resiliency.
 
 ### Smart Contract and Oracle Risk
 
 The protocol relies on smart contracts for collateral management, minting, and liquidation. Any vulnerability - whether in protocol contracts or oracle feeds - can undermine systemic integrity.
 
-**🛡️ Mitigation:** **No audit by a professional security firm has been carried out to date.** What the contracts have been through instead: repeated code-review passes with several frontier AI code-analysis models, and findings reported by independent whitehat researchers. Findings are triaged and fixed as they come in, with the remediation shipped on-chain through the normal upgrade path; this is continuous work, not a one-off pass. A bug bounty is planned. Readers should weigh this accordingly: model-driven review and whitehat reports are not a substitute for a professional audit. The protocol adopts a modular architecture, limiting systemic blast radius in case of an exploit. Pricing relies on two independent price paths - the hedge venue's market mid published on-chain by Quantillon's own publisher, and Chainlink as fallback - with circuit breakers for anomalous readings and an independent watchdog that freezes mint/redeem on a stale, circuit-broken or dislocated price.
+**🛡️ Mitigation:** **No audit by a professional security firm has been carried out to date.** What the contracts have been through instead: internal, AI-assisted code-review passes. Findings are triaged and fixed as they come in, with the remediation shipped on-chain through the normal upgrade path; this is continuous work, not a one-off pass. A bug bounty is planned. Readers should weigh this accordingly: internal, AI-assisted review are not a substitute for a professional audit. The protocol adopts a modular architecture, limiting systemic blast radius in case of an exploit. Pricing relies on two independent price paths - the hedge venue's market mid published on-chain by Quantillon's own publisher, and Chainlink as fallback - with circuit breakers for anomalous readings and an independent watchdog that freezes mint/redeem on a stale, circuit-broken or dislocated price.
 
 ### Governance Risk and Protocol Capture
 
@@ -32,7 +32,7 @@ As with all DAO-based systems, Quantillon faces the risk of governance capture o
 
 Although Quantillon targets the Recital 22 exemption under MiCA, regulatory interpretation can evolve, especially as EU authorities refine crypto oversight.
 
-**🛡️ Mitigation:** The protocol operates under a hybrid compliance architecture. Its decentralized nature is verifiable and publicly auditable. Meanwhile, Quantillon Labs (a French SAS) interfaces with regulators and external auditors, maintaining legal dialogue (notably with the French ACPR); the planned Quantillon Foundation - jurisdiction to be determined - is intended to take over this regulatory-interface role once established. These entities can issue voluntary disclosures or risk assessments without compromising decentralization.
+**🛡️ Mitigation:** The protocol operates under a hybrid compliance architecture. Its decentralized nature is verifiable and publicly auditable. Meanwhile, Quantillon Labs (a French SAS) handles regulatory dialogue and any future external-review engagement, maintaining legal dialogue (notably with the French ACPR); the planned Quantillon Foundation - jurisdiction to be determined - is intended to take over this regulatory-interface role once established. These entities can issue voluntary disclosures or risk assessments without compromising decentralization.
 
 ### DeFi Contagion Risk
 
@@ -50,7 +50,7 @@ The introduction of yield-bearing euro infrastructure creates additional risk ve
 
 **🛡️ Mitigation:**&#x20;
 
-* AI-driven code review and whitehat reports covering the protocol contracts, including the ERC-4626 stQEURO series and the harvest/distribution path, with findings remediated on-chain on an ongoing basis; no professional audit-firm review to date
+* Internal AI-assisted code review covering the protocol contracts, including the ERC-4626 stQEURO series and the harvest/distribution path, with findings remediated on-chain on an ongoing basis; no professional audit-firm review to date
 * Independent watchdog and monitoring with automatic pause of mint/redeem
 * Emergency pause functionality with governance-controlled restart procedures
 * A segregated insurance fund for compounding mechanism failures is **under consideration - not implemented in the deployed protocol**

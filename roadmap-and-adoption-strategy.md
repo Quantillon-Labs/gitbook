@@ -1,6 +1,6 @@
 # Roadmap & Adoption Strategy
 
-> **Status (September 2026): the Quantillon Protocol contracts are deployed on Base mainnet; the public launch is planned for Q4 2026.** Core contracts were deployed in June 2026 and have since been through AI-driven security review with on-chain remediation, oracle go-live and operational hardening - mint/redeem, multi-vault staking with external-vault yield distribution, and autonomous hedging with an independent safety watchdog are all in place on-chain. The application is not yet open to users: **public launch is planned for Q4 2026**, with QTI governance activation to follow.
+> **Status (September 2026): the Quantillon Protocol contracts are deployed on Base mainnet; the public launch is planned for Q4 2026.** Core contracts were deployed in June 2026 and have since been through internal, AI-assisted security review with on-chain remediation, oracle go-live and operational hardening - mint/redeem, multi-vault staking with external-vault yield distribution, and operated hedging with a separately hosted safety watchdog are deployed across contracts and backend services. The application is not yet open to users: **public launch is planned for Q4 2026**, with QTI governance activation to follow.
 
 ### Where We Are
 
@@ -10,7 +10,7 @@ The original multi-phase plan (foundation → architecture → MVP → testnet �
 | --- | --- |
 | 🏗️ Team assembly, whitepaper, technical architecture (2025) | ✅ Completed |
 | 🛠️ MVP build, internal alpha, public testnet (Base Sepolia) | ✅ Completed |
-| 🔒 AI-driven security review + whitehat reports, remediated on-chain | 🔄 Ongoing |
+| 🔒 Internal AI-assisted code review, remediated on-chain | 🔄 Ongoing |
 | 🔍 Audit by a professional security firm | ⏳ Not yet performed |
 | 🚀 **Core contracts deployed on Base (chain 8453)** | ✅ **Deployed June 2026** |
 | 📡 Oracle go-live - Hyperliquid EUR/USD via on-chain publisher (2026-06-25) | ✅ Completed |
@@ -19,9 +19,9 @@ The original multi-phase plan (foundation → architecture → MVP → testnet �
 | 🎨 Frontend restyle + public protocol dashboard (July 2026) | ✅ Completed |
 | 🔀 Alternative hedge-venue evaluation (Lighter, July 2026) | ✅ Closed - Hyperliquid confirmed as the sole venue (September 2026) |
 | Staking-ratio yield allocation, vault 1.5.0 (30 September 2026) | Deployed; [current policy](protocol/yield-distribution.md) |
-| 🧮 QuantillonVault 1.1.11 - loss-aware external-vault collateral accounting (17 August 2026) | ✅ Live |
-| 📦 Eight-contract maintenance bundle (after 26 August 2026) | ✅ Live |
-| ⚖️ HedgerPool 1.0.8 - margin policy targeting 2.5% and 102.5% minting floor (2 September 2026) | ✅ Live |
+| 🧮 QuantillonVault 1.1.11 - loss-aware external-vault collateral accounting (17 August 2026) | ✅ Historical release deployed; see current inventory |
+| 📦 Eight-contract maintenance bundle (after 26 August 2026) | ✅ Historical release deployed; see current inventory |
+| ⚖️ HedgerPool 1.0.8 - margin policy targeting 2.5% and 102.5% minting floor (2 September 2026) | ✅ Historical release deployed; see current inventory |
 | 🎁 Quantillon Rewards - terms published (4 September 2026) | ⏳ Program not yet open |
 | 🌐 **Public launch - application open to users** | ⏳ **Planned Q4 2026** |
 | 🗳️ QTI governance activation (token is deployed but dormant - supply 0) | ⏳ Pending |
@@ -98,7 +98,7 @@ Financial literacy campaigns focused on DeFi yields, euro-denominated finance, a
 
 ### Success Factors & Risk Mitigation
 
-**🔒 Security First** - AI-driven code review and whitehat reports with on-chain remediation, an independent watchdog service, and staged rollouts. A professional audit-firm review has not been carried out to date; see [Risks & Mitigation](risk-management-and-sustainability/risks-and-mitigation-strategies.md).
+**🔒 Security First** - Internal AI-assisted code review with on-chain remediation, an independent watchdog service, and staged rollouts. A professional audit-firm review has not been carried out to date; see [Risks & Mitigation](risk-management-and-sustainability/risks-and-mitigation-strategies.md).
 
 **👥 Community-Driven Development** - early and continuous community engagement to build a sustainable ecosystem.
 

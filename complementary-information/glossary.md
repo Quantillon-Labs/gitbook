@@ -14,7 +14,7 @@ The French authority responsible for prudential supervision and resolution, whic
 
 ### APY (Annual Percentage Yield)
 
-The annualized percentage return, measuring the real yield earned on an investment over one year.
+An annualized return metric including compounding assumptions. A displayed historical or estimated APY does not guarantee the return a holder will realize over a year.
 
 ***
 
@@ -52,14 +52,14 @@ A hybrid approach combining centralized and decentralized systems, often integra
 
 ### Chainlink
 
-A decentralized oracle network used by Quantillon as the **fallback** EUR/USD source and for USDC/USD collateral validation. The active EUR/USD source is the market mid of the active hedge venue (currently Hyperliquid) - see the Oracle Architecture page.
+A decentralized oracle network used by Quantillon as the **independent reference and manual fallback** EUR/USD source and for USDC/USD collateral validation. The active EUR/USD source is the market mid of the active hedge venue (currently Hyperliquid) - see the Oracle Architecture page.
 
 ***
 
 ### Overcollateralization
 
 A system where the value of pledged collateral exceeds the value of the issued loan or stablecoin.\
-**Minting QEURO requires the protocol collateralization ratio to stay above the governance-set minting floor - currently 102.5% (since 2 September 2026; 105% at launch); 101% is the critical threshold that triggers liquidation mode.**
+**Minting QEURO requires the protocol collateralization ratio to meet the governance-set minting floor - currently 102.5% (since 2 September 2026; 105% at launch); 101% is the critical threshold that triggers liquidation mode.**
 
 ***
 

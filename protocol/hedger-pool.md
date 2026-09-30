@@ -281,7 +281,7 @@ Called when the vault is in liquidation mode (protocol collateralization ratio �
 2. **EUR/USD Rate Differential**: compensation for FX risk (currently 3.50% EUR / 4.50% USD, governance-set)
 3. **Position Fees**: entry/exit/margin fees are currently 0 (governance-settable)
 
-> **Reward fee split**: `rewardFeeSplit` (currently 20%, i.e. `2e17` of `1e18`) is the share of protocol fees routed to the local reward reserve. Anyone can top the reserve up with `fundRewardReserve(amount)` (`RewardReserveFunded`).
+> **Reward fee split**: HedgerPool `rewardFeeSplit` is currently 0 and governs the share of its operation fees routed to the local reward reserve. The separate vault `hedgerRewardFeeSplit` is 20% of collected vault fees. Neither setting taxes reward claims. Anyone can top the reserve up with `fundRewardReserve(amount)` (`RewardReserveFunded`).
 
 #### Claim Rewards
 
@@ -326,7 +326,7 @@ struct CoreParams {
 | Parameter | Live Value | Description |
 |-----------|------------|-------------|
 | `minMarginRatio` | **250 bps (2.5%)** - live since 2 September 2026 (HedgerPool v1.0.8); was 500 bps at launch. Governance-set, cannot go below the 250 bps contract floor (`DEFAULT_MIN_MARGIN_RATIO_BPS`) | Minimum margin/position ratio |
-| `maxLeverage` | 20 | Max 20× leverage (the setter caps it at 20) |
+| `maxLeverage` | 40 | Max 40× leverage (the setter caps it at 40) |
 | `entryFee` | 0 | Currently 0 (governance-settable) |
 | `exitFee` | 0 | Currently 0 (governance-settable) |
 | `marginFee` | 0 | Currently 0 (governance-settable) |
@@ -334,7 +334,7 @@ struct CoreParams {
 | `usdInterestRate` | 450 (4.50%) | USD leg interest rate (max 2000) |
 | `minMarginAmount` | 0 | Minimum margin per position (governance-set; initializer default 100 USDC) |
 | `minPositionHoldBlocks` | 0 | Minimum blocks before a position can be closed (governance-set; initializer default 5) |
-| `rewardFeeSplit` | 20% (`2e17`) | Share of protocol fees routed to the reward reserve (max `1e18`) |
+| `rewardFeeSplit` | 0 | Share of protocol fees routed to the reward reserve (max `1e18`) |
 
 #### Configuration Functions
 
@@ -457,7 +457,7 @@ Recovers tokens sent by mistake to the treasury (cannot recover active USDC).
 uint256 public constant MAX_POSITION_SIZE = type(uint96).max;
 uint256 public constant MAX_MARGIN = type(uint96).max;
 uint256 public constant MAX_ENTRY_PRICE = type(uint96).max;
-uint256 public constant MAX_LEVERAGE = type(uint16).max;   // storage bound; governance can configure at most 20x
+uint256 public constant MAX_LEVERAGE = type(uint16).max;   // storage bound; governance can configure at most 40x
 uint256 public constant MAX_MARGIN_RATIO = 5000;           // 50% maximum margin ratio
 uint256 public constant DEFAULT_MIN_MARGIN_RATIO_BPS = 250; // 2.5% governance floor
 
@@ -473,7 +473,7 @@ uint256 public constant MAX_REWARD_FEE_SPLIT = 1e18;
 uint256 public constant QEURO_DUST_THRESHOLD = 1e12;
 ```
 
-Maximum leverage governance can configure: **20×** (`configureRiskAndFees` reverts above it); live `coreParams.maxLeverage` = 20.
+Maximum leverage governance can configure: **40×** (`configureRiskAndFees` reverts above it); live `coreParams.maxLeverage` = 40.
 
 ***
 
@@ -589,4 +589,4 @@ Generic reverts (`NotAuthorized`, `InvalidAmount`, `ConfigValueTooHigh/TooLow`, 
 
 ***
 
-> **Summary**: The HedgerPool is the core of Quantillon's hedging mechanics. A single designated hedger - Quantillon Labs' hedging engine in the current phase - provides EUR/USD coverage, earning revenue via the rate differential and YieldShift. The margin health gate, the September 2026 margin policy and the emergency controls keep the hedge and the protocol collateralization aligned.
+> **Summary**: The HedgerPool is the core of Quantillon's hedging mechanics. A single designated hedger - Quantillon Labs' hedging engine in the current phase - provides EUR/USD coverage, with position interest/reward-reserve accounting, any configured staking-yield haircut, and separately funded YieldShift rewards. The margin health gate, the September 2026 margin policy and the emergency controls keep the hedge and the protocol collateralization aligned.

@@ -1,12 +1,14 @@
 # UserPool
 
+> UserPool's configured APYs are accounting inputs, not realized Morpho APY. The dapp's direct ERC-4626 staking flow follows [Yield Distribution](yield-distribution.md) and does not inherit UserPool's cooldown.
+
 ## UserPool: Batch Deposits and QEURO Staking
 
 ### 📋 Overview
 
 The UserPool is an **optional batch deposit/stake contract**: it lets an address mint QEURO from USDC in batches, stake QEURO under a governance-set APY with an unstaking cooldown, and keeps per-user deposit/withdrawal histories. The dApp's primary flows use `QuantillonVault` directly (`mintQEURO`, `mintAndStakeQEURO`, `redeemQEURO`) and the stQEURO ERC-4626 series for yield - see [Core Mechanisms](mechanisms.md) and [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md).
 
-Live version: **1.0.3** · address `0x712bCc77e7aa53C79870A40d044D440Ad2901bF2` (Base mainnet).
+Live version: **1.0.6** · address `0x712bCc77e7aa53C79870A40d044D440Ad2901bF2` (Base mainnet).
 
 ***
 

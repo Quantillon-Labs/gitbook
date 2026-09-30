@@ -6,7 +6,7 @@
 
 The Quantillon Protocol generates yield by deploying part of its USDC collateral into **external yield vaults** (money markets such as Morpho or Aave) through a standardized adapter layer. Each external vault is onboarded under a numeric **`vaultId`** and receives its own dedicated **stQEURO series** deployed by the `stQEUROFactory`.
 
-> **There is no `AaveVault` contract** (the name is historical). Earlier protocol designs described a monolithic Aave-specific vault; the production architecture replaced it with lightweight, vault-agnostic adapters implementing a common `IExternalStakingVault` interface. Aave and Morpho are both supported through this same pattern; only the MetaMorpho adapter is deployed and registered today.
+> **There is no `AaveVault` contract** (the name is historical). Earlier protocol designs described a monolithic Aave-specific vault; the production architecture replaced it with lightweight, vault-agnostic adapters implementing a common `IExternalStakingVault` interface. The production strategy uses MetaMorpho; the other adapter implementations wrap local/test mocks and do not establish production Aave support.
 
 ***
 
@@ -26,8 +26,8 @@ Because all adapters share this interface, the protocol can onboard, migrate, or
 Available adapter implementations:
 
 * **`MetaMorphoStakingVaultAdapter`** - wraps a MetaMorpho (Morpho) vault. **This is the adapter currently deployed and registered on Base mainnet.**
-* **`MorphoStakingVaultAdapter`** - Morpho markets adapter (symmetric pattern).
-* **`AaveStakingVaultAdapter`** - Aave-style adapter (symmetric pattern), used with mock vaults for local development and available should governance onboard an Aave market; no such onboarding is scheduled.
+* **`MorphoStakingVaultAdapter`** - mock-vault adapter for local/test environments, not a production Morpho markets integration.
+* **`AaveStakingVaultAdapter`** - mock-vault adapter for local development; a production Aave integration requires separate implementation and validation.
 
 ***
 
@@ -70,7 +70,7 @@ See [Yield Distribution](yield-distribution.md) for the exact snapshot formula, 
 
 ### 🛡️ Governance & Risk Controls
 
-* Registering or deactivating a vault/adapter (`setStakingVault`) is **governance-gated** (2-of-3 Safe; core-contract upgrades additionally route through a 12h timelock). Deploying USDC is done by the vault-operator role and harvesting by the yield-distributor role - two narrow operational roles on `QuantillonVault` held by keeper wallets that governance can revoke at any time. USDC is withdrawn from the external vault automatically when a redemption needs it; there is no separate emergency-withdrawal function.
+* Registering or deactivating a vault/adapter (`setStakingVault`) is **governance-gated** (2-of-3 Safe; core-contract upgrades additionally route through a 12h timelock). Deploying USDC is done by the vault-operator role and harvesting by the yield-distributor role - two narrow operational roles on `QuantillonVault` held by keeper wallets; grants and revocations require the core admin TimelockController. USDC is withdrawn from the external vault automatically when a redemption needs it; there is no separate emergency-withdrawal function.
 * Adapters are deliberately thin pass-throughs - no fixed exposure or rebalance constants live in the adapter; exposure sizing is an operational governance decision per `vaultId`.
 * External-vault risk (smart-contract risk of Morpho/Aave, underlying market risk) is isolated per vault for **yield**: each stQEURO series bears only its own vault's performance. Since `QuantillonVault` 1.1.11 the collateral accounting is loss-aware - the protocol collateralization ratio reflects the external vault's current value, so a loss in an external vault lowers the global ratio.
 * Onboarding follows a governance runbook. The current single-funded-strategy guard must be respected before any funding; registration does not bypass it.

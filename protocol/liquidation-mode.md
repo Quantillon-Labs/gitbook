@@ -26,9 +26,9 @@ uint256 public criticalCollateralizationRatio;        // 1.01e20  = 101%
 
 | Protocol State | Collateralization Ratio | Effect |
 |----------------|------------------------|--------|
-| **Healthy** | > minting floor | Normal minting and redemption |
-| **Restricted** | 101% – minting floor | Minting blocked (CR below the governance-set minting floor - currently 102.5%, since 2 September 2026; 105% at launch); redemption normal |
-| **Liquidation mode** | ≤ 101% | Pro-rata liquidation redemption activated |
+| **Healthy band** | ≥ minting floor | Minting may pass the CR gate; all other checks still apply |
+| **Restricted** | > critical ratio and < minting floor | Minting blocked (CR below the governance-set minting floor - currently 102.5%, since 2 September 2026; 105% at launch); redemption normal |
+| **Liquidation mode** | > 0 and ≤ critical ratio (currently 101%) | Pro-rata liquidation redemption activated |
 
 Both thresholds are governance-configurable within hard floors: the minting ratio can never be set below 101%, and the critical ratio never below 100%.
 
@@ -36,7 +36,7 @@ Both thresholds are governance-configurable within hard floors: the minting rati
 
 ### ⚙️ How Liquidation Mode Works
 
-When the protocol collateralization ratio falls to or below the critical ratio (101%), `QuantillonVault` switches redemptions to **pro-rata mode**:
+When the protocol collateralization ratio is positive and falls to or below the critical ratio (currently 101%), `QuantillonVault` switches redemptions to **pro-rata mode**:
 
 ```
 usdcPayout = (qeuroAmount / totalQEUROSupply) × totalVaultUSDC
@@ -56,7 +56,7 @@ In liquidation mode, hedger positions' **effective margin is treated as zero** -
 ```solidity
 vault.getProtocolCollateralizationRatio(); // current global CR (view, from the cached oracle price)
 vault.canMint();                           // false when CR < minCollateralizationRatioForMinting
-vault.shouldTriggerLiquidation();          // view: true when CR <= criticalCollateralizationRatio
+vault.shouldTriggerLiquidation();          // view: true when 0 < CR <= criticalCollateralizationRatio
 vault.shouldTriggerLiquidationLive();      // non-view: refreshes the oracle cache, returns (bool shouldLiquidate, uint256 collateralizationRatio)
 ```
 
@@ -64,7 +64,7 @@ vault.shouldTriggerLiquidationLive();      // non-view: refreshes the oracle cac
 
 ### 🔄 Recovery
 
-Liquidation mode is not terminal. The protocol exits it automatically as soon as the collateralization ratio rises back above the critical threshold - through EUR/USD price movement, hedger margin top-ups, or new collateral. Minting resumes once CR is back above the governance-set minting floor.
+Liquidation mode is not terminal. The protocol exits it automatically as soon as the collateralization ratio rises back above the critical threshold - through EUR/USD price movement, hedger margin top-ups, or new collateral. Minting must meet the governance-set minting floor as well as the oracle, execution-capacity, pause, token and liquidity checks. A zero ratio is a sentinel outside the liquidation predicate; it must not be interpreted as an automatic executable redemption quote.
 
 ***
 
@@ -73,7 +73,7 @@ Liquidation mode is not terminal. The protocol exits it automatically as soon as
 1. **Fairness** - pro-rata sharing removes the race-to-exit dynamic of first-come-first-served redemptions under stress.
 2. **Simplicity** - no keeper infrastructure, auction mechanics, or liquidation bonuses; the vault itself enforces the payout math.
 3. **Solvency-first** - the minting floor (governance-set: currently 102.5% since 2 September 2026, 105% at launch; hard minimum 101%) keeps new issuance from diluting collateral quality, while the 101% critical band gives hedgers room to recapitalize before holders are impacted.
-4. **Continuous operation** - users can always redeem, in any protocol state; only the payout formula changes.
+4. **Conditional redemption** - liquidation changes the payout formula. Oracle validation, pauses, liquidity and minimum-output protection still apply and may prevent redemption.
 
 ***
 
