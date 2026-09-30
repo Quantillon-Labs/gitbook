@@ -110,19 +110,13 @@ These are implementation-specific assets. They show how the architecture is impl
 
 #### **Q: How does the "Yield Shift" mechanism work?**
 
-**A:** The **Yield Shift** is the rebalancing engine for the first deployment. It dynamically redistributes yield between Users and Hedgers based on market conditions:
+**A:** YieldShift contains a dynamic allocation mechanism for separately authorized yield sources. It does not determine the current Morpho harvest split.
 
-**📈 When hedger participation is high:**
+QuantillonVault 1.5.0 allocates harvested yield by the staked fraction of total QEURO at harvest. The unstaked share goes to treasury; the hedger receives only the configured haircut on gross staker yield. Stakers receive QEURO credit through their share token as yield vests. See [Yield Distribution](../protocol/yield-distribution.md).
 
-* More yield can flow to QEURO and stQEURO users
-* The deployment becomes more attractive for local-currency holders
+#### **Q: Does the displayed Morpho APY guarantee my stQEURO return?**
 
-**📉 When hedger supply is low:**
-
-* More yield can be allocated to Hedgers
-* The protocol attracts more delta-neutral capital for peg stability
-
-This creates a self-balancing incentive loop where market forces help maintain deployment health without turning Quantillon into a manually managed currency product.
+**A:** No. It is the provider's one-month average underlying APY. Actual QEURO credit depends on deployed USDC, realized yield, the harvest snapshot, haircut and conversion costs. There is no separate staking yield fee on vault 1.5.0 credits. The allocation is snapshot-weighted; vesting does not measure how long each user staked.
 
 ***
 

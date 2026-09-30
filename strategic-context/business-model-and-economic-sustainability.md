@@ -4,7 +4,7 @@ Quantillon's first deployment uses a three-token architecture that generates mul
 
 ### Primary Revenue Sources
 
-The deployed protocol ships with a complete fee framework, most of which is deliberately set to **zero at launch** to bootstrap adoption. The levers below are live in the contracts and governance-adjustable; collected fees route through the FeeCollector, which splits them **60% treasury / 25% dev fund / 15% community** (governance-adjustable).
+The deployed protocol ships with a complete fee framework, most of which is deliberately set to **zero at launch** to bootstrap adoption. Collected protocol fees route through FeeCollector; harvested yield uses the separate allocation below. FeeCollector splits its receipts **60% treasury / 25% dev fund / 15% community** (governance-adjustable).
 
 #### 1. QEURO Operations (Core Stablecoin Activity)
 
@@ -13,7 +13,7 @@ The deployed protocol ships with a complete fee framework, most of which is deli
 
 #### 2. stQEURO Yield Infrastructure
 
-* **Yield fee**: a per-series fee on credited staker yield - currently 0, capped at 20%
+* **Staker allocation**: vault 1.5.0 ignores the legacy per-series `yieldFee`. Only the configured hedger haircut is deducted from gross staker yield; conversion costs still apply. Treasury receives the unstaked allocation directly. See [Yield Distribution](../protocol/yield-distribution.md).
 
 #### 3. Hedging Operations
 

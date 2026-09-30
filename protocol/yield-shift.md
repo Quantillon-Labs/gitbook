@@ -4,11 +4,10 @@
 
 ### 📋 Overview
 
-YieldShift is the dynamic yield-allocation engine of the Quantillon protocol. It balances the split of yield between the user side (stQEURO holders) and the hedger side according to pool conditions, and keeps the **hedger-side yield ledger** from which the hedger claims.
+YieldShift provides dynamic allocation and a hedger claim ledger for separately authorized yield sources. Its accounting is distinct from the current Morpho harvest path.
 
-> **How yield flows in the live deployment**: the yield earned by the external staking vault (Morpho) is harvested by `QuantillonVault.harvestAndDistributeVaultYield`, which credits the stakers' share **directly** into the stQEURO series (exchange rate) and the treasury's share to the treasury. YieldShift receives yield only from governance-authorised sources through `addYield` and tracks the hedger's claimable share. No yield source is authorised on the live deployment today, and the hedger funding carve-out is currently 0 bps - see [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md) for the harvest split.
+> **Current Morpho harvest:** QuantillonVault 1.5.0 credits the staker allocation directly to the staking series, transfers the unstaked allocation to treasury and pays only the configured haircut to the hedger recipient. This bypasses YieldShift. See [Yield Distribution](yield-distribution.md) for the formula and current settings. The API below describes separate accounting for governance-authorized sources, not the active Morpho harvest path.
 
-Live version: **1.0.5** · address `0xdcd66568F8623bDa3387287c31F14b43e49665b1` (Base mainnet).
 
 ***
 
@@ -217,11 +216,11 @@ function isYieldSourceAuthorized(address source, bytes32 yieldType) external vie
 function setYieldSourceAuthorization(address source, bytes32 yieldType, bool authorized) external;
 ```
 
-**Example configuration** (no source is authorised on the live deployment today):
+**Possible source classifications** (authorization alone does not wire a producer; these are not the current Morpho harvest route):
 
 | Source | Type | Description |
 |--------|------|-------------|
-| `QuantillonVault` | VAULT_YIELD | Hedger share of harvested external-vault yield |
+| `QuantillonVault` | VAULT_YIELD | Separately integrated vault yield source, if configured |
 | `QuantillonVault` | PROTOCOL_FEES | Mint/redeem fees (currently 0) |
 | `HedgerPool` | HEDGING_FEES | Hedger operation fees (currently 0) |
 
@@ -284,12 +283,12 @@ mapping(address => uint256) public hedgerLastClaim;
 ├─────────────────────────────────────────────────────────────┤
 │  User side (live path, outside YieldShift)                   │
 │  QuantillonVault.harvestAndDistributeVaultYield(vaultId)     │
-│     ├── hedger funding carve-out first (currently 0 bps)     │
+│     ├── haircut only from gross staker yield → recipient   │
 │     ├── stakers' share credited to the stQEURO series        │
-│     │   (exchange rate rises - no claim needed)              │
+│     │   (exchange rate rises as yield vests; no claim)      │
 │     └── treasury share to the treasury                        │
 │                                                              │
-│  Hedger side (YieldShift ledger)                             │
+│  Separate authorized-source YieldShift ledger              │
 │  1. authorised source calls addYield(vaultId, amount, type)  │
 │     ├── userYieldPool   += amount × currentYieldShift        │
 │     └── hedgerYieldPool += amount × (1 - currentYieldShift)  │
@@ -475,4 +474,4 @@ Result on 10,000 USDC yield:
 
 ***
 
-> **Summary**: YieldShift is the allocation layer between the user and hedger sides of the protocol. It dynamically balances incentives via a TWAP-smoothed pool ratio, protects against flash deposits with a 7-day holding period, binds every yield source to its stQEURO series, and keeps the hedger's claimable yield ledger. Staker yield itself is credited directly by the vault into the stQEURO exchange rate.
+> The examples above describe YieldShift accounting when separately funded. They do not determine the Morpho harvest, the stQEURO staking-duration rules or its vesting schedule. See [Yield Distribution](yield-distribution.md) for current production behavior.

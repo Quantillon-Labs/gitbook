@@ -97,7 +97,7 @@ Our tokenomic model incorporates cutting-edge mechanisms such as dual-token arch
 **Primary Revenue Streams (live framework)**
 
 1. **QEURO Operations**: mint/redeem fees via QuantillonVault - currently 0, governance-settable up to 5%
-2. **Yield Fees**: per-series stQEURO yield fee (currently 0, capped at 20%) and the treasury share of harvested external-vault yield
+2. **Yield Allocation**: treasury receives the unstaked allocation of harvested strategy yield directly. Vault 1.5.0 ignores the legacy per-series staking yield fee; see [Yield Distribution](../yield-distribution.md).
 3. **Hedger Position Fees**: entry/exit/margin fees (currently 0, governance-settable) plus a 20% reward fee split on hedger rewards
 
 **Revenue Allocation Model (as coded - FeeCollector)**

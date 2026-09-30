@@ -98,17 +98,17 @@ QEURO Burn → Oracle Verification → Collateral Release → USDC Transfer
 
 USDC collateral can be deployed to external staking vaults - currently a MetaMorpho (Morpho) USDC vault via a dedicated adapter - to generate yield. Deployment is executed by the vault-operator role, USDC is withdrawn automatically to serve redemptions, and governance can deactivate a vault or pause the protocol. See [External Staking Vaults](../external-staking-vaults.md) for details.
 
-**Revenue Distribution Model (Harvest + YieldShift)**
+**Revenue Distribution Model**
 
-```
-External Vault Yield (Variable APY), harvested by QuantillonVault
-├── 1. Hedger funding carve-out first
-│      (governance-set annual rate, capped at 50% of each harvest - currently 0 bps)
-└── 2. Residual split between stQEURO stakers and the treasury
-       according to the staked share
+```text
+Morpho yield harvested by QuantillonVault
+├── Gross staker allocation: harvested yield × harvest-time staking ratio
+│   ├── Configured haircut → hedger recipient in USDC
+│   └── Remaining allocation → QEURO credit, redeemable as it vests
+└── Unstaked allocation → treasury in USDC
 ```
 
-> **Note**: On top of the harvest split, the YieldShift mechanism governs the user/hedger allocation layer of the yield pools based on pool utilization ratios. The base shift is 50% to users, with a maximum of 90%.
+Holding unstaked QEURO does not earn this yield. Vault 1.5.0 bypasses YieldShift and ignores the legacy staking yield fee. See [Yield Distribution](../yield-distribution.md) for the formula and current settings.
 
 ***
 
@@ -442,7 +442,7 @@ function recoverETH() external onlyRole(DEFAULT_ADMIN_ROLE);
 **Primary Revenue Sources**
 
 1. **Mint/Redeem Fees**: currently 0 (governance-settable, capped at 5%); when collected, routed to the FeeCollector (60% treasury / 25% dev fund / 15% community)
-2. **Yield Management**: stQEURO yield fee (currently 0, max 20%) and the treasury share of harvested external-vault yield
+2. **Yield Management**: treasury allocation attributable to unstaked QEURO; no additional staking yield fee on vault 1.5.0 credits
 3. **Position Fees**: hedger entry/exit/margin fees (currently 0, governance-settable) plus a 20% reward fee split on hedger rewards
 
 **🎯 Key Performance Indicators**

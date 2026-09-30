@@ -67,7 +67,7 @@ is the source of truth for on-chain behavior, the live chain beats any .md file)
   stQEUROToken does not.
 - **Disclosure rule (D-6):** describe roles and controls; never name operator wallet addresses
   (watchdog, keepers, publisher, deployer/hedger/treasury EOA). Contract addresses are fine.
-- Live contracts and versions (2026-09-04): QuantillonVault 1.1.11 (0x833E5Ba5…4a07),
+- Historical contracts and versions (2026-09-04; superseded by the on-chain-verified 30 September inventory in `protocol/smart-contract-components.md`): QuantillonVault 1.1.11 (0x833E5Ba5…4a07),
   QEUROToken 1.0.6, QTIToken 1.0.2, UserPool 1.0.3, HedgerPool 1.0.8, FeeCollector 1.0.2
   (split 60/25/15 treasury/dev/community), YieldShift 1.0.5, stQEUROFactory 1.0.1,
   stQEUROToken 1.0.3, OracleRouter 1.1.1, ChainlinkOracle 1.0.4, HyperliquidEurUsdOracle 1.0.2,
@@ -112,7 +112,7 @@ is the source of truth for on-chain behavior, the live chain beats any .md file)
   doc: `quantillon-dapp/docs/hedging-engine-margin-rebalancing.md`. Owner section:
   `protocol/hedger-pool.md` "Operational margin policy (September 2026)"; other pages carry a
   two-sentence summary and a link.
-- Hedger funding carve-out on harvests: `fundingRateAnnualBps` = 0, no recipient set (max 50 %).
+- Current Morpho harvest policy (30 September 2026): QuantillonVault 1.5.0 uses the harvest-time staking ratio; unstaked yield goes to treasury. Hedger payment is only `hedgerStakingYieldHaircutBps` (verified 0); recipient is configured. The annual funding setting is retired and the legacy token `yieldFee` is ignored. Yield vests over 24 hours; allocation remains snapshot-weighted. Owner page: `protocol/yield-distribution.md`.
   Multi-hedger is not promised anywhere: "single designated hedger in the current phase".
 
 **Key live parameters (verified 2026-09-04):** HedgerPool coreParams = min margin 250 bps,

@@ -20,6 +20,7 @@
 * [Smart Contract Components](protocol/smart-contract-components.md)
   * [UserPool](protocol/user-pool.md)
   * [HedgerPool](protocol/hedger-pool.md)
+  * [Yield Distribution](protocol/yield-distribution.md)
   * [YieldShift](protocol/yield-shift.md)
   * [External Staking Vaults](protocol/external-staking-vaults.md)
   * [Oracle Architecture](protocol/oracle-architecture.md)

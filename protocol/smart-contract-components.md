@@ -37,24 +37,24 @@ This section is the technical inventory of the Quantillon protocol smart contrac
 
 ### Live contracts (Base mainnet, chain 8453)
 
-Versions read on-chain on 4 September 2026 (`version()` on each proxy). "Timelock" = UUPS upgrade through the 12-hour OZ TimelockController (`SecureUpgradeable`); "Safe-direct" = plain UUPS upgraded directly by the 2-of-3 governance Safe.
+Versions read on-chain on 30 September 2026 at Base block 51,985,901 (`version()` on each proxy). "Timelock" = UUPS upgrade through the 12-hour OZ TimelockController (`SecureUpgradeable`); "Safe-direct" = plain UUPS upgraded directly by the 2-of-3 governance Safe.
 
 | Contract | Address | Version | Upgrade path |
 |----------|---------|---------|--------------|
-| `QuantillonVault` | `0x833E5Ba510a241b21F1C60c987D1c49eB52E4a07` | 1.1.11 | Timelock |
-| `QEUROToken` | `0x69aD4e6c49d6275D0e11b5515D98a89f029869AA` | 1.0.6 | Timelock |
-| `QTIToken` | `0x246c6F441c0f8Fc6A71Db0F12dB5665D373Df271` | 1.0.2 | Timelock |
-| `UserPool` | `0x712bCc77e7aa53C79870A40d044D440Ad2901bF2` | 1.0.3 | Timelock |
-| `HedgerPool` | `0xff5D7cE5c7671B2EA805Ee752B4f8eC9Ecf2975A` | 1.0.8 | Timelock |
-| `YieldShift` | `0xdcd66568F8623bDa3387287c31F14b43e49665b1` | 1.0.5 | Timelock |
-| `stQEUROFactory` | `0x0382B0b9FB6Ff737209C3B31D727BB9d2E2bcb53` | 1.0.1 | Timelock |
-| `stQEUROToken` - series `stQEUROMORPHO1` (vaultId 2) | `0x17CD8ed967d17072297CcAe3D379C9e86aeBEb1d` | 1.0.3 | Timelock |
-| `FeeCollector` | `0x0A33F72683cfC2303639d5cB9A45D77fF16d9FAD` | 1.0.2 | Safe-direct |
-| `OracleRouter` | `0x7ED6aaEd83Db69509A88CAe5C247ef8fA44056E0` | 1.1.1 | Safe-direct |
-| `ChainlinkOracle` | `0xaEE3c9c298051ef7242882AbCaE2Fd12d29443E7` | 1.0.4 | Safe-direct |
-| `HyperliquidEurUsdOracle` | `0x0B58aBB57775E0fCEDfd4460e00dD9D9610C2C43` | 1.0.2 | Safe-direct |
-| `SlippageStorage` | `0x0fde0ff2566be3c24af6d654012dddb4f1da099b` | 1.0.2 | Safe-direct |
-| `MetaMorphoStakingVaultAdapter` (vaultId 2) | `0xb2f253Cd74ebfa16894339438B467396De9e8EA3` | - | Replaceable per `vaultId` (governance) |
+| `QuantillonVault` | `0x833E5Ba510a241b21F1C60c987D1c49eB52E4a07` | 1.5.0 | Timelock |
+| `QEUROToken` | `0x69aD4e6c49d6275D0e11b5515D98a89f029869AA` | 1.0.9 | Timelock |
+| `QTIToken` | `0x246c6F441c0f8Fc6A71Db0F12dB5665D373Df271` | 1.0.5 | Timelock |
+| `UserPool` | `0x712bCc77e7aa53C79870A40d044D440Ad2901bF2` | 1.0.6 | Timelock |
+| `HedgerPool` | `0xff5D7cE5c7671B2EA805Ee752B4f8eC9Ecf2975A` | 1.4.1 | Timelock |
+| `YieldShift` | `0xdcd66568F8623bDa3387287c31F14b43e49665b1` | 1.1.1 | Timelock |
+| `stQEUROFactory` | `0x0382B0b9FB6Ff737209C3B31D727BB9d2E2bcb53` | 1.0.4 | Timelock |
+| `stQEUROToken` - series `stQEUROMORPHO1` (vaultId 2) | `0x17CD8ed967d17072297CcAe3D379C9e86aeBEb1d` | 1.2.5 | Timelock |
+| `FeeCollector` | `0x0A33F72683cfC2303639d5cB9A45D77fF16d9FAD` | 1.0.3 | Safe-direct |
+| `OracleRouter` | `0x7ED6aaEd83Db69509A88CAe5C247ef8fA44056E0` | 1.1.2 | Safe-direct |
+| `ChainlinkOracle` | `0xaEE3c9c298051ef7242882AbCaE2Fd12d29443E7` | 1.0.5 | Safe-direct |
+| `HyperliquidEurUsdOracle` | `0x0B58aBB57775E0fCEDfd4460e00dD9D9610C2C43` | 1.0.6 | Safe-direct |
+| `SlippageStorage` | `0x0fde0ff2566be3c24af6d654012dddb4f1da099b` | 1.0.3 | Safe-direct |
+| `MetaMorphoStakingVaultAdapter` (vaultId 2) | `0x4c9B8b09214d37D5310b8E6768cF28E0dDcEDC30` | - | Replaceable per `vaultId` (governance) |
 | `TimeProvider` | `0x520236487CBD0a6958B4EefC7853cd7C3F5C56E7` | - | Deployed directly (no proxy) |
 
 Governance: Safe (2-of-3) `0x1d7fF432a93d0085Fb69474c7E567f859829e6cd` · Timelock (12 h) `0x7Ade8f3Bf1FdaF0785efE9Ea5C6339D1aD6B8342`. See [Quantillon DAO](../quantillon-dao.md).
@@ -100,7 +100,7 @@ Governance: Safe (2-of-3) `0x1d7fF432a93d0085Fb69474c7E567f859829e6cd` · Timelo
 | Role | Hash Value | Permissions |
 |------|------------|-------------|
 | `DEFAULT_ADMIN_ROLE` | `0x00` | Role management, recovery |
-| `GOVERNANCE_ROLE` | `keccak256("GOVERNANCE_ROLE")` | `yieldFee` (max 20%), treasury |
+| `GOVERNANCE_ROLE` | `keccak256("GOVERNANCE_ROLE")` | legacy `yieldFee` storage (ignored by vault 1.5.0 credits), vesting period, treasury |
 | `EMERGENCY_ROLE` | `keccak256("EMERGENCY_ROLE")` | Pause/unpause, `emergencyWithdraw(user)` |
 | `UPGRADER_ROLE` | `keccak256("UPGRADER_ROLE")` | Upgrades (timelock) |
 
@@ -120,7 +120,7 @@ Yield is credited to a series by `QuantillonVault.harvestAndDistributeVaultYield
 | Role | Hash Value | Permissions |
 |------|------------|-------------|
 | `DEFAULT_ADMIN_ROLE` | `0x00` | Role management, recovery, dev-mode proposal/apply |
-| `GOVERNANCE_ROLE` | `keccak256("GOVERNANCE_ROLE")` | Fees, collateralization thresholds, oracle/pool/collector wiring, staking-vault registration and activation, default vault, redemption priority, hedger funding rate and recipient, reward fee split, fee withdrawal |
+| `GOVERNANCE_ROLE` | `keccak256("GOVERNANCE_ROLE")` | Fees, collateralization thresholds, oracle/pool/collector wiring, staking-vault registration and activation, default vault, redemption priority, staking-yield haircut and recipient, reward fee split, fee withdrawal |
 | `EMERGENCY_ROLE` | `keccak256("EMERGENCY_ROLE")` | Pause/unpause (Safe and the independent watchdog) |
 | `VAULT_OPERATOR_ROLE` | `keccak256("VAULT_OPERATOR_ROLE")` | `deployUsdcToVault` (keeper wallet) |
 | `YIELD_DISTRIBUTOR_ROLE` | `keccak256("YIELD_DISTRIBUTOR_ROLE")` | `harvestAndDistributeVaultYield`, `creditVaultYield` (keeper wallet) |
@@ -236,16 +236,16 @@ Owner pages hold the full constant lists; this table is the cross-reference.
 | Contract | Key constants / live values | Reference |
 |----------|-----------------------------|-----------|
 | `QEUROToken` | No tokenomic supply cap - supply bounded by hedging capacity (governance-set minting CR floor, currently 102.5%). `DEFAULT_MAX_SUPPLY = 100_000_000e18` (administrative ceiling, governance-raisable via `maxSupply`); global mint and burn rate limits 10M QEURO per 300-block window; mint/redeem fees 0 (max 5%, set on `QuantillonVault`) | [QEURO Token](quantillon-protocols-tokens/qeuro-token.md) |
-| `QuantillonVault` | Minting floor 102.5% (hard minimum 101%), critical ratio 101%, `MAX_FUNDING_RATE_ANNUAL_BPS = 5000`, mint-time price-deviation guard 2% | [Liquidation Mode](liquidation-mode.md) |
+| `QuantillonVault` | Minting floor 102.5% (hard minimum 101%), critical ratio 101%, mint-time price-deviation guard 2% | [Liquidation Mode](liquidation-mode.md) |
 | `HedgerPool` | Min margin 250 bps (contract floor), max leverage 20×, fees 0, interest 350/450 bps, `rewardFeeSplit` 20% | [HedgerPool](hedger-pool.md) |
 | `UserPool` | stakingAPY 8%, depositAPY 4%, min stake 100 QEURO, cooldown 7 days, `MAX_BATCH_SIZE = 100` | [UserPool](user-pool.md) |
 | `QTIToken` | `TOTAL_SUPPLY_CAP = 100_000_000e18`, `MIN_LOCK_TIME = 7 days`, `MAX_LOCK_TIME = 365 days`, `MAX_VE_QTI_MULTIPLIER = 4`, `PROPOSAL_EXECUTION_DELAY = 2 days` (dormant) | [QTI Token](quantillon-protocols-tokens/qti-token.md) |
 | `YieldShift` | `MIN_HOLDING_PERIOD = 7 days`, `TWAP_PERIOD = 24 hours`, `MAX_HISTORY_LENGTH = 1000`; base 50% / max 90% / speed 1% / target ratio 100% | [YieldShift](yield-shift.md) |
-| `stQEUROToken` | `yieldFee` 0 (max 20%) per series | [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md) |
+| `stQEUROToken` | Legacy `yieldFee` ignored on vault 1.5.0 credit path | [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md) |
 | `FeeCollector` | Split 60/25/15 (treasury / dev fund / community) | this page |
 | `ChainlinkOracle` | Staleness 2 h EUR/USD / 25 h USDC/USD, deviation 5%, drift 15 min, bounds 0.80–1.40, USDC tolerance 2%, sequencer grace 1 h | [ChainlinkOracle](chainlink-oracle.md) |
 | `HyperliquidEurUsdOracle` | Staleness 900 s (hard cap 1 h), same bounds / deviation / tolerance | [Oracle Architecture](oracle-architecture.md) |
-| External staking vaults | Active adapter `MetaMorphoStakingVaultAdapter` (vaultId 2); hedger funding carve-out governance-set, capped at 50% of each harvest - currently 0 bps | [External Staking Vaults](external-staking-vaults.md) |
+| External staking vaults | Active adapter `MetaMorphoStakingVaultAdapter` (vaultId 2); staking-ratio allocation with haircut-only hedger payment; see [Yield Distribution](yield-distribution.md) | [External Staking Vaults](external-staking-vaults.md) |
 
 ***
 
@@ -321,7 +321,10 @@ event RedemptionPriorityUpdated(uint256[] vaultIds);
 event UsdcDeployedToExternalVault(uint256 indexed vaultId, uint256 indexed usdcAmount, uint256 principalInVault);
 event UsdcWithdrawnFromExternalVault(uint256 indexed vaultId, uint256 indexed usdcAmount, uint256 principalInVault);
 event VaultYieldDistributed(uint256 indexed vaultId, uint256 realizedYield, uint256 hedgerShare, uint256 userShare, uint256 treasuryShare);
+// Legacy annual funding event retained in the ABI; not the active harvest setting.
 event FundingRateUpdated(uint256 oldRateBps, uint256 newRateBps);
+event HedgerStakingYieldHaircutUpdated(uint256 oldBps, uint256 newBps);
+event VaultYieldBreakdown(uint256 indexed vaultId, uint256 hedgerBase, uint256 stakingYieldHaircut);
 event HedgerYieldRecipientUpdated(address indexed oldRecipient, address indexed newRecipient);
 
 // Hedger liquidity and fees
@@ -517,7 +520,7 @@ function _authorizeUpgrade(address newImplementation) internal override onlyRole
 |----------|----------|
 | USDC `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` | Collateral token |
 | MetaMorpho USDC vault `0xBEEFE94c8aD530842bfE7d8B397938fFc1cb83b2` (ERC-4626) | Yield-generating USDC deposit venue |
-| `MetaMorphoStakingVaultAdapter` `0xb2f253Cd74ebfa16894339438B467396De9e8EA3` (vaultId 2) | Adapter between QuantillonVault and the MetaMorpho vault |
+| `MetaMorphoStakingVaultAdapter` `0x4c9B8b09214d37D5310b8E6768cF28E0dDcEDC30` (vaultId 2) | Adapter between QuantillonVault and the MetaMorpho vault |
 
 The EUR/USD hedge itself is executed off-chain on Hyperliquid by the designated hedger - see [HedgerPool](hedger-pool.md).
 

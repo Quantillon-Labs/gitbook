@@ -36,11 +36,11 @@ Available adapter implementations:
 | Component | Value |
 | --- | --- |
 | Active external vault | MetaMorpho USDC vault (`0xBEEFE94c8aD530842bfE7d8B397938fFc1cb83b2`) |
-| Adapter | `MetaMorphoStakingVaultAdapter` - `0xb2f253Cd74ebfa16894339438B467396De9e8EA3` |
+| Adapter | `MetaMorphoStakingVaultAdapter` - `0x4c9B8b09214d37D5310b8E6768cF28E0dDcEDC30` |
 | `vaultId` | `2` |
 | stQEURO series | `stQEUROMORPHO1` - `0x17CD8ed967d17072297CcAe3D379C9e86aeBEb1d` |
 
-> The vaultId-2 adapter was migrated from a previous address (`0x103aEBD0059AAA3DcCaa9ab0cCb901382Bd48978`) to the current one on 2026-07-01. Migrations like this are possible precisely because of the adapter indirection - stakers' positions and the stQEURO series are unaffected.
+> The current adapter binding was verified through `getVaultExposure(2)` on 30 September 2026. The staking-token series is unchanged; see [Smart Contract Components](smart-contract-components.md) for the current inventory.
 
 ***
 
@@ -53,7 +53,7 @@ Available adapter implementations:
 * `getVaultName(vaultId)` → human-readable label (e.g. `MORPHO1`)
 * `QuantillonVault.getVaultExposure(vaultId)` → the adapter address, its active flag, the principal deployed and the current underlying value; the external vault itself is `adapter.metaMorphoVault()`
 
-Each series carries its own exchange rate, so the yield performance of one external vault never dilutes stakers of another. See [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md) for the exchange-rate mechanics.
+Each series carries its own exchange rate. The current allocation release supports one funded strategy and rejects another funded strategy or competing series with outstanding shares; registration alone does not enable simultaneous multi-strategy allocation. See [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md) for the exchange-rate mechanics.
 
 ***
 
@@ -61,12 +61,10 @@ Each series carries its own exchange rate, so the yield performance of one exter
 
 1. **Deploy** - the vault-operator role (an operational keeper wallet designated by governance) moves idle USDC into an external vault via `QuantillonVault.deployUsdcToVault(vaultId, amount)`.
 2. **Accrue** - the external vault (e.g. MetaMorpho) generates money-market yield on that USDC.
-3. **Harvest & distribute** - `QuantillonVault.harvestAndDistributeVaultYield(vaultId)` realizes the yield and splits it:
-   * a **hedger funding share** first (absolute, time-prorated, at a governance-set annual rate capped at 50% - **currently 0 bps**, no carve-out is taken today),
-   * the **residual** is split between the vault's stQEURO stakers and the protocol treasury in proportion to the staked share of circulating QEURO.
-4. **Compound** - the staker share raises the stQEURO series' exchange rate; no rebasing, no claim transaction needed.
+3. **Harvest & distribute** - `QuantillonVault.harvestAndDistributeVaultYield(vaultId)` allocates the staked fraction of harvested USDC to stakers and the unstaked fraction to treasury. Only a configured haircut on gross staker yield is paid to the hedger.
+4. **Credit and vest** - the staker allocation is converted to QEURO and credited to the series. It raises the redeemable exchange rate as yield vests, with no rebasing or claim transaction.
 
-An off-chain keeper holding the vault's `YIELD_DISTRIBUTOR_ROLE` triggers harvests on a schedule; the distribution math is fully on-chain. See [YieldShift](yield-shift.md) for the user/hedger yield-allocation layer.
+See [Yield Distribution](yield-distribution.md) for the exact snapshot formula, schedule, current haircut, vesting and underlying APY interpretation. The Morpho harvest bypasses YieldShift's separate accounting pools.
 
 ***
 
@@ -75,7 +73,7 @@ An off-chain keeper holding the vault's `YIELD_DISTRIBUTOR_ROLE` triggers harves
 * Registering or deactivating a vault/adapter (`setStakingVault`) is **governance-gated** (2-of-3 Safe; core-contract upgrades additionally route through a 12h timelock). Deploying USDC is done by the vault-operator role and harvesting by the yield-distributor role - two narrow operational roles on `QuantillonVault` held by keeper wallets that governance can revoke at any time. USDC is withdrawn from the external vault automatically when a redemption needs it; there is no separate emergency-withdrawal function.
 * Adapters are deliberately thin pass-throughs - no fixed exposure or rebalance constants live in the adapter; exposure sizing is an operational governance decision per `vaultId`.
 * External-vault risk (smart-contract risk of Morpho/Aave, underlying market risk) is isolated per vault for **yield**: each stQEURO series bears only its own vault's performance. Since `QuantillonVault` 1.1.11 the collateral accounting is loss-aware - the protocol collateralization ratio reflects the external vault's current value, so a loss in an external vault lowers the global ratio.
-* Onboarding a new external vault follows a runbook: deploy the adapter, register it with the factory (new `vaultId` + stQEURO series), then progressively fund it.
+* Onboarding follows a governance runbook. The current single-funded-strategy guard must be respected before any funding; registration does not bypass it.
 
 ***
 
@@ -83,4 +81,5 @@ An off-chain keeper holding the vault's `YIELD_DISTRIBUTOR_ROLE` triggers harves
 
 * [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md) - exchange-rate mechanics and staking UX
 * [Core Mechanisms](mechanisms.md) - protocol-wide mint/redeem and collateral flows
-* [YieldShift](yield-shift.md) - dynamic yield split between user and hedger pools
+* [Yield Distribution](yield-distribution.md) - current Morpho allocation
+* [YieldShift](yield-shift.md) - separate authorized-source accounting

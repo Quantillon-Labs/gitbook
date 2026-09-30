@@ -276,7 +276,8 @@ Called when the vault is in liquidation mode (protocol collateralization ratio �
 
 #### Hedger Revenue Sources
 
-1. **Hedger Funding**: a carve-out taken first out of each external-vault yield harvest (governance-set annual rate, capped at 50% of the harvest), accounted through YieldShift's hedger ledger - **currently 0 bps with no recipient configured**: Quantillon Labs, the sole hedger, receives no funding carve-out today
+1. **Staking yield haircut**: only the configured percentage of gross staker yield is paid directly in USDC to the configured recipient. No base yield is allocated to hedger collateral. This payment bypasses YieldShift. See [Yield Distribution](yield-distribution.md) for the current setting and formula.
+
 2. **EUR/USD Rate Differential**: compensation for FX risk (currently 3.50% EUR / 4.50% USD, governance-set)
 3. **Position Fees**: entry/exit/margin fees are currently 0 (governance-settable)
 
@@ -526,12 +527,15 @@ IYieldShift public yieldShift;
 ```
 External staking vault (Morpho) generates yield
     ↓
-QuantillonVault harvests; a hedger funding carve-out is taken first
-(governance-set annual rate, capped at 50% of each harvest - currently 0 bps)
+QuantillonVault splits by the harvest-time staking ratio
     ↓
-YieldShift tracks the hedger's claimable share
+Configured haircut on gross staker yield → recipient in USDC
     ↓
-Hedger claims via claimHedgingRewards()
+Remaining staker yield → QEURO credit; unstaked yield → treasury
+
+This flow does not enter YieldShift or require claimHedgingRewards().
+Separate authorized-source rewards may use YieldShift's claim ledger.
+
 ```
 
 ***

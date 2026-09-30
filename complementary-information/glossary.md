@@ -102,7 +102,7 @@ The global market for currency trading. Quantillon leverages its depth and liqui
 
 ### Hedgers
 
-Participants who provide USDC to hedge against EUR/USD volatility, in exchange for compensation via the Yield Shift mechanism. In the current phase a single designated hedger (Quantillon Labs' hedging engine, executing on Hyperliquid) fills this role - see the HedgerPool page.
+Participants who provide USDC margin to hedge EUR/USD exposure. Morpho harvest compensation is limited to the configured staking-yield haircut; separate position reward accounting is described on the HedgerPool page. In the current phase a single designated hedger (Quantillon Labs' hedging engine, executing on Hyperliquid) fills this role - see the HedgerPool page.
 
 ***
 
@@ -215,7 +215,7 @@ A staking model where $QTI tokens are **locked** for a fixed time in exchange fo
 
 ### Yield Shift
 
-Quantillon’s unique mechanism for **dynamically redistributing yield** from collateral between Users and Hedgers to maintain the stablecoin’s peg.
+A contract for allocating separately authorized yield sources between user and hedger accounting pools. The current Morpho harvest bypasses it; see [Yield Distribution](../protocol/yield-distribution.md).
 
 ***
 

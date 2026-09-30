@@ -18,6 +18,7 @@ The original multi-phase plan (foundation → architecture → MVP → testnet �
 | ⚖️ Autonomous hedging engine + independent watchdog | ✅ Operating |
 | 🎨 Frontend restyle + public protocol dashboard (July 2026) | ✅ Completed |
 | 🔀 Alternative hedge-venue evaluation (Lighter, July 2026) | ✅ Closed - Hyperliquid confirmed as the sole venue (September 2026) |
+| Staking-ratio yield allocation, vault 1.5.0 (30 September 2026) | Deployed; [current policy](protocol/yield-distribution.md) |
 | 🧮 QuantillonVault 1.1.11 - loss-aware external-vault collateral accounting (17 August 2026) | ✅ Live |
 | 📦 Eight-contract maintenance bundle (after 26 August 2026) | ✅ Live |
 | ⚖️ HedgerPool 1.0.8 - margin policy targeting 2.5% and 102.5% minting floor (2 September 2026) | ✅ Live |

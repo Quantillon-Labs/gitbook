@@ -33,7 +33,7 @@ Narrow operational roles are delegated to dedicated wallets, each revocable by t
 **Directly by the 2-of-3 Safe (no timelock):**
 
 * Upgrades of the peripheral contracts - **FeeCollector, OracleRouter, ChainlinkOracle, HyperliquidEurUsdOracle and SlippageStorage** - which are plain UUPS proxies upgraded directly by the Safe
-* Operational parameters: fee settings (mint/redeem, stQEURO yield fee, hedger fees), collateralization thresholds (minting floor, currently 102.5%), hedging parameters, interest rates
+* Operational parameters: fee settings (mint/redeem and hedger fees), staking-yield haircut and recipient, vesting parameters (the legacy stQEURO yield fee is ignored by vault 1.5.0), collateralization thresholds (minting floor, currently 102.5%), hedging parameters, interest rates
 * Oracle operations: switching the active EUR/USD source in the OracleRouter (Hyperliquid market oracle ↔ Chainlink fallback), price bounds and staleness, circuit-breaker management
 * Emergency actions: pause/unpause, minting killswitch, emergency position closure
 * Role management and treasury operations

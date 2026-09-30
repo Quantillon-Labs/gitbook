@@ -41,23 +41,15 @@ stQEURO represents the first deployment's yield-bearing wrapper, automatically c
 Key benefits include:
 
 * **Automatic Compounding:** No manual reinvestment required
-* **Instant Liquidity:** No lock periods or withdrawal delays
+* **Redeemable shares:** No staking-duration lock in the direct ERC-4626 flow; newly credited yield vests, and exits remain subject to contract checks
 * **DeFi Composability:** Full integration across protocols while earning yield
 * **Tax Efficiency:** No rebase events creating potential taxable income
 
-### Yield Mechanics and the "Yield Shift"
+### Yield Mechanics
 
-Quantillon introduces an innovative mechanism called the **Yield Shift**, which serves as the protocol's internal rebalancing engine. It functions by redistributing yield between Users and Hedgers based on market conditions, supply/demand imbalances, and peg deviation pressures.
+QuantillonVault 1.5.0 splits Morpho harvests by the staked fraction of total QEURO at harvest. Stakers receive their allocation after any configured hedger haircut; the unstaked allocation goes to treasury. The legacy per-series staking yield fee is ignored on this path. YieldShift is a separate authorized-source ledger and does not adjust this split.
 
-Collateral deployed in external staking vaults (currently Morpho USDC lending on Base) generates a baseline APY. When that yield is harvested:
-
-1. **A hedger funding carve-out is taken first** - a governance-set annual rate, capped at 50% of each harvest, compensating the EUR/USD hedge (currently 0 bps: no carve-out is taken today).
-2. **The residual is split between stQEURO stakers and the treasury** according to the staked share of QEURO.
-3. On the yield-pool allocation layer, the Yield Shift adjusts the user/hedger split (base 50%, up to 90% to users):
-   * **Positive Yield Shift**: More yield incentivizes Hedgers when their supply is insufficient.
-   * **Negative Yield Shift**: More yield flows to Users when hedger participation is high.
-
-This creates a dynamic equilibrium. The Yield Shift is not discretionary; it is governed by predefined formulas based on real-time FX rate spreads and User/Hedger supply and demand. Governance can only modify its parameters within capped ranges, preserving systemic integrity.
+This is snapshot-weighted allocation. Credited QEURO becomes redeemable as it vests through the share price. See [Yield Distribution](protocol/yield-distribution.md) for the current settings, formula and APY interpretation.
 
 ### Incentive Alignment and Protocol Sustainability
 
