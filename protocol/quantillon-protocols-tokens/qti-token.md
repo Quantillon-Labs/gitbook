@@ -155,7 +155,7 @@ Where:
 
 * **Review Process**: Internal AI-assisted code review, remediated on-chain as findings come in; **no professional audit-firm review to date** - see [Risks & Mitigation](../../risk-management-and-sustainability/risks-and-mitigation-strategies.md)
 * **OpenZeppelin Base**: Battle-tested upgradeable contracts
-* **Bug Bounty Program**: planned (amounts TBD)
+* **Vulnerability Disclosure**: an unpaid [disclosure programme](https://security.quantillon.money/disclosure/) is active
 * **Continuous Monitoring**: independent hedging/oracle watchdog with automatic pause and alerting
 
 **Operational Security**

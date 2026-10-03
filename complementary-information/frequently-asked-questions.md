@@ -135,7 +135,7 @@ What has been done:
 * an independent watchdog that freezes mint/redeem automatically if the hedge or the oracle is unhealthy
 * a 2-of-3 governance Safe with a 12-hour timelock on core-contract upgrades
 
-A bug bounty is planned, and an audit-firm review remains the main gap in this list.
+An unpaid [vulnerability disclosure programme](https://security.quantillon.money/disclosure/) is active, and an audit-firm review remains the main gap in this list.
 
 The design goal is consistent: keep the protocol legible, observable, and controllable under stress. See [Risks & Mitigation](../risk-management-and-sustainability/risks-and-mitigation-strategies.md) for the full security posture.
 
