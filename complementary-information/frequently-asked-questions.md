@@ -182,3 +182,7 @@ If you are evaluating the protocol itself, read the architecture pages first and
 * [X / Twitter](https://x.com/QuantillonLabs)
 
 These channels are the best place to follow the evolution of QEURO as the first deployment and Quantillon as the broader protocol thesis.
+
+## Signed quotes in development
+
+The [candidate signed quote architecture](../protocol/signed-quotes.md) aims to remove idle periodic publication while retaining independent valuation and hedge-capacity controls. Base settlement and Hyperliquid hedging remain separate, and ordinary transactions still incur gas. Production activation has not been announced.

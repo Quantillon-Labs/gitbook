@@ -1,5 +1,7 @@
 # Oracle Architecture
 
+> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
+
 ## Valuation and execution
 
 OracleRouter provides the EUR/USD reference for QEURO valuation. Slot **1**, the active MARKET slot, reads HyperliquidEurUsdOracle, which consumes the published `xyz:EUR` perpetual mid from SlippageStorage. Slot **0** reads ChainlinkOracle and is a manual governance fallback. ChainlinkOracle also validates USDC/USD.

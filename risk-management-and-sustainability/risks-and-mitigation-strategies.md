@@ -77,3 +77,7 @@ The introduction of yield-bearing euro infrastructure creates additional risk ve
 * Emergency communication channels for rapid coordination during cross-protocol incidents
 
 > **Quantillon is built on the principle of resilient decentralization. Rather than avoiding risk, it manages it explicitly through incentive design, robust engineering, and layered governance. This makes it uniquely equipped to operate in a volatile, fragmented, and evolving DeFi environment.**
+
+## Signed quotes in development
+
+The [candidate signed quote architecture](../protocol/signed-quotes.md) aims to remove idle periodic publication while retaining independent valuation and hedge-capacity controls. Base settlement and Hyperliquid hedging remain separate, and ordinary transactions still incur gas. Production activation has not been announced.

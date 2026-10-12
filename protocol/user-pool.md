@@ -1,5 +1,7 @@
 # UserPool
 
+> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
+
 > UserPool's configured APYs are accounting inputs, not realized Morpho APY. The dapp's direct ERC-4626 staking flow follows [Yield Distribution](yield-distribution.md) and does not inherit UserPool's cooldown.
 
 ## UserPool: Batch Deposits and QEURO Staking

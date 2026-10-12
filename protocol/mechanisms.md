@@ -1,5 +1,7 @@
 # Core Mechanisms
 
+> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
+
 ## Mechanisms
 
 Understanding how Quantillon Protocol operates is essential for both users and developers. This guide describes the mechanisms used by the first deployment, QEURO, and shows how the broader protocol turns USD liquidity into local-currency exposure through FX hedging, overcollateralization, and staking yield allocation.

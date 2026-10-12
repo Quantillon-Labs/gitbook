@@ -1,5 +1,7 @@
 # Liquidation Mode
 
+> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
+
 ## Liquidation Mode: Protocol Solvency Protection
 
 ### 📋 Overview

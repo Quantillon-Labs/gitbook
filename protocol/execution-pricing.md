@@ -1,5 +1,7 @@
 # Execution Pricing
 
+> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
+
 ## A reference price is not an executable quote
 
 The oracle supplies the EUR/USD reference used for valuation and safety checks. **ExecutionPricing** separately quotes normal mint and redemption using published Hyperliquid order-book depth and admitted hedge capacity. A mint uses the buy side (asks); a redemption uses the sell side (bids). Conservative reference-price bounds and a buffer also affect the amount received.
