@@ -30,7 +30,7 @@ Signed quotes also depend on operated signing services. If valid quotes cannot b
 
 ## Scope of the migration
 
-The change covers minting, redemption, optional UserPool accounting, mint-and-stake routes, harvested-yield conversion, hedger margin operations and liquidation. Rewards accounting, protocol dashboards and the independent watchdog also need to distinguish stale cached observations from live execution readiness.
+The change covers minting, redemption, optional UserPool accounting, mint-and-stake routes, harvested-yield conversion, hedger margin operations and liquidation. Rewards accounting and protocol dashboards also need to distinguish stale cached observations from current valuation. The candidate watchdog checks whether fresh signed reports can be delivered and accepted, together with hedger health. It uses read-only simulations, so an idle publication cache alone does not require a new paid oracle transaction. These controls still require environment-level recovery validation before activation.
 
 Deployment proceeds through development and preproduction before governed production activation. Documentation and contract deployment records will be updated to the verified state at activation. Historical records remain dated records of the earlier architecture.
 
