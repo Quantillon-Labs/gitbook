@@ -1,6 +1,6 @@
-# Signed quotes: migration in development
+# Signed quotes: preproduction validation
 
-Quantillon is developing transaction-specific signed quotes. This page describes the proposed migration and candidate implementation. It does not announce production activation. The deployed architecture remains documented in [Deployment Status](deployment-status.md), [Oracle Architecture](oracle-architecture.md) and [Execution Pricing](execution-pricing.md).
+As of 12 October 2026, transaction-specific signed quotes are installed for testing in preproduction, on an isolated fork with simulated hedging. Mint, redemption, UserPool and mint-and-stake paths have passed integration checks, and the candidate is restored after a coordinated fork reset. This does not announce production activation. The deployed architecture remains documented in [Deployment Status](deployment-status.md), [Oracle Architecture](oracle-architecture.md) and [Execution Pricing](execution-pricing.md).
 
 ## What changes for a user
 
@@ -30,8 +30,8 @@ Signed quotes also depend on operated signing services. If valid quotes cannot b
 
 ## Scope of the migration
 
-The change covers minting, redemption, optional UserPool accounting, mint-and-stake routes, harvested-yield conversion, hedger margin operations and liquidation. Rewards accounting and protocol dashboards also need to distinguish stale cached observations from current valuation. The candidate watchdog checks whether fresh signed reports can be delivered and accepted, together with hedger health. It uses read-only simulations, so an idle publication cache alone does not require a new paid oracle transaction. These controls still require environment-level recovery validation before activation.
+The change covers minting, redemption, optional UserPool accounting, mint-and-stake routes, harvested-yield conversion, hedger margin operations and liquidation. Rewards accounting and protocol dashboards also need to distinguish stale cached observations from current valuation. The candidate watchdog checks whether fresh signed reports can be delivered and accepted, together with hedger health. It uses read-only simulations, so an idle publication cache alone does not require a new paid oracle transaction. Preproduction readiness and reset recovery have been tested. Production recovery and external hedging remain separate validation gates.
 
-Deployment proceeds through development and preproduction before governed production activation. Documentation and contract deployment records will be updated to the verified state at activation. Historical records remain dated records of the earlier architecture.
+The current installation scope is preproduction only. Development and Base mainnet deployments remain unchanged. Production still requires real hedge calibration, completion of the remaining operational integrations and governed activation. Documentation and contract deployment records must follow each verified activation. Historical records remain dated records of the earlier architecture.
 
 An intent or multi-hedger RFQ model is a possible later evolution. Neither is required to remove idle periodic publication, and neither provides automatic atomicity across Base and Hyperliquid.
