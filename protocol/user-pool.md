@@ -1,6 +1,6 @@
 # UserPool
 
-> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
+> [Signed quotes](signed-quotes.md) are active on Base since 17 October 2026. Normal conversions require a valid signed authorization; the emergency-redemption budget is zero.
 
 > UserPool's configured APYs are accounting inputs, not realized Morpho APY. The dapp's direct ERC-4626 staking flow follows [Yield Distribution](yield-distribution.md) and does not inherit UserPool's cooldown.
 
@@ -8,9 +8,9 @@
 
 ### 📋 Overview
 
-The UserPool is an **optional batch deposit/stake contract**: it lets an address mint QEURO from USDC in batches, stake QEURO under a governance-set APY with an unstaking cooldown, and keeps per-user deposit/withdrawal histories. The dApp's primary flows use `QuantillonVault` directly (`mintQEURO`, `mintAndStakeQEURO`, `redeemQEURO`) and the stQEURO ERC-4626 series for yield - see [Core Mechanisms](mechanisms.md) and [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md).
+The UserPool is an **optional batch deposit/stake contract**: it lets an address mint QEURO from USDC in batches, stake QEURO under a governance-set APY with an unstaking cooldown, and keeps per-user deposit/withdrawal histories. Conversion routes use the signed wrapper on UserPool or QuantillonVault, and the stQEURO ERC-4626 series remains the direct staking path - see [Core Mechanisms](mechanisms.md) and [stQEURO Token](quantillon-protocols-tokens/stqeuro-token.md).
 
-Live version: **1.0.6** · address `0x712bCc77e7aa53C79870A40d044D440Ad2901bF2` (Base mainnet).
+Live version: **1.3.0** · address `0x712bCc77e7aa53C79870A40d044D440Ad2901bF2` (Base mainnet).
 
 ***
 
@@ -136,6 +136,8 @@ struct UserWithdrawalInfo {
 ***
 
 ### 💰 User Operations
+
+The deposit and withdrawal signatures below describe inner operations. In signed mode, encode the selected operation and submit it with its authorization through `UserPool.executeWithQuote(bytes,bytes)`. Bare unquoted conversion calls are rejected. The wrapper preserves the original user and existing accounting checks.
 
 All user entry points take **batches** (arrays of equal length, at most `MAX_BATCH_SIZE = 100` items; `ArrayLengthMismatch`, `BatchSizeTooLarge`, `EmptyArray` otherwise). Each item carries its own slippage guard.
 

@@ -10,53 +10,52 @@ This section is the technical inventory of the Quantillon protocol smart contrac
 
 ### Overview
 
-```
-                    ┌─────────────────────┐        ┌─────────────────┐
-                    │    OracleRouter     │◄───────│ SlippageStorage │◄── price publisher
-                    │ slot 1: Hyperliquid │        └─────────────────┘
-                    │ slot 0: Chainlink   │
-                    └──────────┬──────────┘
-                               │ IOracle
-            ┌──────────────────┼──────────────────┐
-            │                  │                  │
-   ┌────────▼────────┐ ┌───────▼───────┐ ┌───────▼───────┐
-   │   QEUROToken    │ │QuantillonVault│ │   HedgerPool  │
-   │ (ERC20 Stable)  │ │(Collateral Mgr)│ │(Hedger Margin)│
-   └────────┬────────┘ └───────┬───────┘ └───────┬───────┘
-            │                  │                  │
-   ┌────────▼────────┐ ┌───────▼───────┐ ┌───────▼───────┐
-   │ stQEUROFactory  │ │ Staking Vault │ │  YieldShift   │
-   │ → stQEUROToken  │ │Adapter (Morpho)│ │(Distribution) │
-   │ (ERC-4626)      │ └───────────────┘ └───────────────┘
-   └─────────────────┘
-   UserPool (optional batch deposit/stake) · FeeCollector (60/25/15 fee split)
-   QTIToken (governance, dormant) · TimeProvider (shared clock)
+```text
+Signed reference -> SignedReferenceSource -> HyperliquidEurUsdOracle
+                              ^                        |
+                              |                        v
+                       ChainlinkOracle ----------> OracleRouter
+                                                       |
+                                            Vault / HedgerPool
+
+Signed execution + capacity -> SignedExecutionPricing -> Vault / UserPool
+                                                        |
+                                               QEURO mint / burn
+                                                        |
+                                   stQEUROFactory -> per-vault stQEURO
+
+Vault -> external staking adapter (MetaMorpho) -> yield distribution
+UserPool: conversion and optional accounting; YieldShift: separate yield ledger
+FeeCollector: fee routing; QTIToken: dormant governance
 ```
 
 > The OracleRouter's market slot (slot 1) hosts `HyperliquidEurUsdOracle`; `ChainlinkOracle` in slot 0 is the one-transaction fallback and the USDC/USD source. See [Oracle Architecture](oracle-architecture.md).
 
 ### Live contracts (Base mainnet, chain 8453)
 
-Versions read on-chain on 30 September 2026 at finalized Base block 51,985,907 (`version()` on each proxy). "Timelock" = UUPS upgrade through the 12-hour OZ TimelockController (`SecureUpgradeable`); "Safe-direct" = plain UUPS upgraded directly by the 2-of-3 governance Safe.
+Versions read on-chain on 17 October 2026 at finalized Base block 52,727,379 (`version()` on each proxy). "Timelock" = UUPS upgrade through the 12-hour OZ TimelockController (`SecureUpgradeable`); "Safe-direct" = plain UUPS upgraded directly by the 2-of-3 governance Safe.
 
 | Contract | Address | Version | Upgrade path |
 |----------|---------|---------|--------------|
-| `QuantillonVault` | `0x833E5Ba510a241b21F1C60c987D1c49eB52E4a07` | 1.5.0 | Timelock |
+| `QuantillonVault` | `0x833E5Ba510a241b21F1C60c987D1c49eB52E4a07` | 1.6.0 | Timelock |
 | `QEUROToken` | `0x69aD4e6c49d6275D0e11b5515D98a89f029869AA` | 1.0.9 | Timelock |
 | `QTIToken` | `0x246c6F441c0f8Fc6A71Db0F12dB5665D373Df271` | 1.0.5 | Timelock |
-| `UserPool` | `0x712bCc77e7aa53C79870A40d044D440Ad2901bF2` | 1.0.6 | Timelock |
-| `HedgerPool` | `0xff5D7cE5c7671B2EA805Ee752B4f8eC9Ecf2975A` | 1.4.1 | Timelock |
+| `UserPool` | `0x712bCc77e7aa53C79870A40d044D440Ad2901bF2` | 1.3.0 | Timelock |
+| `HedgerPool` | `0xff5D7cE5c7671B2EA805Ee752B4f8eC9Ecf2975A` | 1.6.0 | Timelock |
 | `YieldShift` | `0xdcd66568F8623bDa3387287c31F14b43e49665b1` | 1.1.1 | Timelock |
-| `stQEUROFactory` | `0x0382B0b9FB6Ff737209C3B31D727BB9d2E2bcb53` | 1.0.4 | Timelock |
-| `stQEUROToken` - series `stQEUROMORPHO1` (vaultId 2) | `0x17CD8ed967d17072297CcAe3D379C9e86aeBEb1d` | 1.2.5 | Timelock |
+| `stQEUROFactory` | `0x0382B0b9FB6Ff737209C3B31D727BB9d2E2bcb53` | 1.0.5 | Timelock |
+| `stQEUROToken` - series `stQEUROMORPHO1` (vaultId 2) | `0x17CD8ed967d17072297CcAe3D379C9e86aeBEb1d` | 1.3.0 | Timelock |
 | `FeeCollector` | `0x0A33F72683cfC2303639d5cB9A45D77fF16d9FAD` | 1.0.3 | Safe-direct |
 | `OracleRouter` | `0x7ED6aaEd83Db69509A88CAe5C247ef8fA44056E0` | 1.1.2 | Safe-direct |
 | `ChainlinkOracle` | `0xaEE3c9c298051ef7242882AbCaE2Fd12d29443E7` | 1.0.5 | Safe-direct |
-| `HyperliquidEurUsdOracle` | `0x0B58aBB57775E0fCEDfd4460e00dD9D9610C2C43` | 1.0.6 | Safe-direct |
+| `HyperliquidEurUsdOracle` | `0x0B58aBB57775E0fCEDfd4460e00dD9D9610C2C43` | 1.0.7 | Safe-direct |
 | `SlippageStorage` | `0x0fde0ff2566be3c24af6d654012dddb4f1da099b` | 1.0.3 | Safe-direct |
 | `MetaMorphoStakingVaultAdapter` (vaultId 2) | `0x4c9B8b09214d37D5310b8E6768cF28E0dDcEDC30` | - | Replaceable per `vaultId` (governance) |
-| `ExecutionPricing` | `0xFA894CD2e0C8030c95925FfF3b8206F397e0D897` | 1.3.2 | Non-proxy; access-controlled configuration |
+| `SignedExecutionPricing` | `0x076F86a591258957665b65c04F04B706D00EaEBa` | 1.1.0 | Non-proxy; governed configuration |
+| `SignedReferenceSource` | `0xFd059ed44959a6a7979e1485a825CE36Dc95cCB1` | 1.0.0 | Non-proxy; governed configuration |
 | `TimeProvider` | `0x520236487CBD0a6958B4EefC7853cd7C3F5C56E7` | - | Deployed directly (no proxy) |
+
+SlippageStorage is a legacy deployment and no longer feeds the active market oracle. Previous ExecutionPricing and publication batchers are historical; normal conversions use the signed wrappers described in [Signed Quotes](signed-quotes.md).
 
 Governance: Safe (2-of-3) `0x1d7fF432a93d0085Fb69474c7E567f859829e6cd` · Timelock (12 h) `0x7Ade8f3Bf1FdaF0785efE9Ea5C6339D1aD6B8342`. See [Quantillon DAO](../quantillon-dao.md).
 
@@ -81,7 +80,7 @@ Governance: Safe (2-of-3) `0x1d7fF432a93d0085Fb69474c7E567f859829e6cd` · Timelo
 ### Who holds what
 
 * The **TimelockController holds DEFAULT_ADMIN_ROLE on the eight core contracts**: QuantillonVault, QEUROToken, QTIToken, UserPool, HedgerPool, YieldShift, stQEUROFactory and the stQEURO series. The Safe retains operational governance and emergency roles as configured per contract, and peripheral admin/upgrade permissions. Core role changes use the controller; peripheral role changes use their respective admins. See [Production Deployment Status](deployment-status.md).
-* Narrow operational roles are delegated to dedicated wallets, revocable through the applicable admin (the timelock for core roles): an **independent hedging watchdog** holds `EMERGENCY_ROLE` on `QuantillonVault` (pause/unpause only); **keeper wallets** designated by governance hold `VAULT_OPERATOR_ROLE` (deploy USDC to the external vault) and `YIELD_DISTRIBUTOR_ROLE` (harvest and distribute yield) on `QuantillonVault`; the **oracle publisher** holds `WRITER_ROLE` on `SlippageStorage`.
+* Narrow operational roles are delegated to dedicated wallets, revocable through the applicable admin (the timelock for core roles): an **independent hedging watchdog** holds `EMERGENCY_ROLE` on `QuantillonVault` (pause/unpause only); **keeper wallets** designated by governance hold `VAULT_OPERATOR_ROLE` (deploy USDC to the external vault) and `YIELD_DISTRIBUTOR_ROLE` (harvest and distribute yield) on `QuantillonVault`. The periodic publisher is retired; separate reference, execution and capacity signing authorities are checked by the signed modules. Retiring publication does not imply that historical roles have all been revoked.
 * Inter-contract roles: `QuantillonVault` holds `MINTER_ROLE` / `BURNER_ROLE` on QEURO, `VAULT_FACTORY_ROLE` on `stQEUROFactory`, `VAULT_MANAGER_ROLE` on the staking vault adapter and `FEE_SOURCE_ROLE` on `FeeCollector` (as does `HedgerPool`); `OracleRouter` holds `ORACLE_MANAGER_ROLE` and `EMERGENCY_ROLE` on `HyperliquidEurUsdOracle` for its pass-through admin functions.
 * `HedgerPool` has **no hedger role**: hedger-only functions check the `singleHedger` address set by governance (Quantillon Labs' hedging engine in the current phase).
 
@@ -211,7 +210,7 @@ There is no standalone `AaveVault` contract (the name survives only in historica
 | `EMERGENCY_ROLE` | `keccak256("EMERGENCY_ROLE")` | Circuit breaker, pause |
 | `UPGRADER_ROLE` | `keccak256("UPGRADER_ROLE")` | Upgrades (Safe-direct) |
 
-### SlippageStorage
+### SlippageStorage (legacy deployment)
 
 | Role | Hash Value | Permissions |
 |------|------------|-------------|
@@ -418,7 +417,7 @@ event TreasuryUpdated(address indexed newTreasury);
 event ETHRecovered(address indexed to, uint256 amount);
 ```
 
-### SlippageStorage
+### SlippageStorage (legacy deployment)
 
 ```solidity
 event SlippageUpdated(uint128 midPrice, uint16 worstCaseBps, uint16 spreadBps, uint128 depthEur, uint48 timestamp);
@@ -488,7 +487,7 @@ These functions send recovered funds to the configured `treasury` address and ca
 
 ## 7. UUPS Upgrade Pattern
 
-All contracts are UUPS (Universal Upgradeable Proxy Standard) proxies, but they follow two upgrade paths:
+The upgradeable core and oracle contracts are UUPS proxies and follow two upgrade paths. SignedExecutionPricing, SignedReferenceSource, TimeProvider and external staking adapters are direct deployments, not UUPS proxies:
 
 | Path | Contracts | Mechanism |
 |------|-----------|-----------|
@@ -510,7 +509,7 @@ function _authorizeUpgrade(address newImplementation) internal override onlyRole
 
 | Source | Usage |
 |--------|-------|
-| Hyperliquid EUR/USD market mid (via `SlippageStorage` → `HyperliquidEurUsdOracle`, source `SOURCE_HYPERLIQUID = 1`) | Active EUR/USD source (OracleRouter slot 1) |
+| Hyperliquid EUR/USD market mid (via `SignedReferenceSource` → `HyperliquidEurUsdOracle`, source `SOURCE_HYPERLIQUID = 1`) | Active EUR/USD source (OracleRouter slot 1) |
 | Chainlink EUR/USD feed `0xc91D87E81faB8f93699ECf7Ee9B44D11e1D53F0F` (8 decimals) | Fallback EUR/USD source (OracleRouter slot 0) |
 | Chainlink USDC/USD feed `0x7e860098F58bBFC8648a4311b374B1D669a2bc6B` (8 decimals) | USDC stability validation |
 | Chainlink Base L2 sequencer uptime feed `0xBCF85224fc0756B9Fa45aA7892530B47e10b6433` | Sequencer check on the Chainlink path (1 h grace) |

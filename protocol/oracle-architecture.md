@@ -1,58 +1,50 @@
 # Oracle Architecture
 
-> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
-
 ## Valuation and execution
 
-OracleRouter provides the EUR/USD reference for QEURO valuation. Slot **1**, the active MARKET slot, reads HyperliquidEurUsdOracle, which consumes the published `xyz:EUR` perpetual mid from SlippageStorage. Slot **0** reads ChainlinkOracle and is a manual governance fallback. ChainlinkOracle also validates USDC/USD.
+Since 17 October 2026, signed reference reports supply the EUR/USD valuation path. **SignedReferenceSource 1.0.0** checks the report signature, original observation time, sequence, epoch and independent Chainlink reference. **HyperliquidEurUsdOracle 1.0.7** consumes that source in OracleRouter's active market slot **1**. ChainlinkOracle in slot **0** remains a manual governance fallback and the USDC/USD source.
 
-Normal user execution additionally uses directional order-book quotes from [ExecutionPricing](execution-pricing.md). Using the hedge venue's reference reduces valuation mismatch; it does not eliminate spreads, funding costs, slippage, timing differences or hedge failure risk.
+Reference valuation is separate from an exact execution quote. SignedExecutionPricing 1.1.0 validates transaction-specific execution authorization and signed hedge-capacity reports. A trade's size-dependent price does not change the valuation of all outstanding QEURO.
 
 ## Data flow
 
 ```text
-Hyperliquid mid -> operated publisher -> SlippageStorage -> market oracle
-Chainlink EUR/USD -------------------------------> independent reference check
-market oracle / Chainlink fallback -> OracleRouter -> vault valuation
-Hyperliquid depth + hedge admission -> ExecutionPricing -> mint/redeem quote
+Hyperliquid observation -> reference signer -> signed reference report
+                                                | delivered with a transaction
+                                                v
+Chainlink independent reference ----------> SignedReferenceSource
+                                                |
+                                                v
+                                      HyperliquidEurUsdOracle
+                                                |
+                                                v
+                                           OracleRouter
+                                                |
+                                    Vault / HedgerPool accounting
+
+Exact execution quote + capacity report -> SignedExecutionPricing -> settlement
 ```
 
-The publisher is an operated service with a restricted writing role. Availability depends on that service and its transaction funding. On-chain checks limit accepted data; they do not prove every accepted observation is economically correct.
+SlippageStorage and the publication batchers are historical deployments; they no longer feed the active signed reference path. The adapter's `slippageStorage()` getter retains its legacy name but now returns SignedReferenceSource. The periodic publisher is retired.
 
-## Market-oracle protections
+## Freshness and validity
 
-The market oracle checks publication age, EUR/USD bounds, deviation from its last valid price and an **independent Chainlink EUR/USD reference on-chain**. At the [30 September snapshot](deployment-status.md), the market observation limit was 900 seconds (hard maximum one hour), bounds were 0.80 to 1.40 USD/EUR and the consecutive-price deviation limit was 5%.
+Normal reference and capacity reports have a **60-second** maximum age in the verified configuration. Execution quotes have a separate **45-second** maximum measured from the original market observation. The adapter's 900-second market snapshot limit is an additional check, not permission to use an expired signed report or quote.
 
-The independent-reference divergence limit was 2%, with a 3% off-hours band. Its configured age ceiling was 8,100 seconds; the Chainlink reader's own 7,200-second EUR/USD freshness limit also applies. The off-hours band does **not** waive reference freshness: a stale reference can stop valid pricing on weekends or holidays while Hyperliquid continues trading.
+Report delivery preserves the original observation timestamp. Replaying an identical report cannot refresh it; an older report cannot overwrite a newer cached reference. Price bounds, independent-reference comparison, USDC validation and circuit breakers remain applicable. A rejected price is not made usable by returning a cached value with `isValid = false`.
 
-Rejected reads return a last-valid value with `isValid = false`; consumers must respect that flag. A cached numerical price is not permission to transact. USDC/USD validation is delegated to ChainlinkOracle. See [ChainlinkOracle](chainlink-oracle.md) for the sequencer guard, feed checks and delayed development-mode controls.
+The adapter supports the signed source's explicit emergency reference policy, with a configured age ceiling of 8100 seconds and the independent oracle's own validity checks. **Emergency redemption has zero budget and is disabled in the current production configuration.** Ordinary signed quotes cannot use this emergency age window.
 
-## The market slot
+## Readiness during inactivity
 
-The router interface permits selecting its sources with `switchOracle` and updating their addresses with the appropriate roles. Source selection alone does not provide compatible execution depth or hedge capacity.
+A stored observation may age while no transaction needs it. Dashboards, keepers and the watchdog can obtain fresh signed reports and simulate their delivery with the relevant read or operation. Those simulations do not persist state and do not spend publication gas. An idle cache alone does not establish that signed delivery is unavailable.
 
-A Lighter oracle was deployed during an alternative-venue evaluation; that option was retired on 1 September 2026. Hyperliquid is the sole supported hedge venue.
+The watchdog monitors fresh delivery and hedge health. Slow but successful probes are distinct from failed readiness checks. A valid signature establishes authorization, not economic accuracy or a completed Hyperliquid fill. Current state can still change between simulation and settlement.
 
-## Independent watchdog (defence-in-depth)
+## Fallback and governance
 
-A separately hosted watchdog observes hedging and oracle health and can pause QuantillonVault. This freezes mint and redeem. Its operating policy is to lift only pauses it created after health recovers. The on-chain EMERGENCY_ROLE itself permits both pause and unpause; self-owned recovery is a service policy, not a separate contract permission.
+OracleRouter selects one source; it does not automatically fail over. Switching to Chainlink is a governance action and does not, by itself, restore execution quotes, hedge capacity or a paused vault. Normal signed settlement fails closed when required data or authorization is unavailable.
 
-The Safe retains emergency pause/unpause authority. Granting or revoking a core vault role uses the TimelockController, which holds the core admin role; it is not an immediate direct Safe action. See [Guardians](../quantillon-guardians.md).
+Oracle proxies retain their peripheral administration and upgrade paths. The core controller and Safe have different responsibilities; a signed report grants no administrative role. Confirm live roles before constructing governance calls.
 
-## Fallback and recovery
-
-| Action | Effect and limits |
-| --- | --- |
-| Switch router to Chainlink | Changes valuation source; requires a valid Chainlink feed and does not alone restore minting |
-| Trigger oracle circuit breaker | Marks pricing invalid; the last-valid number is not an executable fallback |
-| Reset circuit breaker | Resets the breaker subject to contract validation; investigate the cause first |
-| Pause vault | Stops guarded operations, including mint and redeem |
-| Restore publisher and hedge health | Allows fresh observations and capacity; other guards and pause state still apply |
-
-Degraded redemption may be available under [ExecutionPricing's rules](execution-pricing.md). Neither fallback nor liquidation mode guarantees redemption under all conditions.
-
-## Governance and deployed contracts
-
-The Safe holds the peripheral oracle administration and upgrade permissions; these upgrades do not use the core 12-hour timelock. OracleRouter also has delegated manager/emergency permissions on the market oracle for its forwarding functions. SlippageStorage writes require WRITER_ROLE.
-
-For verified addresses and versions, use [Smart Contract Components](smart-contract-components.md); for the core/peripheral distinction, use [Quantillon DAO](../quantillon-dao.md).
+See [Signed Quotes](signed-quotes.md), [Execution Pricing](execution-pricing.md) and [Deployment Status](deployment-status.md) for the verified release and user-facing behavior.

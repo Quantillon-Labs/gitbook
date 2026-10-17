@@ -112,7 +112,7 @@ These are implementation-specific assets. They show how the architecture is impl
 
 **A:** YieldShift contains a dynamic allocation mechanism for separately authorized yield sources. It does not determine the current Morpho harvest split.
 
-QuantillonVault 1.5.0 allocates harvested yield by the staked fraction of total QEURO at harvest. The unstaked share goes to treasury; the hedger receives only the configured haircut on gross staker yield. Stakers receive QEURO credit through their share token as yield vests. See [Yield Distribution](../protocol/yield-distribution.md).
+QuantillonVault 1.6.0 preserves the allocation introduced in 1.5.0 and allocates harvested yield by the staked fraction of total QEURO at harvest. The unstaked share goes to treasury; the hedger receives only the configured haircut on gross staker yield. Stakers receive QEURO credit through their share token as yield vests. See [Yield Distribution](../protocol/yield-distribution.md).
 
 #### **Q: Does the displayed Morpho APY guarantee my stQEURO return?**
 
@@ -183,6 +183,6 @@ If you are evaluating the protocol itself, read the architecture pages first and
 
 These channels are the best place to follow the evolution of QEURO as the first deployment and Quantillon as the broader protocol thesis.
 
-## Signed quotes in development
+## Signed quotes in production
 
-The [candidate signed quote architecture](../protocol/signed-quotes.md) aims to remove idle periodic publication while retaining independent valuation and hedge-capacity controls. Base settlement and Hyperliquid hedging remain separate, and ordinary transactions still incur gas. Production activation has not been announced.
+[Signed quotes](../protocol/signed-quotes.md) are active on Base since 17 October 2026. Quotes expire within 45 seconds of the market observation, and approval is completed before requesting an executable quote. The periodic publisher is retired. Base settlement and Hyperliquid hedging remain separate, ordinary transactions still incur gas, and the emergency-redemption budget is zero.

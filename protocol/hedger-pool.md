@@ -1,10 +1,12 @@
 # HedgerPool
 
-> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
+> [Signed quotes](signed-quotes.md) are active on Base since 17 October 2026. Normal conversions require a valid signed authorization; the emergency-redemption budget is zero.
 
 ## HedgerPool: EUR/USD Hedging & Collateral Management
 
 ### 📋 Overview
+
+HedgerPool **1.6.0** is active on Base since 17 October 2026. Reference-dependent position operations can deliver a fresh signed report atomically through `executeWithReference(bytes,bytes)`; delegated margin withdrawals use the typed `removeMarginWithReference(uint256,uint256,bytes)`. Existing ownership, roles, collateral and margin checks still apply. Add-margin remains directly available to authorized callers.
 
 The HedgerPool is the contract responsible for managing EUR/USD hedging positions in the Quantillon protocol. It allows the designated hedger to provide delta-neutral coverage, maintaining QEURO peg stability while generating revenue.
 
@@ -25,7 +27,7 @@ contract HedgerPool is
     SecureUpgradeable
 ```
 
-`SecureUpgradeable` routes upgrades through the 12-hour OZ TimelockController (see [Quantillon DAO](../quantillon-dao.md)). Live version: **1.0.8** (since 2 September 2026).
+`SecureUpgradeable` routes upgrades through the 12-hour OZ TimelockController (see [Quantillon DAO](../quantillon-dao.md)). Live version: **1.6.0** (since 2 September 2026).
 
 **External Dependencies**
 
@@ -509,7 +511,7 @@ function minMarginAmount() external view returns (uint256);
 function minPositionHoldBlocks() external view returns (uint256);
 function rewardFeeSplit() external view returns (uint256);
 function pendingRewardWithdrawals(address hedger) external view returns (uint256);
-function version() external pure returns (string memory);  // "1.0.8"
+function version() external pure returns (string memory);  // "1.6.0"
 ```
 
 The hedger → active-position mapping (`hedgerActivePositionId`) is private; read the position with `positions(1)` while the single-hedger model holds.

@@ -27,7 +27,7 @@ Pushing to `main` or `dev` triggers `.github/workflows/Telegram Notifications.ym
 
 ## Protocol Domain Knowledge
 
-Use `protocol/deployment-status.md` for dated production settings and `protocol/smart-contract-components.md` for addresses and versions. The 30 September 2026 review uses finalized Base block 51,985,907. Source code and live chain state take precedence over prose. Historical settings must not be presented as current defaults.
+Use `protocol/deployment-status.md` for dated production settings and `protocol/smart-contract-components.md` for addresses and versions. The 17 October 2026 version and signed-binding review uses finalized Base block 52,727,379; broader settings retain the 30 September review at block 51,985,907. Signed quotes are active, the periodic publisher is retired, and the emergency-redemption budget is zero. Source code and live chain state take precedence over prose. Historical settings must not be presented as current defaults.
 
 - Public launch remains a Q4 2026 target. Contracts are deployed on Base only. QTI supply is zero and governance is dormant; Rewards is deployed but closed with no opening date.
 - Core DEFAULT_ADMIN_ROLE belongs to the 12-hour TimelockController. The 2-of-3 Safe retains operational roles and peripheral administration. Do not describe core role revocation as an instant Safe call.

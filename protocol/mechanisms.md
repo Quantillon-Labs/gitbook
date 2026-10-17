@@ -1,6 +1,6 @@
 # Core Mechanisms
 
-> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
+> [Signed quotes](signed-quotes.md) are active on Base since 17 October 2026. Normal conversions require a valid signed authorization; the emergency-redemption budget is zero.
 
 ## Mechanisms
 
@@ -32,9 +32,9 @@ The QEURO minting mechanism is designed for simplicity and capital efficiency:
 
 **📥 Step-by-Step Minting**
 
-1. **USDC Deposit**: Users deposit USDC to the QuantillonVault
+1. **Approval and quote**: Users approve USDC, review a wallet-specific executable quote, and submit it through the signed Vault or UserPool wrapper
 2. **Oracle Price Check**: the protocol's EUR/USD oracle provides the real-time exchange rate (the hedge venue's market mid, Hyperliquid, with Chainlink as fallback; see [Oracle Architecture](oracle-architecture.md))
-3. **Eligibility Checks**: The protocol checks collateralization, published execution capacity, price freshness and available execution liquidity
+3. **Eligibility Checks**: The protocol checks collateralization, signed hedge capacity, price freshness and available execution liquidity
 4. **QEURO Issuance**: Users receive the amount supported by the execution quote, subject to the minimum output they accept and any configured minting fee
 5. **Yield Deployment**: USDC collateral can be deployed to external staking vaults (currently Morpho/MetaMorpho - see [External Staking Vaults](external-staking-vaults.md)) for yield generation
 
@@ -59,8 +59,7 @@ QEURO received: 1,000 ÷ 1.10 = 909.09 QEURO
 #### Minting quotes and capacity
 
 The app provides an execution quote and the capacity available for minting QEURO.
-The backend calculates capacity from usable hedge collateral and publishes it
-on-chain. The vault uses that capacity together with price, liquidity and
+The capacity service signs reports based on usable hedge collateral and reconciled settlement; those reports are delivered with transactions. The vault uses that capacity together with price, liquidity and
 collateralization checks when processing a mint.
 
 Usable collateral includes margin already assigned to the EUR hedge as well as
@@ -77,7 +76,7 @@ liquidity and protocol checks:
 **📤 Step-by-Step Redemption**
 
 1. **QEURO Submission**: Users submit QEURO for redemption via Vault
-2. **Quote Verification**: Reference prices and available execution liquidity determine the normal redemption quote
+2. **Quote Verification**: The signed wrapper checks the authorized call, exact output, expiry, nonce and current reference and capacity constraints
 3. **Collateral Release**: Equivalent USDC released from the vault (withdrawn from the external staking vault if deployed)
 4. **Fee Deduction**: redemption fee applied - currently 0 (governance-settable, capped at 5%)
 5. **USDC Transfer**: Net USDC transferred to user wallet
@@ -218,7 +217,7 @@ USDC collateral is deployed to the registered external staking vault (MetaMorpho
 
 YieldShift is a separate contract for accounting yield from authorized sources. Its dynamic allocation is not the current Morpho harvest policy.
 
-> **Current Morpho flow:** QuantillonVault 1.5.0 allocates by the harvest-time staking ratio, sends the unstaked allocation to treasury and pays the hedger only a configured haircut on gross staker yield. Staker credit vests through the share price. See [Yield Distribution](yield-distribution.md). The following YieldShift parameters describe its separate pools, not this harvest split.
+> **Current Morpho flow:** QuantillonVault 1.6.0 preserves the policy introduced in 1.5.0 and allocates by the harvest-time staking ratio, sends the unstaked allocation to treasury and pays the hedger only a configured haircut on gross staker yield. Staker credit vests through the share price. See [Yield Distribution](yield-distribution.md). The following YieldShift parameters describe its separate pools, not this harvest split.
 
 #### Technical Parameters
 
@@ -279,7 +278,7 @@ The **ChainlinkOracle** (Chainlink EUR/USD spot) is wired as a one-transaction g
 
 | Feed     | Source | Purpose               | Max Staleness |
 | -------- | ------ | --------------------- | ------------- |
-| EUR/USD (active) | Hyperliquid market mid via `HyperliquidEurUsdOracle` | QEURO peg pricing | 15 minutes (900 s; governance-settable up to 1 hour) |
+| EUR/USD (active) | Hyperliquid market mid via `HyperliquidEurUsdOracle` | QEURO peg pricing | 60 s normal signed reference; additional 900 s adapter limit |
 | EUR/USD (fallback) | Chainlink via `ChainlinkOracle` | Governance fallback | 2 hours |
 | USDC/USD | Chainlink via `ChainlinkOracle` | Collateral validation | 25 hours (daily heartbeat) |
 
@@ -291,11 +290,11 @@ The **ChainlinkOracle** (Chainlink EUR/USD spot) is wired as a one-transaction g
 * On any rejection the oracle returns the last valid price with `isValid = false`, which the vault treats as a hard stop (mint/redeem revert)
 * The Chainlink path additionally checks the Base L2 sequencer-uptime feed (1-hour grace period after a restart)
 
-Constants and functions: [ChainlinkOracle](chainlink-oracle.md) (fallback contract reference) and [Oracle Architecture](oracle-architecture.md) (router, market oracle, publisher, watchdog).
+Constants and functions: [ChainlinkOracle](chainlink-oracle.md) (fallback contract reference) and [Oracle Architecture](oracle-architecture.md) (signed source, router, market oracle and watchdog).
 
 **Emergency Functions**
 
-`triggerCircuitBreaker()` / `resetCircuitBreaker()` (emergency role) force and clear the last-valid-price mode on an oracle; `switchOracle(0)` (oracle-manager role) reverts pricing to Chainlink in one transaction. An independent watchdog freezes mint/redeem (vault pause) if the active price is stale, circuit-broken or diverges from Chainlink.
+`triggerCircuitBreaker()` / `resetCircuitBreaker()` (emergency role) force and clear the last-valid-price mode on an oracle; `switchOracle(0)` (oracle-manager role) reverts pricing to Chainlink in one transaction. An independent watchdog freezes mint/redeem (vault pause) if fresh signed delivery or hedge health fails its guard policy. An idle stored observation alone is not a failed fresh-delivery check.
 
 ***
 

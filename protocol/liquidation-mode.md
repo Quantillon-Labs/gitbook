@@ -1,6 +1,8 @@
 # Liquidation Mode
 
-> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
+> [Signed quotes](signed-quotes.md) are active on Base since 17 October 2026. Normal conversions require a valid signed authorization; the emergency-redemption budget is zero.
+
+Protocol liquidation mode changes the proportional-backing payout formula. It is separate from the signed module's explicitly governed emergency-redemption mode, whose current budget is zero. A liquidation condition does not automatically enable budgeted emergency redemption or bypass signed settlement guards.
 
 ## Liquidation Mode: Protocol Solvency Protection
 

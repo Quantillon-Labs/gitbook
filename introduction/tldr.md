@@ -14,7 +14,9 @@
 
 ---
 
-## Where It Stands (September 2026)
+## Where It Stands (17 October 2026)
+
+[Signed quotes](../protocol/signed-quotes.md) are active on Base. The periodic publisher is retired; normal conversions require a valid authorization with a maximum 45-second lifetime.
 
 - **Contracts deployed on Base mainnet** (chain 8453) since June 2026 - mint/redeem, stQEURO staking with external-vault yield, autonomous hedging with an independent watchdog
 - **Public launch planned for Q4 2026** - the application is not yet open to users

@@ -4,6 +4,8 @@
 
 <div align="center"><img src=".gitbook/assets/banner.png" alt="Quantillon Protocol Banner" width="100%"></div>
 
+**Production update, 17 October 2026:** [Signed quotes](protocol/signed-quotes.md) are active on Base. See [Deployment Status](protocol/deployment-status.md) for dated verification and [Smart Contract Components](protocol/smart-contract-components.md) for current versions.
+
 ## Overview
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

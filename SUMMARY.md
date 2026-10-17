@@ -26,7 +26,7 @@
   * [External Staking Vaults](protocol/external-staking-vaults.md)
   * [Execution Pricing](protocol/execution-pricing.md)
   * [Oracle Architecture](protocol/oracle-architecture.md)
-  * [Signed Quotes (In Development)](protocol/signed-quotes.md)
+  * [Signed Quotes](protocol/signed-quotes.md)
   * [ChainlinkOracle](protocol/chainlink-oracle.md)
   * [Liquidation Mode](protocol/liquidation-mode.md)
 

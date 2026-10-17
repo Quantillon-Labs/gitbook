@@ -1,8 +1,8 @@
 # Yield Distribution
 
-> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
+> [Signed quotes](signed-quotes.md) are active on Base since 17 October 2026. Normal conversions require a valid signed authorization; the emergency-redemption budget is zero.
 
-This page describes QuantillonVault 1.5.0, activated on Base on 30 September 2026. The current funded strategy is the MetaMorpho USDC vault. The allocation is calculated from balances at harvest, not from how long each wallet has staked.
+This page describes the allocation introduced by QuantillonVault 1.5.0 on 30 September 2026 and preserved by version 1.6.0, activated on 17 October. The keeper uses the signed harvest authorization for conversion; its existing role, allocation and vesting rules still apply. The current funded strategy is the MetaMorpho USDC vault. The allocation is calculated from balances at harvest, not from how long each wallet has staked.
 
 ## Where the yield comes from
 

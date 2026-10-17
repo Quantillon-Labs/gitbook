@@ -1,27 +1,29 @@
 # Execution Pricing
 
-> A [signed quote migration](signed-quotes.md) is in development. It has not replaced the deployed behavior described on this page.
-
 ## A reference price is not an executable quote
 
-The oracle supplies the EUR/USD reference used for valuation and safety checks. **ExecutionPricing** separately quotes normal mint and redemption using published Hyperliquid order-book depth and admitted hedge capacity. A mint uses the buy side (asks); a redemption uses the sell side (bids). Conservative reference-price bounds and a buffer also affect the amount received.
+Since 17 October 2026, **SignedExecutionPricing 1.1.0** is the active pricing module. The execution service walks the Hyperliquid order book for the requested amount: asks for minting, bids for redemption. It includes protocol fees and an execution buffer, subject to reference-price bounds. SignedReferenceSource supplies the separate valuation reference.
 
-Consequently, a mint followed immediately by a redemption can return less USDC even when the configured mint and redemption fees are zero. Fees, execution spreads and network transaction costs are different costs.
+The resulting quote binds an exact output to a wallet, chain, target, inner call, nonce, epoch and expiry. Zero protocol fees do not mean zero execution cost: execution spread and network gas remain. A mint followed by redemption can return less USDC.
 
 ## Capacity and settlement
 
-The publisher submits observations on-chain. The pricing module checks freshness, depth, permitted price impact, source compatibility and outstanding exposure. New minting requires compatible market pricing and sufficient admitted hedge capacity. A newly published book does not erase unhedged exposure: the authorized reporter acknowledges completed hedges separately.
+Executable quotes carry independently authorized reference and hedge-capacity reports. Capacity is based on reconciled hedge observations and cumulative acknowledgments. A fresh report does not erase unhedged exposure. Unresolved buys and sells count toward gross admission rather than cancelling each other merely because net exposure is zero.
 
-The dapp obtains a quote and passes minimum-output protections to the vault. A preview is not a reservation; a transaction can revert when the quote or capacity changes before execution. Integrations should use the current contract interfaces and repeat previews before submitting.
+The app completes approval before requesting the executable quote, then submits the authorized call through `executeWithQuote`. The maximum lifetime is **45 seconds from the market observation**. A preview does not reserve capacity; issued executable quotes share a bounded risk budget, but cannot reserve public venue liquidity or guarantee execution. Current collateralization, reference, liquidity, capacity, token and pause checks still apply.
 
-## Degraded redemption
+If the amount, route or deployment changes, obtain and review a new quote. An expired authorization cannot be reused. Resolve pending transaction receipts before retrying after an ambiguous network response.
 
-When executable depth or capacity is unavailable, stale, or incompatible with the active router source, the module can quote a **degraded redemption** from a valid reference price with a configured haircut. For a fresh observation the haircut is at least the maximum permitted book impact, preventing a better fallback quote simply by exhausting depth.
+## Emergency redemption and liquidation
 
-This is not an unconditional exit guarantee. Invalid reference prices, a fresh book that diverges excessively from the reference, vault/token pauses, unavailable USDC and the user's minimum output can still block redemption. Protocol liquidation mode uses its separate proportional-backing formula; see [Liquidation Mode](liquidation-mode.md).
+The legacy pricing module's degraded-redemption fallback is not the normal signed path. The current signed module is in **NORMAL** mode with a **0 QEURO emergency budget**. Quote unavailability does not automatically enable a reference-only redemption.
+
+Emergency redemption would require explicit governed configuration, a non-renewing budget, valid independent reference data and the remaining vault/liquidity checks. It is separate from [liquidation mode](liquidation-mode.md), which changes the payout formula according to remaining backing. Neither mechanism guarantees an unconditional exit.
 
 ## Accounting and controls
 
-Execution spread is tracked separately from user backing and protocol fees. The reserve is excluded from collateralization and external-vault deployable principal. ExecutionPricing is a **non-proxy contract** with access-controlled configuration and reporting; replacing it requires updating the vault's configured module through the applicable governance controls.
+Execution spread is tracked separately from user backing and protocol fees. The reserve is excluded from collateralization and external-vault deployable principal. SignedExecutionPricing and SignedReferenceSource are non-proxy modules; replacing them requires the applicable governed bindings and reconciliation of outstanding settlements.
 
-See [Oracle Architecture](oracle-architecture.md) for valuation checks, [Production Deployment Status](deployment-status.md) for the dated production state, and [Smart Contract Components](smart-contract-components.md) for the deployed address.
+Base settlement and subsequent Hyperliquid hedging remain non-atomic. A successful Base transaction is not proof that the venue hedge has filled.
+
+See [Signed Quotes](signed-quotes.md), [Oracle Architecture](oracle-architecture.md), [Deployment Status](deployment-status.md) and [Smart Contract Components](smart-contract-components.md).

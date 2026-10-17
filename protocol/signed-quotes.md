@@ -1,37 +1,42 @@
-# Signed quotes: preproduction validation
+# Signed Quotes
 
-As of 12 October 2026, transaction-specific signed quotes are installed for testing in preproduction, on an isolated fork with simulated hedging. Mint, redemption, UserPool and mint-and-stake paths have passed integration checks, and the candidate is restored after a coordinated fork reset. This does not announce production activation. The deployed architecture remains documented in [Deployment Status](deployment-status.md), [Oracle Architecture](oracle-architecture.md) and [Execution Pricing](execution-pricing.md).
+Transaction-specific signed quotes are **active on Base mainnet since 17 October 2026**. The [confirmed governance execution](https://basescan.org/tx/0xd2945ee2bc1357ec6503e1a374cca9adf841168d4c78739ff6a78a0088aa06f7) activated the migration, and the application reopened at 10:08 UTC. Contract versions and signed bindings were verified at finalized Base block **52,727,379**. See [Deployment Status](deployment-status.md) and [Smart Contract Components](smart-contract-components.md).
 
 ## What changes for a user
 
-The application first completes any required token approval. It then requests an executable quote for the chosen amount and wallet. The user reviews the exact output and expiry before submitting it on Base. A changed amount requires a new quote. An expired quote cannot execute. Before expiry, execution still depends on current collateralization, capacity, reference-price bounds and pause controls.
+1. Choose the amount and complete any required token approval.
+2. Request an executable quote for that wallet, amount and operation.
+3. Review the exact output and expiry, then submit the authorized transaction on Base.
+4. Check the transaction receipt before retrying. A network timeout does not prove failure.
 
-The quote incorporates the relevant side of the Hyperliquid order book, trade size, protocol fees and an execution buffer. This builds on existing directional depth pricing; size-aware execution is already part of the current protocol.
+A quote lasts **at most 45 seconds from its original market observation**. Wallet interaction and transaction inclusion use that same window. Changing the amount or route requires a new quote; an expired quote cannot execute. A refreshed quote can have a different output and requires another review.
 
-## What stays separate
+A price preview is informational. Executable quotes bind the wallet, chain, target, exact call, amounts, expiry and nonce. The app submits them through the signed wrapper on QuantillonVault or UserPool. Signing does not bypass current collateralization, reference, capacity, token or pause checks. Even before expiry, a transaction can revert.
+
+## Three separate responsibilities
 
 | Responsibility | Purpose |
 | --- | --- |
-| Execution quote | Defines the amount received for one operation |
-| Reference valuation | Values liabilities, collateral and hedger accounting |
-| Hedge capacity | Limits newly admitted exposure against reconciled coverage and available margin |
+| Execution quote | Defines the exact output for one operation, using directional book depth, size, fees and an execution buffer |
+| Reference valuation | Values liabilities, collateral and hedger accounting, checked against an independent reference |
+| Hedge capacity | Limits new exposure against reconciled coverage and available margin |
 
-A large trade's execution spread must not change the valuation of every outstanding QEURO. Signed quotes remain subject to protocol accounting, collateralization, independent-reference checks and onchain capacity limits.
+A large trade's execution spread must not revalue every outstanding QEURO. Quotes issued concurrently share a risk budget. Reservations remain until canonical settlement, expiry or invalidation is established; they do not reserve Hyperliquid's public liquidity.
 
-Quotes issued at the same time share a risk budget. The system must retain reservations until canonical settlement, expiry or invalidation is established. These reservations do not reserve Hyperliquid's public liquidity.
+## Publication and readiness
 
-## Costs and execution risk
+The periodic market publisher is retired. Signed reference and capacity reports travel with user or operational transactions. This removes the idle publisher's recurring gas expense; settlement, governance and other onchain operations still cost gas.
 
-Once all consumers migrate, Quantillon can stop publishing an unchanged stream of periodic market snapshots while there is no activity. Required data can travel with user or operational transactions. This removes the idle publisher's recurring gas expense, but does not make settlement, governance or emergency operations free.
+The watchdog checks whether fresh signed reports can be delivered and accepted, together with hedge health. Read-only simulations can test that path without publishing a new persistent observation. An old cache during inactivity is therefore different from unavailable fresh data.
 
-Minting on Base and hedging on Hyperliquid remain separate operations. A successful mint is not proof of a completed hedge. Market movement, partial fills, outages and failed hedges remain possible. Buffers, exposure caps, reconciliation and emergency procedures reduce risk without eliminating it.
+## Unavailability and emergency redemption
 
-Signed quotes also depend on operated signing services. If valid quotes cannot be produced, normal signed minting is unavailable. Emergency redemption requires its own governed mode and valid reference data; there is no unconditional redemption guarantee.
+Normal signed settlement requires valid signing services, fresh observations, sufficient admitted capacity and the other protocol checks. A service outage or failed guard can block both minting and normal redemption.
 
-## Scope of the migration
+The separate emergency-redemption mechanism has a **non-renewing budget of 0 QEURO** in production and is unavailable with that configuration. It is not an automatic fallback when quotes fail. Enabling it would require governed mode and budget changes, valid independent reference data and the remaining contract and liquidity checks. Switching mode alone does not replenish a budget. [Protocol liquidation mode](liquidation-mode.md), which changes the backing-based payout formula, is a different mechanism.
 
-The change covers minting, redemption, optional UserPool accounting, mint-and-stake routes, harvested-yield conversion, hedger margin operations and liquidation. Rewards accounting and protocol dashboards also need to distinguish stale cached observations from current valuation. The candidate watchdog checks whether fresh signed reports can be delivered and accepted, together with hedger health. It uses read-only simulations, so an idle publication cache alone does not require a new paid oracle transaction. Preproduction readiness and reset recovery have been tested. Production recovery and external hedging remain separate validation gates.
+## Execution risk and scope
 
-The current installation scope is preproduction only. Development and Base mainnet deployments remain unchanged. Production still requires real hedge calibration, completion of the remaining operational integrations and governed activation. Documentation and contract deployment records must follow each verified activation. Historical records remain dated records of the earlier architecture.
+Minting on Base and hedging on Hyperliquid remain separate operations. A successful mint is not proof of a completed hedge. Market movement, partial fills, outages and failed hedges remain possible; admission limits and reconciliation reduce risk without eliminating it.
 
-An intent or multi-hedger RFQ model is a possible later evolution. Neither is required to remove idle periodic publication, and neither provides automatic atomicity across Base and Hyperliquid.
+The migration covers mint/redemption, UserPool conversion, mint-and-stake, harvested-yield conversion, hedger reference operations and the related monitoring consumers. It preserves the [yield allocation policy](yield-distribution.md). The technical [production integration guide](https://smartcontracts.quantillon.money/Signed-Quote-Migration.html) describes contract entrypoints and signature bindings.
