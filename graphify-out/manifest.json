@@ -1,0 +1,187 @@
+{
+  "/home/uld/GitHub/Quantillon/gitbook/.claude/settings.local.json": {
+    "mtime": 1775549122.8756342,
+    "ast_hash": "e5bd447aa96115c195fb6826647f7fbd",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/mvp-technical-documentation.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "dd26e3a121076b6e44c9c24e16dee06e",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/README.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "986d189bd6e36194ed60a1ea8bef84e4",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/team-and-operational-structure.md": {
+    "mtime": 1756712910.7774427,
+    "ast_hash": "5b26ac3533bc34dac224696e3c902224",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/CLAUDE.md": {
+    "mtime": 1777276814.8153076,
+    "ast_hash": "71d7f6ab80f84fb92bac198cf39c6d54",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/SUMMARY.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "4f469a8400922c3550f30a6f5178fd66",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/quantillon-dao.md": {
+    "mtime": 1756712910.7770464,
+    "ast_hash": "e8bf4339017397b7512e685c0657dc89",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/quantillon-guardians.md": {
+    "mtime": 1756712910.7770464,
+    "ast_hash": "652126a809a82fd5d711e4e61edb7f63",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/roadmap-and-launch-plan.md": {
+    "mtime": 1777276814.8203075,
+    "ast_hash": "c58fe551cc5c2e091b3855bb43e9c4bc",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/roadmap-and-adoption-strategy.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "32a73fcddac75c832e68f2344377c96e",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/tokenomics-and-governance.md": {
+    "mtime": 1777276814.8203075,
+    "ast_hash": "33d934a49eabcb5fc61f5414524b803b",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/.github/workflows/Telegram Notifications.yml": {
+    "mtime": 1774434679.0323186,
+    "ast_hash": "42c11c3948d293bf05f6e9ce2874252f",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/protocol/mechanisms.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "ec2404b1376b256e3bc86fe88549c108",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/protocol/user-pool.md": {
+    "mtime": 1771838529.8207138,
+    "ast_hash": "14317237c89811c6f0954544a0a59f57",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/protocol/yield-shift.md": {
+    "mtime": 1771838529.8627143,
+    "ast_hash": "8da5cc5e430bcecf2e2533f99ae5f71d",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/protocol/appendices-techniques.md": {
+    "mtime": 1771838529.8247137,
+    "ast_hash": "ce2f441045fbab456f625cf897f16d40",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/protocol/aave-vault.md": {
+    "mtime": 1771838529.8257136,
+    "ast_hash": "55c2ba7985537679627e236f31963bb6",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/protocol/chainlink-oracle.md": {
+    "mtime": 1771838529.8287992,
+    "ast_hash": "19df6f80c62b228d2cd1e101afb669f8",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/protocol/hedger-pool.md": {
+    "mtime": 1771838529.893715,
+    "ast_hash": "db2f29e9158cd0dd1d93cd898d135d7e",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/protocol/quantillon-protocol-design-and-architecture.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "43e61eb33c3fe4245f572b11e1646cf7",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/protocol/liquidation-system.md": {
+    "mtime": 1771838529.8207138,
+    "ast_hash": "d6030c862396c390ab2da83e990e5b87",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/protocol/quantillon-protocols-tokens/README.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "4f0e1f7b2ae8f781735058709402e5dd",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/introduction/tldr.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "1d3175353cf4f9413ebfea2aa710b71b",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/introduction/whitepaper.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "7eb833f4b70d93596975675251b3c1cb",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/risk-management-and-sustainability/risks-and-mitigation-strategies.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "d1d7d0d1a51072334663374b3b532010",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/complementary-information/frequently-asked-questions.md": {
+    "mtime": 1777276848.3300664,
+    "ast_hash": "f17065bab455b5a0cb4ec928d5e5edc2",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/complementary-information/references.md": {
+    "mtime": 1756712910.7765298,
+    "ast_hash": "2baef72b185824d25f4d727e7ab707dc",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/complementary-information/terms-of-services.md": {
+    "mtime": 1756712910.7765298,
+    "ast_hash": "d074d17fa60ed295dffb9891be8a1d12",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/complementary-information/legal-notice.md": {
+    "mtime": 1756712910.7765298,
+    "ast_hash": "c5ee6fd6628e5fede85487b84caf8532",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/complementary-information/glossary.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "436933dda2a510f8ec5fe59531768198",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/complementary-information/privacy-policy.md": {
+    "mtime": 1777276814.8199675,
+    "ast_hash": "97db2d34ad95896584bb554d5fb65067",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/strategic-context/regulatory-and-legal.md": {
+    "mtime": 1777276814.8203075,
+    "ast_hash": "87146113f7b443cd78a5f4d4d2dc9165",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/strategic-context/market-and-competitive-analysis.md": {
+    "mtime": 1777276814.8203075,
+    "ast_hash": "cdb584750554385d87b9e9e11eea68d5",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/strategic-context/business-model-and-economic-sustainability.md": {
+    "mtime": 1777276814.8203075,
+    "ast_hash": "2af44c48b65cfabeaf29cb869dc53a04",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/strategic-context/macro-and-regulatory-context.md": {
+    "mtime": 1777276814.8203075,
+    "ast_hash": "090b2a35d3efe972500bd93b397d96df",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/strategic-context/market-landscape-and-competitive-analysis.md": {
+    "mtime": 1777276814.8203075,
+    "ast_hash": "8959f5eef3ba310aba516b889b0a08d2",
+    "semantic_hash": ""
+  },
+  "/home/uld/GitHub/Quantillon/gitbook/.gitbook/assets/banner.png": {
+    "mtime": 1756196552.661327,
+    "ast_hash": "eed177f87c20b23864de419171588425",
+    "semantic_hash": ""
+  }
+}

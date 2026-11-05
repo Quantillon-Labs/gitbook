@@ -1,0 +1,58 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "settings.local.json",
+      "file_type": "code",
+      "source_file": ".claude/settings.local.json",
+      "source_location": "L1",
+      "id": "claude_settings_local_json",
+      "community": 0,
+      "norm_label": "settings.local.json"
+    },
+    {
+      "label": "enabledMcpjsonServers",
+      "file_type": "code",
+      "source_file": ".claude/settings.local.json",
+      "source_location": "L2",
+      "id": "claude_settings_local_enabledmcpjsonservers",
+      "community": 0,
+      "norm_label": "enabledmcpjsonservers"
+    },
+    {
+      "label": "enableAllProjectMcpServers",
+      "file_type": "code",
+      "source_file": ".claude/settings.local.json",
+      "source_location": "L5",
+      "id": "claude_settings_local_enableallprojectmcpservers",
+      "community": 0,
+      "norm_label": "enableallprojectmcpservers"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/settings.local.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "claude_settings_local_json",
+      "target": "claude_settings_local_enabledmcpjsonservers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/settings.local.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "claude_settings_local_json",
+      "target": "claude_settings_local_enableallprojectmcpservers",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "c1f477e37d31c22399ffa9e4616790a05077b00a"
+}
