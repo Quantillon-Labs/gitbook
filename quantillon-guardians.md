@@ -11,7 +11,7 @@ description: The Guardian to take rapid decisions in a crisis
 
 ## 💡 Need for a Guardian <a href="#need-for-a-guardian" id="need-for-a-guardian"></a>
 
-There is no on-chain "guardian" role: the guardian capability is the contracts' `EMERGENCY_ROLE` (plus `PAUSER_ROLE` on the QEURO token). Today it is exercised by the **2-of-3 Gnosis Safe** (`0x1d7fF432a93d0085Fb69474c7E567f859829e6cd`) controlled by Quantillon Labs team members, which also holds the protocol's other privileged roles - see [Quantillon DAO](quantillon-dao.md).
+There is no on-chain "guardian" role: the guardian capability is the contracts' `EMERGENCY_ROLE` (plus `PAUSER_ROLE` on the QEURO token). Today it is exercised by the **2-of-3 Gnosis Safe** (`0x1d7fF432a93d0085Fb69474c7E567f859829e6cd`), which also holds the protocol's other privileged roles - see [Quantillon DAO](quantillon-dao.md).
 
 In addition, an **independent, separately hosted watchdog service** holds a pause-only `EMERGENCY_ROLE` on QuantillonVault: it freezes mint and redeem within seconds if the hedging engine or the EUR/USD oracle is unhealthy, and lifts only pauses it set itself once the situation is healthy again. The Safe can pause or unpause directly; revoking the watchdog's core role requires the TimelockController - see [Oracle Architecture](protocol/oracle-architecture.md#independent-watchdog-defence-in-depth).
 

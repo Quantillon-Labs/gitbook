@@ -10,7 +10,7 @@ HedgerPool **1.6.0** is active on Base since 17 October 2026. Reference-dependen
 
 The HedgerPool is the contract responsible for managing EUR/USD hedging positions in the Quantillon protocol. It allows the designated hedger to provide delta-neutral coverage, maintaining QEURO peg stability while generating revenue.
 
-> **Single hedger model**: the protocol runs a **single designated hedger** - the `singleHedger` address set by governance. In the current phase that hedger is Quantillon Labs' hedging engine, which neutralizes the EUR/USD exposure on Hyperliquid (see [Oracle Architecture](oracle-architecture.md) for why mint/redeem pricing follows the hedge venue). Hedger USDC is pooled in `QuantillonVault` for unified liquidity.
+> **Single hedger model**: the protocol runs a **single designated hedger** - the `singleHedger` address set by governance. The hedging engine manages the EUR/USD exposure on Hyperliquid (see [Oracle Architecture](oracle-architecture.md) for why mint/redeem pricing follows the hedge venue). Hedger USDC is pooled in `QuantillonVault` for unified liquidity.
 
 ***
 
@@ -593,4 +593,4 @@ Generic reverts (`NotAuthorized`, `InvalidAmount`, `ConfigValueTooHigh/TooLow`, 
 
 ***
 
-> **Summary**: The HedgerPool is the core of Quantillon's hedging mechanics. A single designated hedger - Quantillon Labs' hedging engine in the current phase - provides EUR/USD coverage, with position interest/reward-reserve accounting, any configured staking-yield haircut, and separately funded YieldShift rewards. The margin health gate, the September 2026 margin policy and the emergency controls keep the hedge and the protocol collateralization aligned.
+> **Summary**: The HedgerPool is the core of Quantillon's hedging mechanics. A single designated hedger provides EUR/USD coverage, with position interest/reward-reserve accounting, any configured staking-yield haircut, and separately funded YieldShift rewards. The margin health gate, the September 2026 margin policy and the emergency controls keep the hedge and the protocol collateralization aligned.

@@ -163,7 +163,7 @@ If you are evaluating the protocol itself, read the architecture pages first and
 
 #### **Q: What is Quantillon Rewards?**
 
-**A:** Quantillon Rewards is an off-chain points program operated by Quantillon Labs for QEURO depositors and stakers. Points (QP) have no monetary value and promise no token or allocation. Its terms are published ([Rewards Program Terms](rewards-program-terms.md)); the program is **not yet open** in the application and no opening date is committed.
+**A:** Quantillon Rewards is an off-chain points program for QEURO depositors and stakers. Points (QP) have no monetary value and promise no token or allocation. Its terms are published ([Rewards Program Terms](rewards-program-terms.md)); the program is **not yet open** in the application and no opening date is committed.
 
 ***
 

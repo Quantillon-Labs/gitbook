@@ -10,7 +10,7 @@ Quantillon Labs (the “Company”) reserves the right to modify their character
 
 #### PRESENTATION OF THE COMPANY <a href="#presentation-of-the-company" id="presentation-of-the-company"></a>
 
-The Website is published by the Company.
+Quantillon Labs publishes the Website through which users access information about Quantillon Protocol and its interface.
 
 \- Company’s name: Quantillon Labs,
 

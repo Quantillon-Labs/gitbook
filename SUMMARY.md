@@ -46,7 +46,7 @@
 
 ## 🤝 Organization and Governance
 
-* [Team & Operational Structure](team-and-operational-structure.md)
+* [Protocol operations and responsibilities](team-and-operational-structure.md)
 * [Tokenomics & Governance](tokenomics-and-governance.md)
 * [Quantillon DAO](quantillon-dao.md)
 * [Quantillon Guardians](quantillon-guardians.md)

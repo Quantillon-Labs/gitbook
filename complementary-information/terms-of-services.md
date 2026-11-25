@@ -16,7 +16,7 @@ For questions or complaints, contact **support@quantillon.money** or write to ou
 
 #### 2. SCOPE AND ACCEPTANCE
 
-The Interface provides access to information and features associated with the Quantillon protocol, including QEURO minting and redemption, QEURO staking through vaults, portfolio information and, when available, the Quantillon Rewards program.
+The Interface provides access to information and features associated with the Quantillon Protocol, including QEURO minting and redemption, QEURO staking through vaults, portfolio information and, when available, the Quantillon Rewards program.
 
 Before you sign in, we make these Terms available for review. By signing the wallet authentication message that expressly refers to these Terms, you agree to the version identified in that message. If you act for an organization, you confirm that you have authority to accept these Terms on its behalf. You can save or print these Terms for your records. If you do not agree, do not sign that acceptance message or use features requiring acceptance.
 

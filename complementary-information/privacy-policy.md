@@ -8,13 +8,13 @@ _Change log: 30 September 2026 - authentication-cookie and wallet-security descr
 
 1. **INTRODUCTION**
 
-Quantillon, Quantillon Protocol (hereinafter referred to as "Quantillon Labs", the "Company", "we", "us" or "our") a French simplified joint stock company (société par actions simplifiée) organized under the laws of France, having its registered office located at 2 Avenue de Lognac, 33700 Mérignac, France, incorporated with the Commercial and Companies Register of Bordeaux under number 988 682 613 is committed to protecting and respecting your privacy (hereinafter referred to as "Users", "you" or "your").
+Quantillon Labs (the "Company", "we", "us" or "our"), a French simplified joint stock company (société par actions simplifiée) organized under the laws of France, having its registered office located at 2 Avenue de Lognac, 33700 Mérignac, France, incorporated with the Commercial and Companies Register of Bordeaux under number 988 682 613 is committed to protecting and respecting your privacy (hereinafter referred to as "Users", "you" or "your").
 
 This privacy policy (hereinafter referred to as "Privacy Policy") together with our legal notice, disclaimers, documentation, and general terms and conditions explain how Quantillon Labs operates and how it may - from time to time only - use your personal information (hereinafter referred to as "Personal Information" or "Personal Data") when Users access the websites : [https://quantillon.money/](https://quantillon.money/) and [https://app.quantillon.money/](https://app.quantillon.money/) (hereinafter together referred to as the "Site").
 
 For more information about the Company, the User is invited to consult the [legal notice](legal-notice.md).
 
-Quantillon Labs has developed a tool under the name "Quantillon" that offers, among other things, an FX-hedged DeFi protocol whose first deployment combines deep USD-based liquidity, automated FX hedging, and modular yield vaults to provide secure, capital-efficient, and scalable euro exposure on-chain through QEURO. (hereinafter referred to as the “Quantillon Protocol”).
+The Company operates the website and application through which users access Quantillon Protocol. The protocol provides onchain FX hedging, including QEURO and its associated vaults.
 
 In this context, this Privacy Policy describes why and how we may collect and use Personal Information and provides information about individuals’ rights in relation to Personal Information.
 
