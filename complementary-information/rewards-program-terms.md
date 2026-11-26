@@ -5,7 +5,7 @@ _Version 1_
 
 > **Status: the Program is not yet open.** These terms take effect when the Program opens in the application; no opening date is committed.
 
-These terms govern participation in Quantillon Rewards (the "Program"), a loyalty program operated by Quantillon Labs, a French simplified joint stock company (SAS) with registered office at 2 Avenue de Lognac, 33700 Merignac, France, registered with the Commercial and Companies Register of Bordeaux under number 988 682 613 ("Quantillon Labs", "we"). They complement the [Legal Notice](legal-notice.md), the [Privacy Policy](privacy-policy.md) and, once published, the [Terms of Service](terms-of-services.md).
+These terms govern participation in Quantillon Rewards (the "Program"), a loyalty program operated by Quantillon Labs, a French simplified joint stock company (SAS) with registered office at 2 Avenue de Lognac, 33700 Merignac, France, registered with the Commercial and Companies Register of Bordeaux under number 988 682 613 ("Quantillon Labs", "we"). They complement the [Legal Notice](legal-notice.md), the [Privacy Policy](privacy-policy.md) and the [Terms of Service](terms-of-services.md).
 
 ### 1. Participation
 

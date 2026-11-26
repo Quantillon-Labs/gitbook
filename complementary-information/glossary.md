@@ -102,7 +102,7 @@ The global market for currency trading. Quantillon leverages its depth and liqui
 
 ### Hedgers
 
-Participants who provide USDC margin to hedge EUR/USD exposure. Morpho harvest compensation is limited to the configured staking-yield haircut; separate position reward accounting is described on the HedgerPool page. In the current phase a single designated hedger (Quantillon Labs' hedging engine, executing on Hyperliquid) fills this role - see the HedgerPool page.
+Participants who provide USDC margin to hedge EUR/USD exposure. Morpho harvest compensation is limited to the configured staking-yield haircut; separate position reward accounting is described on the HedgerPool page. In the current phase a single designated hedger executing on Hyperliquid fills this role - see the HedgerPool page.
 
 ***
 
@@ -127,7 +127,7 @@ Quantillon's strategy of leveraging **existing liquidity** (USDC and Forex) inst
 
 ### Margin Rebalancing
 
-The operational policy, in force since September 2026, under which Quantillon Labs' hedging engine keeps the collateral of the two legs of the EUR/USD hedge - the HedgerPool position on Base and the Hyperliquid perpetual - near a 2.5% equity-to-notional target through bounded, monitored USDC transfers. The on-chain HedgerPool minimum margin ratio is 250 bps (2.5%) and the minting floor is 102.5% - see the HedgerPool page.
+The operational policy, in force since September 2026, under which the designated hedging engine keeps the collateral of the two legs of the EUR/USD hedge - the HedgerPool position on Base and the Hyperliquid perpetual - near a 2.5% equity-to-notional target through bounded, monitored USDC transfers. The on-chain HedgerPool minimum margin ratio is 250 bps (2.5%) and the minting floor is 102.5% - see the HedgerPool page.
 
 ***
 
@@ -163,7 +163,7 @@ Quantillon’s native governance token. **Dormant** (deployed with a 100M supply
 
 ### Quantillon Rewards (QP)
 
-An off-chain loyalty program operated by Quantillon Labs that records points ("QP") for QEURO depositors and stakers. QP have no monetary value and confer no right to any token or allocation. The terms are published (Rewards Program Terms); the program is not yet open in the application.
+An off-chain loyalty program that records points ("QP") for QEURO depositors and stakers. QP have no monetary value and confer no right to any token or allocation. The terms are published (Rewards Program Terms); the program is not yet open in the application.
 
 ***
 

@@ -1,39 +1,13 @@
-# Team & Operational Structure
+# Protocol operations and responsibilities
 
-Quantillon is driven by a multidisciplinary team combining decades of experience in software engineering, decentralized finance, macroeconomics, and digital asset management. The organizational design reflects the layered responsibilities of protocol development, governance stewardship, and institutional interfacing.
+Quantillon Protocol uses onchain contracts for QEURO minting, redemption, vault accounting and hedge collateral. The public interface is operated by the French company identified in the [Legal Notice](complementary-information/legal-notice.md).
 
-### Founding Team
+## Hedging and liquidity
 
-**👨‍💼 Toni Cantarutti - CEO**
+Governance sets the single hedger address. See [HedgerPool](protocol/hedger-pool.md) for the collateral requirements and the risks of relying on one operator.
 
-Toni brings over **15 years of experience** as a software architect specializing in core C++ and system-level development. His career spans R\&D roles at Intuisphere, Orange Labs, and Thermo Fisher Scientific. He is the founder of Benarius, a CeFi euro-yield platform, which laid the groundwork for Quantillon. Toni leads protocol design, team coordination, and strategic vision.
+## Governance and emergency controls
 
-**👨‍💻 Nicolas Bellengé - CTO**
+The current governance Safe requires two of three signatures. Core upgrades pass through a 12-hour timelock. The [governance overview](quantillon-dao.md) describes the scope of these controls and the transition planned for QTI governance. [Quantillon Guardians](quantillon-guardians.md) describes emergency powers and delegated roles.
 
-With **20 years of experience** in software engineering and project leadership, Nicolas is an expert in Web2/Web3 stack integration. He is the CEO of NBTC SAS, a company focused on the acquisition, resale, and management of crypto assets. At Quantillon, Nicolas oversees the smart contract infrastructure, full-stack development, and cybersecurity framework.
-
-### Core Development & Product Team
-
-Quantillon's core team includes **two full-stack blockchain developers** specializing in Solidity, DeFi integrations, and protocol-level testing. The product division includes a **UX/UI designer** and a **communications strategist** responsible for user onboarding, documentation, and market engagement.
-
-This lean structure ensures rapid iteration while maintaining rigorous technical standards. Team roles are intended to be incentivized through long-term vesting in $QTI tokens once the token is activated (QTI is currently dormant, with no tokens issued).
-
-### Organizational Entities
-
-To manage legal exposure, regulatory dialogue, and decentralized operations, Quantillon is structured into three synergistic entities:
-
-**🔗 Quantillon Protocol (on-chain)**
-
-The on-chain smart contracts responsible for minting, vault logic, hedging infrastructure and governance proposals - governed today by the 2-of-3 governance Safe with a 12-hour upgrade timelock, and by $QTI holders once governance is activated (see [Quantillon DAO](quantillon-dao.md)).
-
-**🔬 Quantillon Labs (development)**
-
-A **French SAS** (Mérignac, France - see the [Legal Notice](complementary-information/legal-notice.md)) responsible for developing and launching the protocol. Initially acts as a liquidity provider and hedger, remunerated by the protocol. Labs ensures code security, DevOps, and integrations.
-
-**🏛️ Quantillon Foundation (compliance - planned)**
-
-A **planned future entity**, with legal form and jurisdiction to be determined, that will interface with regulators, auditors, and legal stakeholders once established. It is intended to safeguard multisig access, publish disclosures, and facilitate DAO transitions. Until then, these responsibilities sit with Quantillon Labs.
-
-> **This tripartite model is designed to support progressive decentralization while ensuring institutional credibility and legal defensibility - especially relevant under MiCA's evolving guidance.**
-
-Quantillon's human capital strategy focuses on high-leverage contributors, external auditors, and community-aligned governance. The team is well-positioned to evolve into a DAO-governed protocol with scalable institutional interfaces.
+A foundation has been proposed for future oversight. It has not been established.

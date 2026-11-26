@@ -24,7 +24,7 @@ The protocol is not described as fully decentralized today. The current control 
 
 ## Entities and legal documents
 
-Quantillon Labs is the French development and operating company identified in the [Legal Notice](../complementary-information/legal-notice.md). Quantillon Protocol refers to the deployed contracts; it is not itself proof of a separate legal entity. The proposed Foundation remains a plan.
+The interface publisher is identified in the [Legal Notice](../complementary-information/legal-notice.md). Quantillon Protocol refers to the deployed contracts; it is not itself proof of a separate legal entity. The proposed Foundation remains a plan.
 
 Regulatory dialogue does not constitute approval or an exemption. No written regulator determination confirming Quantillon's exemption is cited in these documents. A technical documentation review cannot establish legal compliance.
 

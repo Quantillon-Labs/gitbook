@@ -133,7 +133,7 @@ Holding unstaked QEURO does not earn this yield. Vault 1.5.0 bypasses YieldShift
 
 **Current Implementation: Single Hedger Model**
 
-> **Important**: The protocol runs a single designated hedger - Quantillon Labs' hedging engine, executing on Hyperliquid - in the current phase. See [HedgerPool](../hedger-pool.md).
+> **Important**: The protocol runs a single designated hedger executing on Hyperliquid in the current phase. See [HedgerPool](../hedger-pool.md).
 
 **Hedger Functions**:
 

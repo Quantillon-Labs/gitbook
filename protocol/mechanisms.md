@@ -17,7 +17,7 @@ Quantillon Protocol represents a reusable pattern for local-currency DeFi market
 #### Core Design Principles
 
 * **🔒 Over-collateralization**: Minting requires the protocol collateralization ratio to meet the governance-set minting floor - currently **102.5%** (lowered from 105% on 2 September 2026; hard minimum 101%); 101% is the critical threshold that triggers liquidation mode
-* **⚖️ Delta-neutral hedging**: FX risk managed by a single designated hedger (Quantillon Labs' hedging engine, executing on Hyperliquid) in the current phase
+* **⚖️ Delta-neutral hedging**: FX risk managed by a single designated hedger executing on Hyperliquid in the current phase
 * **📈 Staking yield allocation**: Harvest-time staked share to stakers, unstaked share to treasury; YieldShift is a separate ledger
 * **🌊 Liquidity inheritance**: Leverages existing USDC liquidity depth
 * **🏛️ Progressive decentralization**: Parameters managed today by a 2-of-3 Safe with a 12h upgrade timelock; QTI community governance planned via a future activation upgrade
@@ -132,7 +132,7 @@ The UserPool is an optional batch deposit/stake contract; the dApp's primary flo
 
 **Single Hedger Model**
 
-> **Important**: The protocol runs a **single designated hedger** model. The hedger is the `singleHedger` address set by governance via `setSingleHedger()`; there is no hedger role. In the current phase the hedger is Quantillon Labs' hedging engine, which neutralizes the EUR/USD exposure on Hyperliquid.
+> **Important**: The protocol runs a **single designated hedger** model. The hedger is the `singleHedger` address set by governance via `setSingleHedger()`; there is no hedger role. The hedging engine manages the EUR/USD exposure on Hyperliquid.
 
 **Hedger Function**
 

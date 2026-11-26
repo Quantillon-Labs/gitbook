@@ -6,7 +6,7 @@ Quantillon's first deployment serves EUR users via USD-collateralized instrument
 
 **🛡️ Mitigation:** The protocol's architecture is explicitly delta-neutral. The designated hedger takes the offsetting side of the protocol's EUR/USD exposure in exchange for predictable compensation, aligning its incentives with peg stability. The on-chain margin floor, the protocol-level liquidation mode and real-time FX oracles (the hedge venue's EUR/USD market mid - Hyperliquid - with Chainlink as fallback) enforce discipline. Additionally, the Yield Shift mechanism acts as a buffer: as FX volatility rises, incentives for hedgers increase dynamically.
 
-Since September 2026 the hedge runs on a margin policy targeting 2.5%: the on-chain HedgerPool minimum margin ratio is 2.5% (250 bps) and the minting floor is 102.5%. Quantillon Labs' hedging engine keeps the collateral of both legs of the hedge - the HedgerPool position on Base and the Hyperliquid perpetual - near that target through bounded, monitored transfers that are blocked whenever they would bring the protocol collateralization ratio too close to the minting floor (see [HedgerPool](../protocol/hedger-pool.md#operational-margin-policy-september-2026)).
+Since September 2026 the hedge runs on a margin policy targeting 2.5%: the on-chain HedgerPool minimum margin ratio is 2.5% (250 bps) and the minting floor is 102.5%. The designated hedging engine keeps the collateral of both legs of the hedge - the HedgerPool position on Base and the Hyperliquid perpetual - near that target through bounded, monitored transfers that are blocked whenever they would bring the protocol collateralization ratio too close to the minting floor (see [HedgerPool](../protocol/hedger-pool.md#operational-margin-policy-september-2026)).
 
 **Hedge-venue concentration:** the hedge is executed on a single venue (Hyperliquid). This is an **accepted risk**, mitigated operationally: the venue's margin is kept near the 2.5% target with bounded, monitored transfers, an independent watchdog freezes mint/redeem if the hedge or the venue becomes unhealthy, and the protocol can fall back to Chainlink pricing in one transaction. Diversifying venues remains possible by design (the oracle's market slot is venue-agnostic) but is not planned.
 
@@ -32,7 +32,7 @@ As with all DAO-based systems, Quantillon faces the risk of governance capture o
 
 Although Quantillon targets the Recital 22 exemption under MiCA, regulatory interpretation can evolve, especially as EU authorities refine crypto oversight.
 
-**🛡️ Mitigation:** The protocol operates under a hybrid compliance architecture. Its decentralized nature is verifiable and publicly auditable. Meanwhile, Quantillon Labs (a French SAS) handles regulatory dialogue and any future external-review engagement, maintaining legal dialogue (notably with the French ACPR); the planned Quantillon Foundation - jurisdiction to be determined - is intended to take over this regulatory-interface role once established. These entities can issue voluntary disclosures or risk assessments without compromising decentralization.
+**🛡️ Mitigation:** The current controls and risks are documented in [Protocol operations and responsibilities](../team-and-operational-structure.md). A foundation has been proposed. Its jurisdiction and future remit remain open.
 
 ### DeFi Contagion Risk
 
